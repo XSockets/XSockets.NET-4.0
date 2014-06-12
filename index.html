@@ -1,0 +1,2708 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Xsockets.net-4.0 : Super duper real-time framework" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Xsockets.net-4.0</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/XSockets/XSockets.NET-4.0">View on GitHub</a>
+
+          <h1 id="project_title">Xsockets.net-4.0</h1>
+          <h2 id="project_tagline">Super duper real-time framework</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/XSockets/XSockets.NET-4.0/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/XSockets/XSockets.NET-4.0/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <p>Rev. Alpha-1</p>
+
+<h1>
+<a name="do-you-want-to-try-the-40-alpha" class="anchor" href="#do-you-want-to-try-the-40-alpha"><span class="octicon octicon-link"></span></a>Do you want to try the 4.0 alpha?</h1>
+
+<p>Send an email to <a href="mailto:contact@xsockets.net">contact@xsockets.net</a> and we will provide you with information on how to get started.</p>
+
+<h1>
+<a name="xsocketsnet-4---introduction" class="anchor" href="#xsocketsnet-4---introduction"><span class="octicon octicon-link"></span></a>XSockets.NET 4 - Introduction</h1>
+
+<h2>
+<a name="what-is-it" class="anchor" href="#what-is-it"><span class="octicon octicon-link"></span></a>What is it?</h2>
+
+<p>XSockets.NET is a real-time messaging system that allows communication between any device that has TCP/IP. The server can be hosted anywhere (.NET/Mono) and the clients cover every major browser + C#, VB.NET, Android, iOS, NETMF. And it is very easy to connect anything else that has a TCP/IP stack.</p>
+
+<p><strong><em>In short terms: RealTime, InternetOfThings and WebRTC in a single framework!</em></strong></p>
+
+<h2>
+<a name="who-uses-it" class="anchor" href="#who-uses-it"><span class="octicon octicon-link"></span></a>Who uses it?</h2>
+
+<pre><code>TODO: Add images here
+</code></pre>
+
+<hr><h2>
+<a name="getting-started-with-real-time-communication" class="anchor" href="#getting-started-with-real-time-communication"><span class="octicon octicon-link"></span></a>Getting started with real-time communication</h2>
+
+<h3>
+<a name="1-start-a-server" class="anchor" href="#1-start-a-server"><span class="octicon octicon-link"></span></a>1. Start a server</h3>
+
+<pre><code>using (var container = Composable.GetExport&lt;IXSocketServerContainer&gt;())
+{
+    container.Start();
+    Console.ReadLine();
+}
+</code></pre>
+
+<h3>
+<a name="2-create-a-client-and-listen-for-mymessage" class="anchor" href="#2-create-a-client-and-listen-for-mymessage"><span class="octicon octicon-link"></span></a>2. Create a client and listen for "MyMessage"</h3>
+
+<p>JavaScript</p>
+
+<pre><code>var conn = new XSockets.WebSocket('ws://127.0.0.1',['generic']);
+conn.controller('generic').mymessage = function(data){
+    alert(data.Text);
+};
+</code></pre>
+
+<p>C#</p>
+
+<pre><code>var conn = new XSocketClient("ws://127.0.0.1:4502", "http://localhost","generic");
+conn.Open();
+conn.Controller("generic").On("mymessage", data =&gt; Console.WriteLine(data.Text));
+</code></pre>
+
+<h3>
+<a name="3-send-message" class="anchor" href="#3-send-message"><span class="octicon octicon-link"></span></a>3. Send message</h3>
+
+<p>JavaScript</p>
+
+<pre><code>conn.controller('generic').invoke('mymessage',{Text:'Hello JS RealTime'});
+</code></pre>
+
+<p>C#</p>
+
+<pre><code>c.Controller("generic").Invoke("mymessage",new {Text = "Hello C# RealTime"});
+</code></pre>
+
+<h3>
+<a name="4-whats-next" class="anchor" href="#4-whats-next"><span class="octicon octicon-link"></span></a>4. What's next?</h3>
+
+<h4>
+<a name="javascriptc-client-api" class="anchor" href="#javascriptc-client-api"><span class="octicon octicon-link"></span></a>JavaScript/C# Client API</h4>
+
+<p>Learn to...</p>
+
+<ul>
+<li>Use Pub/Sub or RPC</li>
+<li>Use WebRTC for Video/Audio communication without plugins (JavaScript only)</li>
+</ul><h4>
+<a name="server" class="anchor" href="#server"><span class="octicon octicon-link"></span></a>Server</h4>
+
+<p>Create...</p>
+
+<ul>
+<li>Powerful server-side controllers</li>
+<li>Custom pipeline</li>
+<li>Interceptors (for messages, connections and errors)</li>
+<li>Protocol-plugins (for connecting other things, devices, languages)</li>
+<li>Clients in .NET, NodeJS, C, Perl, Raw sockets or whatever you feel like connecting!</li>
+</ul><hr><h2>
+<a name="installing-xsocketsnet" class="anchor" href="#installing-xsocketsnet"><span class="octicon octicon-link"></span></a>Installing XSockets.NET</h2>
+
+<p>XSockets.NET is distributed through nuget.org and chocolatey.org. From Chocolatey you install our Windows Service and on Nuget we have all our packages for development. You can read more about all the packages after the installation samples.</p>
+
+<h3>
+<a name="install-into-a-self-hosted-application" class="anchor" href="#install-into-a-self-hosted-application"><span class="octicon octicon-link"></span></a>Install into a Self-Hosted application</h3>
+
+<p>In the nuget Package Manager Console run the command below to install the server.</p>
+
+<p><code>PM&gt; Install-Package XSockets.Server</code></p>
+
+<h4>
+<a name="start-the-server" class="anchor" href="#start-the-server"><span class="octicon octicon-link"></span></a>Start the server</h4>
+
+<p>Inside of the Main method start the server with the code below.</p>
+
+<pre><code>using XSockets.Core.Common.Socket;
+using XSockets.Plugin.Framework;
+using (var container = Composable.GetExport&lt;IXSocketServerContainer&gt;())
+{
+    server.StartServers();
+    Console.WriteLine("Started, hit enter to quit");
+    Console.ReadLine();
+}
+</code></pre>
+
+<h4>
+<a name="install-into-owin" class="anchor" href="#install-into-owin"><span class="octicon octicon-link"></span></a>Install into OWIN</h4>
+
+<p>Open up the Package Manager Console and install the server</p>
+
+<p><code>PM&gt; Install-Package XSockets.Owin.Host</code></p>
+
+<h4>
+<a name="how-to-register-xsockets-middleware" class="anchor" href="#how-to-register-xsockets-middleware"><span class="octicon octicon-link"></span></a>How to register XSockets Middleware</h4>
+
+<p>UseXSockets is an extension method for the OwinExtensions class.</p>
+
+<pre><code>using Microsoft.Owin;
+using Owin;
+using XSockets.Owin.Host;
+
+[assembly: OwinStartupAttribute(typeof(MyApplication.Startup))]
+namespace MyApplication
+{
+    public partial class Startup
+    {
+        public void Configuration(IAppBuilder app)
+        {           
+            app.UseXSockets(true);       
+        }
+    }
+}
+</code></pre>
+
+<p>So basically just call the UseXSockets extension from where you have your StartUp class for OWIN.</p>
+
+<h2>
+<a name="supported-platforms" class="anchor" href="#supported-platforms"><span class="octicon octicon-link"></span></a>Supported Platforms</h2>
+
+<h3>
+<a name="server-system-requirements" class="anchor" href="#server-system-requirements"><span class="octicon octicon-link"></span></a>Server system requirements</h3>
+
+<p>Since XSockets.NET is built to run on both .NET and Mono the server can be hosted pretty much anywhere.</p>
+
+<h3>
+<a name="client-system-requirements" class="anchor" href="#client-system-requirements"><span class="octicon octicon-link"></span></a>Client system requirements</h3>
+
+<p>XSockets can be used from any client that has TCP/IP, and since XSockets.NET supports cross-protocol communication it is very easy to add new clients and protocols.</p>
+
+<p>The XSockets.NET team has built a few client libraries to make life easier for our developers. All client libraries is using full-duplex/bi-directional communication.</p>
+
+<pre><code>Language    Requirements
+C#          .NET 2.0, 3.5, 4.0
+iOS         .NET 4.0 (MonoTouch)
+Android     .NET 4.0 (MonoDroid)
+NETMF       4.2, 4.3
+JavaScript  Browser with websockets (there is a fallback for IE 9 &amp; IE 8)
+</code></pre>
+
+<h3>
+<a name="communication---how-it-works" class="anchor" href="#communication---how-it-works"><span class="octicon octicon-link"></span></a>Communication - How it works</h3>
+
+<p>The architecture for XSockets.NET is simple yet powerful. Each client connects to a protocol, the protocol will then allow communication over n controllers. So you can multiplex over several controller on one connection. This architecture enables communication cross-protocol as well as cross-controller.</p>
+
+<p>Different clients have different capabilities, browsers for example have the RFC6455 (websockets) protocol implemented, but other things devices might talk a protocol that you have created. Since XSockets allows “cross-protocol communication” all connected clients can communicate with each other very easily.</p>
+
+<h4>
+<a name="basic-architecture" class="anchor" href="#basic-architecture"><span class="octicon octicon-link"></span></a>Basic architecture</h4>
+
+<p><img src="http://xsockets.net/%242/file/xsocketscommunication-1.png" alt="XSockets basic architecture"></p>
+
+<p>The red clients are clients libraries written by XSockets.NET and the blue clients are examples of what we have easily connected with custom protocols.</p>
+
+<p>You may also notice that XSockets enables not only cross-protocol communication, but also cross-controller communication so that you can call a method on another controller. Or even send data to client on another controller with a single line of code.</p>
+
+<hr><h1>
+<a name="xsocketsnet-4---documentation" class="anchor" href="#xsocketsnet-4---documentation"><span class="octicon octicon-link"></span></a>XSockets.NET 4 - Documentation</h1>
+
+<h2>
+<a name="server-api-guide" class="anchor" href="#server-api-guide"><span class="octicon octicon-link"></span></a>Server API Guide</h2>
+
+<h3>
+<a name="how-to-create-and-use-controller-classes" class="anchor" href="#how-to-create-and-use-controller-classes"><span class="octicon octicon-link"></span></a>How to create and use Controller classes</h3>
+
+<p>To create a <code>Controller</code>, create a class that derives from <code>XSockets.Core.XSocket.XSocketController</code>. The following example shows a simple <code>Controller</code> class for a chat application.</p>
+
+<pre><code>public class Chat : XSocketController
+{
+    public void ChatMessage(string message)
+    {
+        this.InvokeToAll(message,"chatmessage");
+    }
+}
+</code></pre>
+
+<p>In this example, a connected client can call the ChatMessage method, and when it does, the data received is broadcasted (RPC) to all clients connected to the <code>Controller</code>.</p>
+
+<h4>
+<a name="controller-object-lifetime" class="anchor" href="#controller-object-lifetime"><span class="octicon octicon-link"></span></a>Controller object lifetime</h4>
+
+<p>You don't instantiate the <code>Controller</code> class or call its methods from your own code on the server. This is all done for you by the XSockets.NET plugin framework. XSockets.NET creates a new instance of your Controller the first time you use it on you connection. The <code>Controller</code> will live in memory for as long as the client is connected to it. This provides the possibility to have state on the controllers which is the most important feature when working with real-time frameworks.</p>
+
+<p>Because the instances of the 'Controller' class ARE transient, you can use them to maintain state from one method call to the next. Each time the server receives a method call from the client, it will be the same instance of your ´Controller´ class per connection that processes the message. Since XSockets.NET does not recycle you will not loose data even though it is stored in-memory. Of course you should persist information that is important since information will be lost if/when the server is stopped.</p>
+
+<p>If you want to send messages to clients from your own code that runs outside the <code>Controller</code> class but in the same context as the server, you can do it by instantiating a <code>Controller</code> class instance. Note: Instances created like this will not have a socket but they can still be used to send messages to clients connected on any <code>Controller</code>.</p>
+
+<h4>
+<a name="how-to-define-methods-in-the-controller-class-that-the-clients-can-call" class="anchor" href="#how-to-define-methods-in-the-controller-class-that-the-clients-can-call"><span class="octicon octicon-link"></span></a>How to define methods in the Controller class that the clients can call</h4>
+
+<p>To expose a method on the <code>Controller</code> that you want to be callable from the client, declare a public method, as shown in the following examples.</p>
+
+<pre><code>public class Chat : XSocketController
+{
+    public void ChatMessage(string message)
+    {
+        this.InvokeToAll(message,"chatmessage");
+    }
+}
+public class StockTicker : XSocketController
+{
+    public IEnumerable&lt;Stock&gt; GetAllStocks()
+    {
+        return _stockTicker.GetAllStocks();
+    }
+}
+</code></pre>
+
+<p>You can specify a return type and parameters, including complex types and arrays, as you would in any C# method. Any data that you receive in parameters or return to the caller is communicated between the client and the server by using JSON, and XSockets.NET handles the binding of complex objects and arrays of objects automatically.</p>
+
+<h4>
+<a name="how-to-call-client-methods-from-the-controller-class" class="anchor" href="#how-to-call-client-methods-from-the-controller-class"><span class="octicon octicon-link"></span></a>How to call client methods from the Controller class</h4>
+
+<p>To call client methods from the server, use the extensionmethods for the <code>IXSocketController</code> interface. The following example shows server code that calls <code>chatmessage</code> on all connected clients, and the client code that defines the method in a JavaScript and C# clients.</p>
+
+<p>There are many extensions for both PUB/SUB and RPC, and you can of course write your own if needed.</p>
+
+<p>Server</p>
+
+<pre><code>public class Chat : XSocketController
+{
+    public void ChatMessage(string message)
+    {
+        this.InvokeToAll(message,"chatmessage");
+    }
+}
+</code></pre>
+
+<p>Client - JavaScript</p>
+
+<pre><code>conn.controller('chat').chatmessage = function(data){
+    console.log(data);
+};
+</code></pre>
+
+<p>Client - C#</p>
+
+<pre><code>conn.Controller("chat").On&lt;string&gt;("chatmessage", data =&gt; Console.WriteLine(data));
+</code></pre>
+
+<p>You can specify complex types and arrays for the parameters. The following example passes a complex type to the client in a method parameter.</p>
+
+<p>Server code that calls a client method using a complex object</p>
+
+<pre><code>public void ChatMessage(string message)
+{
+    this.InvokeToAll(new {Text=message},"chatmessage");
+}
+</code></pre>
+
+<p>We use an anonymous "complex" object here, but you can of course create custom models (classes) as well.</p>
+
+<p>Client - JavaScript</p>
+
+<pre><code>conn.controller('chat').chatmessage = function(data){
+    console.log(data.Text);
+};
+</code></pre>
+
+<p>Client - C#</p>
+
+<pre><code>conn.Controller("chat").On("chatmessage", data =&gt; Console.WriteLine(data.Text));
+</code></pre>
+
+<p><em>Above we get a dynamic since we do not specify the datatype, but we can of course use a complex type to get the message deserialized into the correct type and get intellisense.</em></p>
+
+<h4>
+<a name="how-to-use-state-on-the-server" class="anchor" href="#how-to-use-state-on-the-server"><span class="octicon octicon-link"></span></a>How to use state on the server</h4>
+
+<p>All public getters and setters are accessible from the client API, so you can actually <code>get</code> and <code>set</code> the <code>Controller</code> properties from the client API's.</p>
+
+<p>Below you can see that the chat example is extended with a property for username. Since we can use <code>state</code> to know who the user is at all times there is no need passing the unnecessary data with every message.</p>
+
+<p>Server <code>Controller</code> with state</p>
+
+<pre><code>public class Chat : XSocketController
+{
+    public string UserName {get;set;}
+
+    public void ChatMessage(string message)
+    {
+        this.InvokeToAll(new {UserName = this.UserName, Text = message},"chatmessage");
+    }
+}
+</code></pre>
+
+<p>Set the UserName from the client API's</p>
+
+<p>Client - JavaScript</p>
+
+<pre><code>conn.controller('chat').setProperty('username','Espen Knutsen');
+</code></pre>
+
+<p>Client - C#</p>
+
+<pre><code>conn.Controller("chat").SetProperty("username","Espen Knutsen");
+</code></pre>
+
+<p>So to repeat... Since we at all times know the username there is no need for passing it to the server when we can attach the user on the message going out.</p>
+
+<h4>
+<a name="how-to-hide-methods-and-properties" class="anchor" href="#how-to-hide-methods-and-properties"><span class="octicon octicon-link"></span></a>How to hide methods and properties</h4>
+
+<p>You might not wanna expose all publish methods and properties to the client API's. When you want to hide a publish method/property just decorate the method/property with the <code>[NoEvent]</code> attribute. The attribute is located under <code>XSockets.Core.Common.Socket.Event.Attributes</code></p>
+
+<h4>
+<a name="how-to-use-complex-objects-as-parameters" class="anchor" href="#how-to-use-complex-objects-as-parameters"><span class="octicon octicon-link"></span></a>How to use complex objects as parameters</h4>
+
+<p>Above we looked at how you can send complex types to the clients, of course the client can send complex types to the server as well.</p>
+
+<p><strong>Server</strong></p>
+
+<p>A simple model for our chat sample</p>
+
+<pre><code>public class ChatModel
+{
+    public string UserName {get;set;}
+    public string Text {get;set;}
+}
+</code></pre>
+
+<p>Server code that accepts a complex object and sends it to all clients. Since we have the username (showed in <code>How to use state on the server</code>) we never pass that in, we only set it before sending data out.</p>
+
+<pre><code>public void ChatMessage(ChatModel message)
+{
+    message.UserName = this.UserName;
+    this.InvokeToAll(message,"chatmessage");
+}
+</code></pre>
+
+<p><strong>Clients</strong></p>
+
+<p>Client - JavaScript</p>
+
+<pre><code>conn.controller('chat').invoke('chatmessage',{Text:'Hello from JS'});
+</code></pre>
+
+<p>Client - C#</p>
+
+<pre><code>conn.Controller("chat").Invoke("chatmessage", new ChatModel{Text="Hello from CS"});
+</code></pre>
+
+<h4>
+<a name="how-to-use-imessage-as-parameter" class="anchor" href="#how-to-use-imessage-as-parameter"><span class="octicon octicon-link"></span></a>How to use IMessage as parameter</h4>
+
+<p>When you do not process the data server-side there is no need serializing incoming messages. In these situations you can use <code>IMessage</code> as parameter since any message sent into XSockets.NET will be transformed into <code>IMessage</code> internally.</p>
+
+<p>This is how the <code>Generic</code> controller used in the <code>Getting started with real-time communication</code> sample is built. The code for <code>Generic</code> is very simple and looks exactly like this.</p>
+
+<pre><code>public class Generic : XSocketController
+{
+    public override OnMessage(IMessage message)
+    {
+        this.InvokeToAll(message);
+    }
+}
+</code></pre>
+
+<p>In the <code>Generic</code> <code>Controller</code> we override the <code>OnMessage</code> method which means that any call to the <code>Controller</code> that does not match a <code>method</code> will end up in the <code>OnMessage</code> method.</p>
+
+<p>You can of course use the <code>IMessage</code> parameter in regular methods on the <code>Controller</code> and not just the <code>OnMessage</code> method.</p>
+
+<h4>
+<a name="return-data-synchronously-to-caller" class="anchor" href="#return-data-synchronously-to-caller"><span class="octicon octicon-link"></span></a>Return data synchronously to caller</h4>
+
+<p>When you call the server from a client and want to wait for the result you just replace void with the type you want to return and the client API's will wait for the result.</p>
+
+<p><strong>Server</strong></p>
+
+<pre><code>public string Echo()
+{
+    return "Echo";
+}
+</code></pre>
+
+<p>You can of course send data before doing the return, for example.</p>
+
+<pre><code>public string Echo()
+{
+    this.InvokeToAll("someData", "someMethod");
+    //and so on...
+    return "Echo";
+}
+</code></pre>
+
+<p><strong>Clients</strong></p>
+
+<p>Client - JavaScript</p>
+
+<pre><code>conn.controller('chat').invoke('echo').then(function(d){console.log(d)});
+</code></pre>
+
+<p>Client - C#</p>
+
+<pre><code>var echo = conn.Controller("chat").Invoke&lt;string&gt;("echo");
+Console.WriteLine(echo.Result);
+</code></pre>
+
+<h4>
+<a name="how-to-do-overloading-of-methods" class="anchor" href="#how-to-do-overloading-of-methods"><span class="octicon octicon-link"></span></a>How to do overloading of methods</h4>
+
+<pre><code>N/A
+</code></pre>
+
+<h4>
+<a name="how-to-handle-binary-data" class="anchor" href="#how-to-handle-binary-data"><span class="octicon octicon-link"></span></a>How to handle binary data</h4>
+
+<p>Lets say that we have a file <code>c:\temp\xfile.txt</code> with the text <code>This file was sent with XSockets.NET</code> and we want to send that file to the server.</p>
+
+<p><strong>Server</strong></p>
+
+<pre><code>public void MyFile(IMessage message)
+{
+    var filecontent = Encoding.UTF8.GetString(message.Blob.ToArray());
+}
+</code></pre>
+
+<p><strong>Clients</strong></p>
+
+<p>Client - JavaScript</p>
+
+<pre><code>N/A
+</code></pre>
+
+<p>Client - C#</p>
+
+<pre><code>var blob = File.ReadAllBytes(@"c:\temp\xfile.txt");
+conn.Controller("chat").Invoke("myfile", blob);
+</code></pre>
+
+<h4>
+<a name="how-to-pass-meta-data-together-with-binary-data" class="anchor" href="#how-to-pass-meta-data-together-with-binary-data"><span class="octicon octicon-link"></span></a>How to pass meta-data together with binary data</h4>
+
+<p>If we want to attach metadata about the binary data that is easy to do. Just pass along the object representing the metadata and XSockets will let you extract that data on the server.</p>
+
+<p><strong>Server</strong></p>
+
+<pre><code>//simple class for holding metadata about a file
+public class FileInfo
+{
+    public string Name {get;set;}
+}
+
+public void MyFile(IMessage message)
+{
+    var filecontent = Encoding.UTF8.GetString(message.Blob.ToArray());
+    var metadata = message.Extract&lt;FileInfo&gt;();
+}
+</code></pre>
+
+<p>Just use <code>Extract&lt;T&gt;</code> to get back to metadata attached to the binary data.</p>
+
+<p><strong>Clients</strong></p>
+
+<p>Client - JavaScript</p>
+
+<pre><code>N/A
+</code></pre>
+
+<p>Client - C#</p>
+
+<pre><code>var blob = File.ReadAllBytes(@"c:\temp\xfile.txt");
+conn.Controller("chat").Invoke("myfile", blob, new {Name="xfile.txt"});
+</code></pre>
+
+<hr><h3>
+<a name="rpc" class="anchor" href="#rpc"><span class="octicon octicon-link"></span></a>RPC</h3>
+
+<p>The RemoteProcedureCall pattern let you do exactly what is says, call procedures remotely. RPC together with XSockets fine grained control let you send messages to specific clients in a very smooth way.</p>
+
+<p>You will see more about this powerful feature combined with RPC below</p>
+
+<h4>
+<a name="how-to-call-methods-on-the-client" class="anchor" href="#how-to-call-methods-on-the-client"><span class="octicon octicon-link"></span></a>How to call methods on the client</h4>
+
+<p>If you just want to send a message to the caller of the method, use <code>Invoke</code></p>
+
+<p><strong>Server</strong></p>
+
+<pre><code>//Send a message to the caller
+this.Invoke("Hello to caller from server", "chatmessage");
+</code></pre>
+
+<p><strong>Client</strong></p>
+
+<p>Client - JavaScript</p>
+
+<pre><code>conn.controller('chat').chatmessage = function(data){console.log(data)};
+</code></pre>
+
+<p>Client - C#</p>
+
+<pre><code>conn.Controller("chat").On&lt;string&gt;("chatmessage", data =&gt; Console.WriteLine(data));
+</code></pre>
+
+<h4>
+<a name="how-to-call-methods-on-all-clients" class="anchor" href="#how-to-call-methods-on-all-clients"><span class="octicon octicon-link"></span></a>How to call methods on all clients</h4>
+
+<p>If you want to send a message to all clients connected to the controller, use <code>InvokeToAll</code></p>
+
+<p><strong>Server</strong></p>
+
+<pre><code>this.InvokeToAll("Hello to all from server", "chatmessage");
+</code></pre>
+
+<p><strong>Client</strong></p>
+
+<p>Client - JavaScript</p>
+
+<pre><code>conn.controller('chat').chatmessage = function(data){console.log(data)};
+</code></pre>
+
+<p>Client - C#</p>
+
+<pre><code>conn.Controller("chat").On&lt;string&gt;("chatmessage", data =&gt; Console.WriteLine(data));
+</code></pre>
+
+<h4>
+<a name="how-to-target-a-subset-of-the-connected-clients" class="anchor" href="#how-to-target-a-subset-of-the-connected-clients"><span class="octicon octicon-link"></span></a>How to target a subset of the connected clients</h4>
+
+<p>If you want to send a message to some of the clients connected to the controller, use <code>InvokeTo</code></p>
+
+<p>This is where you will see the power of state! You will actually get intellisense so that you can write lambda expressions to target the clients you want to send the message to.</p>
+
+<p>If we have the properties Age and Gender on the <code>Controller</code> (for example) we can target exactly the ones we want to.
+Below for example we send to all clients having the same gender and location as the caller</p>
+
+<p><strong>Server</strong></p>
+
+<pre><code>this.InvokeTo(p =&gt; p.Gender == this.Gender &amp;&amp; p.City == this.City,"Hello to some from server", "chatmessage");
+</code></pre>
+
+<p><strong>Client</strong></p>
+
+<p>Client - JavaScript</p>
+
+<pre><code>conn.controller('chat').chatmessage = function(data){console.log(data)};
+</code></pre>
+
+<p>Client - C#</p>
+
+<pre><code>conn.Controller("chat").On&lt;string&gt;("chatmessage", data =&gt; Console.WriteLine(data));
+</code></pre>
+
+<h4>
+<a name="how-to-send-messages-to-clients-connected-on-another-controller-class" class="anchor" href="#how-to-send-messages-to-clients-connected-on-another-controller-class"><span class="octicon octicon-link"></span></a>How to send messages to clients connected on another Controller class</h4>
+
+<p>It is pretty much the same as sending to the clients on the same <code>Controller</code> since XSockets extension-methods are generic.</p>
+
+<p>So, if you are on <code>Controller</code> A and want to send to all clients on <code>Controller</code> B you just use...</p>
+
+<pre><code>//To all
+this.InvokeToAll&lt;B&gt;("Hello to all from server", "target");
+
+//And the powerful `InvokeTo&lt;T&gt;`  would have a signature like:
+this.InvokeTo&lt;T&gt;(Func&lt;T,bool&gt; expression, object obj, string target);
+</code></pre>
+
+<h4>
+<a name="how-to-call-client-methods-outside-the-controller-class" class="anchor" href="#how-to-call-client-methods-outside-the-controller-class"><span class="octicon octicon-link"></span></a>How to call client methods outside the Controller class</h4>
+
+<pre><code>N/A
+</code></pre>
+
+<hr><h3>
+<a name="pubsub" class="anchor" href="#pubsub"><span class="octicon octicon-link"></span></a>PUB/SUB</h3>
+
+<p>The publish/subscribe pattern is useful when your applications need the users to subscribe to the topics that you are about to publish. Of course you can have very good control with XSockets since you can select subsets of subscribers very easy to get more fine grained control.</p>
+
+<p>You will see more about this powerful feature combined with PUB/SUB below.</p>
+
+<h4>
+<a name="how-to-publish-data-to-subscribers" class="anchor" href="#how-to-publish-data-to-subscribers"><span class="octicon octicon-link"></span></a>How to publish data to subscribers</h4>
+
+<p>If you just want to send a message to the publisher/caller of the method, use <code>Publish</code>
+The big difference between <code>Publish</code> and <code>Invoke</code> is that the message only will arrive at the client if the client has a <code>Subscription</code> registered on the server.</p>
+
+<p><strong>Server</strong></p>
+
+<pre><code>//Publish a message to the caller
+this.Publish("Hello to caller from server", "chatmessage");
+</code></pre>
+
+<p><strong>Client</strong></p>
+
+<p>Client - JavaScript</p>
+
+<pre><code>conn.controller('chat').subscribe('chatmessage', function(data){
+    console.log(data);
+});
+</code></pre>
+
+<p>Client - C#</p>
+
+<pre><code>conn.Controller("chat").Subscribe&lt;string&gt;("chatmessage", data =&gt; Console.WriteLine(data) );
+</code></pre>
+
+<h4>
+<a name="how-to-publish-to-all-subscribers" class="anchor" href="#how-to-publish-to-all-subscribers"><span class="octicon octicon-link"></span></a>How to publish to all subscribers</h4>
+
+<p>If you want to publish a message to all clients subscribing to a topic, use <code>PublishToAll</code></p>
+
+<p><strong>Server</strong></p>
+
+<pre><code>this.PublishToAll("Hello to all subscribers from server", "chatmessage");
+</code></pre>
+
+<p><strong>Client</strong></p>
+
+<p>Client - JavaScript</p>
+
+<pre><code>conn.controller('chat').subscribe('chatmessage', function(data){
+    console.log(data)
+});
+</code></pre>
+
+<p>Client - C#</p>
+
+<pre><code>conn.Controller("chat").On&lt;string&gt;("chatmessage", data =&gt; Console.WriteLine(data));
+</code></pre>
+
+<h4>
+<a name="how-to-publish-to-a-subset-of-the-subscribing-clients" class="anchor" href="#how-to-publish-to-a-subset-of-the-subscribing-clients"><span class="octicon octicon-link"></span></a>How to publish to a subset of the subscribing clients</h4>
+
+<p>If you want to send a message to some of the subscribing clients, use <code>PublishTo</code></p>
+
+<p>This is where you will see the power of state! You will actually get intellisense so that you can write lambda expressions to target the subscribers you want to send the message to.</p>
+
+<p>If we have the properties Age and Gender on the <code>Controller</code> (for example) we can target exactly the ones we want to.
+Below for example we send to all clients having the same gender and location as the caller</p>
+
+<p><strong>Server</strong></p>
+
+<pre><code>this.PublishTo(p =&gt; p.Gender == this.Gender &amp;&amp; p.City == this.City,"Hello to some from server", "chatmessage");
+</code></pre>
+
+<p><strong>Client</strong></p>
+
+<p>Client - JavaScript</p>
+
+<pre><code>conn.controller('chat').subscribe('chatmessage', function(data){
+    console.log(data)
+});
+</code></pre>
+
+<p>Client - C#</p>
+
+<pre><code>conn.Controller("chat").On&lt;string&gt;("chatmessage", data =&gt; Console.WriteLine(data));
+</code></pre>
+
+<h4>
+<a name="how-to-publish-messages-to-subscribers-connected-on-another-controller-class" class="anchor" href="#how-to-publish-messages-to-subscribers-connected-on-another-controller-class"><span class="octicon octicon-link"></span></a>How to publish messages to subscribers connected on another Controller class</h4>
+
+<p>It is pretty much the same as publishing to the clients on the same <code>Controller</code> since XSockets extension-methods are generic.</p>
+
+<p>So, if you are on <code>Controller</code> A and want to publish to all <code>chatmessage</code> subscribers on <code>Controller</code> B you just use...</p>
+
+<pre><code>//To all
+this.PublishToAll&lt;B&gt;("Hello to all 'chatmessage' subscribers on 'controller' B from server", "chatmessage");
+
+//And the powerful `PublishTo&lt;T&gt;`  would have a signature like:
+this.PublishTo&lt;T&gt;(Func&lt;T,bool&gt; expression, object obj, string target);
+</code></pre>
+
+<h4>
+<a name="how-to-call-subscribers-outside-the-controller-class" class="anchor" href="#how-to-call-subscribers-outside-the-controller-class"><span class="octicon octicon-link"></span></a>How to call subscribers outside the Controller class</h4>
+
+<pre><code>TBD
+</code></pre>
+
+<hr><h3>
+<a name="how-to-handle-connection-lifetime-events-in-the-controller-class" class="anchor" href="#how-to-handle-connection-lifetime-events-in-the-controller-class"><span class="octicon octicon-link"></span></a>How to handle connection lifetime events in the Controller class</h3>
+
+<p>Each controller have events that you can use to know when <code>Open</code>, <code>Close</code> and <code>ReOpen</code> occurs.</p>
+
+<h4>
+<a name="the-onopen-event" class="anchor" href="#the-onopen-event"><span class="octicon octicon-link"></span></a>The OnOpen event</h4>
+
+<p>Will fire when the controller is used over the connection for the first time.</p>
+
+<pre><code>public class Chat : XSocketController
+{
+    public Chat()
+    {
+        this.OnOpen += Chat_OnOpen;
+    }
+
+    void Chat_OnOpen(object sender, OnClientConnectArgs e)
+    {
+        //Connection to controller is open
+    }
+}
+</code></pre>
+
+<h4>
+<a name="the-onclose-event" class="anchor" href="#the-onclose-event"><span class="octicon octicon-link"></span></a>The OnClose event</h4>
+
+<p>Will fire when the socket is closed or if the client choose to close this specific controller on the connection.</p>
+
+<pre><code>public class Chat : XSocketController
+{
+    public Chat()
+    {
+        this.OnClose += Chat_OnClose;
+    }
+
+    void Chat_OnClose(object sender, OnClientDisconnectArgs e)
+    {
+        //Connection to controller was closed
+    }
+}
+</code></pre>
+
+<h4>
+<a name="how-to-do-heartbeats-pingpong-control-frames" class="anchor" href="#how-to-do-heartbeats-pingpong-control-frames"><span class="octicon octicon-link"></span></a>How to do heartbeats (ping/pong control-frames)</h4>
+
+<p>Control-frames (ping/pong) is primarily for checking connections, measure latency and validate that the connection is valid.</p>
+
+<p>You can implement custom logic for sending/receiving these frames on the server, but there is a simple helper that you can use to get the functionality.</p>
+
+<pre><code>public class Chat : XSocketController
+{
+    public Chat()
+    {
+        this.OnOpen += Chat_OnOpen;
+    }
+
+    void Chat_OnOpen(object sender, OnClientConnectArgs e)
+    {
+        this.ProtocolInstance.Heartbeat(notifyAction: (reason)=&gt;{ Console.WriteLine(reason); });
+    }
+}
+</code></pre>
+
+<h3>
+<a name="modulesplugins" class="anchor" href="#modulesplugins"><span class="octicon octicon-link"></span></a>Modules/Plugins</h3>
+
+<h4>
+<a name="how-to-implement-your-custom-pipeline" class="anchor" href="#how-to-implement-your-custom-pipeline"><span class="octicon octicon-link"></span></a>How to implement your custom Pipeline</h4>
+
+<p>The server will only have one <code>XSockets.Core.Common.Socket.IXSocketPipeline</code>, but you can override the default one by just deriving it.</p>
+
+<p>Each message passing into the server or out of the server will pass the pipeline</p>
+
+<pre><code>public class MyPipeline : XSocketPipeline
+{
+    public override void OnIncomingMessage(IXSocketController controller, IMessage e)
+    {
+        Debug.WriteLine(string.Format("IN:  Controller:{}, Topic:{1}, Data:{2}", e.Controller, e.Topic, e.Data));
+        base.OnIncomingMessage(controller, e);
+    }
+
+    public override IMessage OnOutgoingMessage(IXSocketController controller, IMessage e)
+    {
+        Debug.WriteLine(string.Format("OUT: Controller:{}, Topic:{1}, Data:{2}", e.Controller, e.Topic, e.Data));
+        return base.OnOutgoingMessage(controller, e);
+    }
+}
+</code></pre>
+
+<h4>
+<a name="write-a-custom-authenticationpipeline" class="anchor" href="#write-a-custom-authenticationpipeline"><span class="octicon octicon-link"></span></a>Write a custom AuthenticationPipeline</h4>
+
+<p>When the socket is connected and the handshake is completed the <code>AuthenticationPipeline</code> will be called. By default the pipeline will look for a FormsAuthenticationTicket, but you can override this pipline by just implementing a interface <code>XSockets.Core.Common.Socket.IXSocketAuthenticationPipeline</code></p>
+
+<p>There can only be one pipeline so even if you implement several pipelines only one wil be used.</p>
+
+<pre><code>[Export(typeof(IXSocketAuthenticationPipeline))]
+public class MyAuthenticationPipeline : IXSocketAuthenticationPipeline
+{
+    public IPrincipal GetPrincipal(IXSocketProtocol protocol)
+    {            
+        if (protocol.ConnectionContext.User == null)
+        {
+            //creating a fake super user ;)
+            var roles = new string[]{"superman","hulk"};
+            var userIdentity = new GenericIdentity("David");
+            protocol.ConnectionContext.User = new GenericPrincipal(userIdentity, roles);
+        }            
+
+        return protocol.ConnectionContext.User;
+    }
+}
+</code></pre>
+
+<h4>
+<a name="interceptors-concept" class="anchor" href="#interceptors-concept"><span class="octicon octicon-link"></span></a>Interceptors Concept</h4>
+
+<p>There can only be one <code>Pipeline</code>, and one <code>AuthenticationPipeline</code>, but interceptors can be 0 to N. Every interceptor will be called at a specific time. ConnectionInterceptors for example will be called when someone connects, disconnects or when a handshake is completed (ok or not).</p>
+
+<h4>
+<a name="how-to-write-connectioninterceptors" class="anchor" href="#how-to-write-connectioninterceptors"><span class="octicon octicon-link"></span></a>How to write ConnectionInterceptors</h4>
+
+<pre><code>TODO
+</code></pre>
+
+<h4>
+<a name="how-to-write-messageinterceptors" class="anchor" href="#how-to-write-messageinterceptors"><span class="octicon octicon-link"></span></a>How to write MessageInterceptors</h4>
+
+<pre><code>TODO
+</code></pre>
+
+<h4>
+<a name="how-to-write-errorinterceptors" class="anchor" href="#how-to-write-errorinterceptors"><span class="octicon octicon-link"></span></a>How to write ErrorInterceptors</h4>
+
+<pre><code>TODO
+</code></pre>
+
+<h4>
+<a name="how-to-write-a-custom-serializer" class="anchor" href="#how-to-write-a-custom-serializer"><span class="octicon octicon-link"></span></a>How to write a custom Serializer</h4>
+
+<pre><code>TODO
+</code></pre>
+
+<h4>
+<a name="how-to-write-custom-protocols" class="anchor" href="#how-to-write-custom-protocols"><span class="octicon octicon-link"></span></a>How to write custom Protocols</h4>
+
+<pre><code>TODO
+</code></pre>
+
+<h3>
+<a name="securing-the-controller" class="anchor" href="#securing-the-controller"><span class="octicon octicon-link"></span></a>Securing the Controller</h3>
+
+<p>XSockets.NET does not provide any features for authenticating users. Instead, you integrate the XSockets:NET features into the existing authentication structure for an application. You authenticate users as you would normally in your application, and work with the results of the authentication in your XSockets.NET code. For example, you might authenticate your users with ASP.NET forms authentication, and then in your <code>Controller</code>, enforce which users or roles are authorized to call a method.</p>
+
+<p>XSockets provides the Authorize attribute to specify which users have access to a <code>controller</code> or <code>method</code>. You apply the Authorize attribute to either a <code>controller</code> or particular <code>methods</code> in a <code>controller</code>. Without the Authorize attribute, all public methods on the controller are available to a client that is connected to the controller. </p>
+
+<p>If you want to allow unrestrcited access on some methods you can add the <code>AllowAnonymous</code> attribute the these methods.</p>
+
+<p>More information about attributes and methods below</p>
+
+<h4>
+<a name="authorize-attribute" class="anchor" href="#authorize-attribute"><span class="octicon octicon-link"></span></a>Authorize Attribute</h4>
+
+<p>This attribute can be set on Controller or Method level. If set at controller level all action methods that do not have the <code>AllowAnonymous</code> attribute will require authentication.</p>
+
+<p>The authorize attribute can take Roles and Users but if using that you will have to implement your own authentication by overriding <code>OnAuthorization(AuthorizeAttribute authorizeAttribute)</code></p>
+
+<h4>
+<a name="allowanonymous-attribute" class="anchor" href="#allowanonymous-attribute"><span class="octicon octicon-link"></span></a>AllowAnonymous Attribute</h4>
+
+<p>This attribute can be set on action methods and will then allow anonymous access.</p>
+
+<h4>
+<a name="get-formsauthentication-ticket" class="anchor" href="#get-formsauthentication-ticket"><span class="octicon octicon-link"></span></a>Get FormsAuthentication Ticket</h4>
+
+<p>When you have custom authentication you can get the <code>FormsAuthenticationTicket</code> from this method.</p>
+
+<pre><code>var ticket = GetFormsAuthenticationTicket();
+</code></pre>
+
+<p><strong>Note: If you do not pass in a cookiename .ASPXAUTH will be used.</strong></p>
+
+<p><strong>Important: If you have separate project you will have to use the same origin to be able to get cookies and also use machine-key in the config to be able to get the AuthCookie.</strong>
+<strong><em>See</em></strong> <a href="http://msdn.microsoft.com/en-us/library/system.web.configuration.machinekeysection.compatibilitymode%28v=vs.110%29.aspx">machinekey compability mode</a> <strong><em>if you are using different framework versions in the projects.</em></strong></p>
+
+<h4>
+<a name="write-a-custom-authenticationpipeline-1" class="anchor" href="#write-a-custom-authenticationpipeline-1"><span class="octicon octicon-link"></span></a>Write a custom AuthenticationPipeline</h4>
+
+<p>When the socket is connected and the handshake is completed the <code>AuthenticationPipeline</code> will be called. By default the pipeline will look for a FormsAuthenticationTicket, but you can override this pipline by just implementing a interface <code>XSockets.Core.Common.Socket.IXSocketAuthenticationPipeline</code></p>
+
+<p>There can only be one pipeline so even if you implement several pipelines only one wil be used.</p>
+
+<pre><code>[Export(typeof(IXSocketAuthenticationPipeline))]
+public class MyAuthenticationPipeline : IXSocketAuthenticationPipeline
+{
+    public IPrincipal GetPrincipal(IXSocketProtocol protocol)
+    {            
+        if (protocol.ConnectionContext.User == null)
+        {
+            //creating a fake super user ;)
+            var roles = new string[]{"superman","hulk"};
+            var userIdentity = new GenericIdentity("David");
+            protocol.ConnectionContext.User = new GenericPrincipal(userIdentity, roles);
+        }            
+        return protocol.ConnectionContext.User;
+    }
+}
+</code></pre>
+
+<h4>
+<a name="how-to-override-the-onauthorization-method" class="anchor" href="#how-to-override-the-onauthorization-method"><span class="octicon octicon-link"></span></a>How to override the OnAuthorization method</h4>
+
+<p>The <code>OnAuthorization</code> method is called for every method on a controller that has authentication. The attribute for the method (or controller) is passed in and we check that </p>
+
+<ol>
+<li>That the user is authenticated</li>
+<li>If the user name is required we verify a match</li>
+<li>
+<p>If user name was not required or did not match we check roles</p>
+
+<pre><code>public virtual bool OnAuthorization(IAuthorizeAttribute authorizeAttribute)
+{
+    try
+    {
+        var user = this.ProtocolInstance.ConnectionContext.User;
+        if (user.Identity.IsAuthenticated)
+        {
+            if (!string.IsNullOrEmpty(authorizeAttribute.Roles) || !string.IsNullOrEmpty(authorizeAttribute.Users))
+            {                    
+                if (authorizeAttribute.Users.Split(',').Contains(user.Identity.Name)){
+                    return true;
+                }
+                return authorizeAttribute.Roles.Split(',').Any(user.IsInRole);      
+            }
+            return true;
+        }
+        return false;
+    }
+    catch
+    {
+        return false;
+    }
+}
+</code></pre>
+</li>
+</ol><p><strong>Example</strong>
+Based on the <code>Write a custom AuthenticationPipeline</code> where we added the username <code>Hero</code> and the roles <code>hulk</code>, <code>superman</code> we have the following scenario</p>
+
+<pre><code>[Authorize()] //would be valid since we have a authorized `fake` user
+
+[Authorize(Users = "David")] //would be valid
+
+[Authorize(Roles = "batman,robin")] //would be invalid
+
+[Authorize(Roles = "batman,hulk")] //would be valid
+</code></pre>
+
+<h4>
+<a name="how-to-know-when-authorization-fails" class="anchor" href="#how-to-know-when-authorization-fails"><span class="octicon octicon-link"></span></a>How to know when authorization fails</h4>
+
+<p>Every time a method on a controller needs authentication the <code>OnAuthorization</code> method is called (which was overridden in previous sample).</p>
+
+<p>When the <code>OnAuthorization</code> returns false the <code>OnAuthorizationFailed</code> event is fired.</p>
+
+<pre><code>//Constructor
+public Chat()
+{
+    this.OnAuthorizationFailed += Chat_OnAuthorizationFailed;
+}
+
+void Chat_OnAuthorizationFailed(object sender, OnAuthorizationFailedArgs e)
+{
+    Console.WriteLine("Auth Failed: {0},{1}", e.Controller, e.MethodName); 
+}
+</code></pre>
+
+<p>The <code>OnAuthorizationFailedArgs</code> contains information about the controller and the method being called. Information about the user that called the method can be accessed from <code>this.ProtocolInstance.ConnectionContext.User</code></p>
+
+<h3>
+<a name="how-to-handle-errors-in-the-controller-class" class="anchor" href="#how-to-handle-errors-in-the-controller-class"><span class="octicon octicon-link"></span></a>How to handle errors in the Controller class</h3>
+
+<p>Wrap you logic in a try catch block and call the <code>HandleError</code> method that will invoke the <code>OnError</code> event. </p>
+
+<p>When needed you can also send the error to the <code>ErrorInterceptors</code> if you have implemented any.</p>
+
+<pre><code>try
+{
+    throw new Exception("boom!");
+}
+catch(Exception ex)
+{
+    this.HandleError(ex);
+    ErrorInterceptorsQueue.Push(new XSocketException(ex));
+}
+</code></pre>
+
+<h3>
+<a name="how-to-create-internal-long-running-controllers" class="anchor" href="#how-to-create-internal-long-running-controllers"><span class="octicon octicon-link"></span></a>How to create internal (long-running) Controllers</h3>
+
+<pre><code>TODO
+</code></pre>
+
+<h3>
+<a name="how-to-get-information-about-the-client-from-the-connectioncontext" class="anchor" href="#how-to-get-information-about-the-client-from-the-connectioncontext"><span class="octicon octicon-link"></span></a>How to get information about the client from the ConnectionContext</h3>
+
+<h4>
+<a name="getting-cookies" class="anchor" href="#getting-cookies"><span class="octicon octicon-link"></span></a>Getting Cookies</h4>
+
+<p>You can get the <code>CookieCollection</code> by using</p>
+
+<pre><code>var cookies = this.ProtocolInstance.ConnectionContext.CookieCollection;
+</code></pre>
+
+<p>Note: you will only be able to access cookies if your server is on the same domain as the cookie domain.</p>
+
+<h4>
+<a name="getting-headers" class="anchor" href="#getting-headers"><span class="octicon octicon-link"></span></a>Getting Headers</h4>
+
+<p>You can get the headers <code>NameValueCollection</code> by using</p>
+
+<pre><code>var headers = this.ProtocolInstance.ConnectionContext.Headers;
+</code></pre>
+
+<h4>
+<a name="getting-query-strings" class="anchor" href="#getting-query-strings"><span class="octicon octicon-link"></span></a>Getting Query Strings</h4>
+
+<p>You can access the query string <code>NameValueCollection</code> by using</p>
+
+<pre><code>var querystring = this.ProtocolInstance.ConnectionContext.QueryString;
+</code></pre>
+
+<h4>
+<a name="getting-the-current-user-iprincipal" class="anchor" href="#getting-the-current-user-iprincipal"><span class="octicon octicon-link"></span></a>Getting the current User (IPrincipal)</h4>
+
+<p>You can get/set the IPrincipal by using</p>
+
+<pre><code>var principal = this.ProtocolInstance.ConnectionContext.User;
+</code></pre>
+
+<hr><h2>
+<a name="c-client-api-guide" class="anchor" href="#c-client-api-guide"><span class="octicon octicon-link"></span></a>C# Client API Guide</h2>
+
+<p>The C# Client API has support for:</p>
+
+<ul>
+<li>.NET 2.0, 3.5, 4.0+</li>
+<li>iOS (MonoTouch)</li>
+<li>Android (MonoDroid)</li>
+<li>.NET MicroFramework 4.2, 4.3</li>
+</ul><h3>
+<a name="client-setup" class="anchor" href="#client-setup"><span class="octicon octicon-link"></span></a>Client Setup</h3>
+
+<p>To get the client just get the latest package from <a href="http://nuget.org/packages/xsockets.client">nuget.org/packages/xsockets.client</a></p>
+
+<p>The C# clients ALWAYS talk full-duplex/bi-directional communication, and just like the XSockets server this behavior has nothing to do with what OS or WebServer you are running.</p>
+
+<h3>
+<a name="how-to-establish-a-connection" class="anchor" href="#how-to-establish-a-connection"><span class="octicon octicon-link"></span></a>How to establish a connection</h3>
+
+<p>Just like in the JavaScript client you can multiplex over several <code>Controller</code> on one connection. To get a connections just create an instance of the XSocketClient.</p>
+
+<pre><code>var conn = new XSocketClient("ws://localhost:4502", "http://localhost", "chat");
+conn.Open();
+</code></pre>
+
+<ul>
+<li>The first parameter is the endpoint of the server</li>
+<li>The second parameter is the origin of the client</li>
+<li>The third parameter is params string[] for setting your controllers</li>
+</ul><p>Do note that the call to <code>Open</code> is synchron and will wait until the connection is open and the handshake is completed.</p>
+
+<h3>
+<a name="how-to-configure-the-connection" class="anchor" href="#how-to-configure-the-connection"><span class="octicon octicon-link"></span></a>How to configure the connection</h3>
+
+<h4>
+<a name="how-to-use-multiple-controllers" class="anchor" href="#how-to-use-multiple-controllers"><span class="octicon octicon-link"></span></a>How to use multiple Controllers</h4>
+
+<p>To multiplex over several controllers on one connection you just pass in the controllers to use.</p>
+
+<p>Below we connect to <code>Controllers</code> <code>one</code> and <code>two</code></p>
+
+<pre><code>var conn = new XSocketClient("ws://localhost:4502", "http://localhost", "one","two");
+</code></pre>
+
+<p>Do note that you do not have to specify all controllers in the creation of the client. As soon as you start using a controller in the client API you will get an instance of it.</p>
+
+<p>So if there is no controller <code>three</code> defined in the connection you can still do:</p>
+
+<pre><code>conn.Controller("three").Invoke("somemethod");
+</code></pre>
+
+<h4>
+<a name="how-to-specify-query-string-parameters" class="anchor" href="#how-to-specify-query-string-parameters"><span class="octicon octicon-link"></span></a>How to specify query string parameters</h4>
+
+<p>You can add querystrings to the <code>NameValueCollection</code> named <code>QueryString</code> on the <code>IXSocketClient</code></p>
+
+<pre><code>var conn = new XSocketClient("ws://localhost:4502","http://xsockets.net", "chat");
+conn.QueryString.Add("color","blue");
+conn.Open();
+</code></pre>
+
+<h4>
+<a name="how-to-specify-http-headers" class="anchor" href="#how-to-specify-http-headers"><span class="octicon octicon-link"></span></a>How to specify HTTP headers</h4>
+
+<pre><code>var conn = new XSocketClient("ws://localhost:4502","http://xsockets.net", "chat");
+conn.Headers.Add("headername", "headervalue");
+conn.Open();
+</code></pre>
+
+<h4>
+<a name="how-to-specify-client-credentials" class="anchor" href="#how-to-specify-client-credentials"><span class="octicon octicon-link"></span></a>How to specify client credentials</h4>
+
+<h5>
+<a name="connection-header" class="anchor" href="#connection-header"><span class="octicon octicon-link"></span></a>Connection header</h5>
+
+<pre><code>TODO
+</code></pre>
+
+<h5>
+<a name="cookie-with-forms-authentication" class="anchor" href="#cookie-with-forms-authentication"><span class="octicon octicon-link"></span></a>Cookie with Forms Authentication</h5>
+
+<pre><code>var authTicket = new FormsAuthenticationTicket(1, "Uffe",DateTime.Now,DateTime.Now.AddMinutes(15),false, "batman|hulk");            
+string encTicket = FormsAuthentication.Encrypt(authTicket);
+var authcookie = new Cookie(FormsAuthentication.FormsCookieName, encTicket);
+conn.Cookies.Add(authcookie);
+</code></pre>
+
+<h5>
+<a name="certificate" class="anchor" href="#certificate"><span class="octicon octicon-link"></span></a>Certificate</h5>
+
+<pre><code>TODO
+</code></pre>
+
+<h5>
+<a name="windows-authentication" class="anchor" href="#windows-authentication"><span class="octicon octicon-link"></span></a>Windows Authentication</h5>
+
+<pre><code>TODO
+</code></pre>
+
+<h3>
+<a name="rpc-1" class="anchor" href="#rpc-1"><span class="octicon octicon-link"></span></a>RPC</h3>
+
+<h4>
+<a name="how-to-define-methods-on-the-client-that-the-server-can-call" class="anchor" href="#how-to-define-methods-on-the-client-that-the-server-can-call"><span class="octicon octicon-link"></span></a>How to define methods on the client that the server can call</h4>
+
+<p>You define the methods per <code>Controller</code> since one connection can communicate over several <code>Controllers</code></p>
+
+<p><strong>Client</strong></p>
+
+<p>The example below creates a listener for <code>ChatMessage</code> and it expects the data to be a string.</p>
+
+<pre><code>conn.Controller("chat").On&lt;string&gt;("chatmessage", data =&gt; Console.WriteLine(data));
+</code></pre>
+
+<p><strong>Server</strong></p>
+
+<p>The server code for the examples with the <code>ChatModel</code> can look like</p>
+
+<pre><code>this.InvokeToAll("I am Yogi the gummi bear","chatmessage");
+</code></pre>
+
+<h4>
+<a name="methods-without-parameters" class="anchor" href="#methods-without-parameters"><span class="octicon octicon-link"></span></a>Methods without parameters</h4>
+
+<p>If the method you're handling does not have parameters just use the non generic <code>On</code> method.</p>
+
+<p><strong>Server</strong></p>
+
+<pre><code>public class Chat : XSocketController
+{
+    public void CallAllClients()
+    {
+        this.InvokeToAll("test");
+    }
+}
+</code></pre>
+
+<p>Note: You can of course use <code>InvokeTo&lt;T&gt;</code> or <code>Invoke</code> as well</p>
+
+<p><strong>Client</strong></p>
+
+<pre><code>conn.Controller("chat").On("test", () =&gt; Console.WriteLine("Test Was Called"));
+</code></pre>
+
+<h4>
+<a name="methods-with-parameters-specifying-parameter-types" class="anchor" href="#methods-with-parameters-specifying-parameter-types"><span class="octicon octicon-link"></span></a>Methods with parameters, specifying parameter types</h4>
+
+<p>If we have a complex object being sent from the server, like the <code>ChatModel</code> we can of course just do like this</p>
+
+<pre><code>conn.Controller("chat").On&lt;ChatModel&gt;("chatmessage", data =&gt; Console.WriteLine(data.UserName + " - " + data.Text));
+</code></pre>
+
+<p><strong>Server</strong></p>
+
+<p>The server code for the examples with the <code>ChatModel</code> can look like</p>
+
+<pre><code>this.InvokeToAll(new ChatModel{Name="Yogi", Text="I am a gummi bear"},"chatmessage");
+</code></pre>
+
+<h4>
+<a name="methods-with-parameters-specifying-dynamic-objects-for-the-parameters" class="anchor" href="#methods-with-parameters-specifying-dynamic-objects-for-the-parameters"><span class="octicon octicon-link"></span></a>Methods with parameters, specifying dynamic objects for the parameters</h4>
+
+<p>As an alternative to specifying parameters as generic types of the On method, you can specify parameters as dynamic objects. Below we get the <code>data</code> parameter as an dynamic since we did not specify the generic parameter for the <code>On</code> method.</p>
+
+<pre><code>conn.Controller("chat").On("chatmessage", data =&gt; Console.WriteLine(data.Text));
+</code></pre>
+
+<p><strong>Server</strong></p>
+
+<p>The server code for the examples with the <code>ChatModel</code> can look like</p>
+
+<pre><code>this.InvokeToAll(new ChatModel{Name="Yogi", Text="I am a gummi bear"},"chatmessage");
+</code></pre>
+
+<h4>
+<a name="how-to-remove-a-handler" class="anchor" href="#how-to-remove-a-handler"><span class="octicon octicon-link"></span></a>How to remove a handler</h4>
+
+<p>When you want to dispose of a handler you have to remove it from the <code>Controller</code> where it was used.</p>
+
+<pre><code>var listener = conn.Controller("chat").On&lt;string&gt;("chatmessage", data =&gt; Console.WriteLine(data));   
+
+conn.Controller("chat").DisposeListener(listener);
+</code></pre>
+
+<h4>
+<a name="how-to-send-to-server-methods-from-the-client" class="anchor" href="#how-to-send-to-server-methods-from-the-client"><span class="octicon octicon-link"></span></a>How to send to server methods from the client</h4>
+
+<p>To call a method on the server, use the Invoke method on the <code>Controller</code>.</p>
+
+<p>If the server method has no return value, use the non-generic overload of the Invoke method.</p>
+
+<p><strong>Server - method without return value</strong></p>
+
+<pre><code>public class Chat : XSocketController
+{
+    protected string UserName {get;set;}
+    public void SetUserName(string userName)
+    {
+        this.UserName = userName;
+    }
+}
+</code></pre>
+
+<p><strong>Client - calling a method that has no return value</strong></p>
+
+<pre><code>conn.Controller("chat").Invoke("setusername", new {userName = "Steve"});
+</code></pre>
+
+<h4>
+<a name="how-to-call-a-server-side-method-and-wait-for-the-result" class="anchor" href="#how-to-call-a-server-side-method-and-wait-for-the-result"><span class="octicon octicon-link"></span></a>How to call a server side method and wait for the result</h4>
+
+<p>If the server method has a return value, specify the return type as the generic type of the Invoke method.</p>
+
+<p><strong>Server - for a method that has a return value</strong></p>
+
+<pre><code>public IEnumerable&lt;Stock&gt; GetStocks()
+{
+    return _stockTicker.GetAllStocks();
+}
+</code></pre>
+
+<p>The Stock class used for return value</p>
+
+<pre><code>public class Stock
+{
+    public string Symbol { get; set; }
+    public decimal Price { get; set; }
+}
+</code></pre>
+
+<p><strong>Client - calling a method that has a return value in a synchronous method</strong></p>
+
+<pre><code>var stocks = conn.Controller("stockticker").Invoke&lt;IEnumerable&lt;Stock&gt;&gt;("GetStocks").Result;
+foreach (Stock stock in stocks)
+{
+    Console.WriteLine("Symbol: {0} price: {1}\n", stock.Symbol, stock.Price);
+}
+</code></pre>
+
+<h3>
+<a name="pubsub-1" class="anchor" href="#pubsub-1"><span class="octicon octicon-link"></span></a>PUB/SUB</h3>
+
+<h4>
+<a name="how-to-define-subscription-methods-on-the-client-that-the-server-can-publish-to" class="anchor" href="#how-to-define-subscription-methods-on-the-client-that-the-server-can-publish-to"><span class="octicon octicon-link"></span></a>How to define subscription methods on the client that the server can publish to</h4>
+
+<pre><code>conn.Controller("stockticker").Subscribe&lt;Stock&gt;("newStock", data =&gt; Console.WriteLine("Symbol: {0} price: {1}\n", stock.Symbol, stock.Price));
+</code></pre>
+
+<h4>
+<a name="how-to-subscribe-one-time" class="anchor" href="#how-to-subscribe-one-time"><span class="octicon octicon-link"></span></a>How to subscribe one time</h4>
+
+<p>If you only want to get a message once and then unsubscribe automatically you can use <code>one</code></p>
+
+<pre><code>conn.Controller("stockticker").One&lt;Stock&gt;("newStock", data =&gt; Console.WriteLine("Symbol: {0} price: {1}\n", stock.Symbol, stock.Price));
+</code></pre>
+
+<p>This will make sure that the client unsubscribe to the topic after getting the first message.</p>
+
+<h4>
+<a name="how-to-subscribe-n-times" class="anchor" href="#how-to-subscribe-n-times"><span class="octicon octicon-link"></span></a>How to subscribe n times</h4>
+
+<p>If you want to get a message 1 to n times and then unsubscribe automatically you can use <code>many</code></p>
+
+<pre><code>conn.Controller("stockticker").Many&lt;Stock&gt;("change", 3, data =&gt; Console.WriteLine(data));
+</code></pre>
+
+<p>This will unsubscribe the <code>change</code> topic after getting 3 messages.    </p>
+
+<h4>
+<a name="how-to-know-when-the-subscription-is-ready" class="anchor" href="#how-to-know-when-the-subscription-is-ready"><span class="octicon octicon-link"></span></a>How to know when the subscription is ready</h4>
+
+<p>When you compare PUB/SUB with RPC an obvious disadvantage with PUB/SUB is that you do not know if the server has bound the subscription when you do a publish. Therefor you can pass in an additional function to get a callback from the server when the subscription is completed.</p>
+
+<p>This works similar for all subscribe methods.</p>
+
+<pre><code>Subscribe&lt;T&gt;(string topic, Action&lt;T&gt; callback, Action&lt;IMessage&gt; confirmCallback);
+One&lt;T&gt;(string topic, Action&lt;T&gt; callback, Action&lt;IMessage&gt; confirmCallback);
+Many&lt;T&gt;(string topic, uint limit, Action&lt;T&gt; callback, Action&lt;IMessage&gt; confirmCallback);
+</code></pre>
+
+<p>where <code>callback</code> is called when a publish occurs and <code>confirmCallback</code> is the callback that confirms the subscription. </p>
+
+<h4>
+<a name="how-to-remove-a-subscription" class="anchor" href="#how-to-remove-a-subscription"><span class="octicon octicon-link"></span></a>How to remove a subscription</h4>
+
+<p>When you no longer want to subscribe to a <code>topic</code> you just use the <code>unsubscribe</code> method to tell the server to remove the subscription.</p>
+
+<pre><code>conn.Controller("chat").Unsubscribe("chatmessage");
+</code></pre>
+
+<h4>
+<a name="how-to-publish-to-server-methods-from-the-client" class="anchor" href="#how-to-publish-to-server-methods-from-the-client"><span class="octicon octicon-link"></span></a>How to publish to server methods from the client</h4>
+
+<p><strong>Client</strong></p>
+
+<pre><code>conn.Controller("chat").Publish("chatmessage",new {Text= "Hello people!"});
+</code></pre>
+
+<p><strong>Server</strong></p>
+
+<pre><code>//The server migth publish the message back to all clients subscribing
+public void ChatMessage(ChatModel chatModel)
+{
+    this.PublishToAll(chatModel, "chatmessage");
+}
+</code></pre>
+
+<h3>
+<a name="how-to-handle-connection-lifetime-events" class="anchor" href="#how-to-handle-connection-lifetime-events"><span class="octicon octicon-link"></span></a>How to handle connection lifetime events</h3>
+
+<p>The events on connection level provide information about the socket being opened/closed. The controllers has their own lifetime events.</p>
+
+<h4>
+<a name="onconnected" class="anchor" href="#onconnected"><span class="octicon octicon-link"></span></a>OnConnected</h4>
+
+<pre><code>conn.OnConnected += (sender, eventArgs) =&gt; Console.WriteLine("Connected");
+conn.Open();
+</code></pre>
+
+<h4>
+<a name="ondisconnected" class="anchor" href="#ondisconnected"><span class="octicon octicon-link"></span></a>OnDisconnected</h4>
+
+<pre><code>conn.OnDisconnected += (sender, eventArgs) =&gt; Console.WriteLine("Disconnected");
+conn.Open();
+</code></pre>
+
+<h3>
+<a name="how-to-handle-controller-lifetime-events" class="anchor" href="#how-to-handle-controller-lifetime-events"><span class="octicon octicon-link"></span></a>How to handle controller lifetime events</h3>
+
+<p>The controller has nothing to do with the actual socket. These events tell you about the controllers you are using over your connection.</p>
+
+<h4>
+<a name="onopen" class="anchor" href="#onopen"><span class="octicon octicon-link"></span></a>OnOpen</h4>
+
+<pre><code>conn.Controller("chat").OnOpen += (sender, connectArgs) =&gt; {
+    Console.WriteLine("Opened");
+};
+</code></pre>
+
+<h4>
+<a name="onclose" class="anchor" href="#onclose"><span class="octicon octicon-link"></span></a>OnClose</h4>
+
+<pre><code>conn.Controller("chat").OnClose += (sender, disconnectArgs) =&gt;{
+    Console.WriteLine("Closed");
+};
+</code></pre>
+
+<h3>
+<a name="open-a-controller" class="anchor" href="#open-a-controller"><span class="octicon octicon-link"></span></a>Open a controller</h3>
+
+<p>As soon as you start to communicate over a new controller the <code>OnOpen</code> event will fire. You actually do not need to specify the controller in the connection. As long as the controller exists on the server the <code>OnOpen</code> event will fire.</p>
+
+<h3>
+<a name="close-a-controller" class="anchor" href="#close-a-controller"><span class="octicon octicon-link"></span></a>Close a controller</h3>
+
+<p>To close as controller (not the actual connection/socket) you just call the <code>Close</code> method on the controller instance. This will fire the <code>OnClose</code> event on the controller.</p>
+
+<pre><code>conn.Controller("chat").Close();
+</code></pre>
+
+<h4>
+<a name="onopen-1" class="anchor" href="#onopen-1"><span class="octicon octicon-link"></span></a>OnOpen</h4>
+
+<pre><code>conn.Controller("chat").OnOpen += (sender, connectArgs) =&gt; {
+    Console.WriteLine("Open {0}", connectArgs.ClientInfo.Controller);
+};
+</code></pre>
+
+<h4>
+<a name="onclose-1" class="anchor" href="#onclose-1"><span class="octicon octicon-link"></span></a>OnClose</h4>
+
+<pre><code>conn.Controller("chat").OnClose += (sender, disconnectArgs) =&gt; {
+    Console.WriteLine("Closed {0}", disconnectArgs.ClientInfo.Controller);
+};
+</code></pre>
+
+<h3>
+<a name="how-to-handle-errors" class="anchor" href="#how-to-handle-errors"><span class="octicon octicon-link"></span></a>How to handle errors</h3>
+
+<p>To handle errors that the client raises, you can add a handler for the Error event on the connection object.</p>
+
+<pre><code>conn.OnError += (sender, errorArgs) =&gt; Console.WriteLine(errorArgs.Exception.Message);
+</code></pre>
+
+<p>You may also handle errors on individual controller using the OnError event on a specific controller.</p>
+
+<pre><code>conn.Controller("chat").OnError += (sender, errorArgs) =&gt; Console.WriteLine(errorArgs.Exception.Message);
+</code></pre>
+
+<p>To handle errors from method invocations, wrap the code in a try-catch block. </p>
+
+<pre><code>try
+{
+    var stocks = conn.Controller("stockticker").Invoke&lt;IEnumerable&lt;Stock&gt;&gt;("GetStocks");
+    foreach (Stock stock in stocks)
+    {
+        Console.WriteLine("Symbol: {0} price: {1}", stock.Symbol, stock.Price);
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine("Error invoking GetStocks: {0}", ex.Message);
+}
+</code></pre>
+
+<h3>
+<a name="client-pool" class="anchor" href="#client-pool"><span class="octicon octicon-link"></span></a>Client Pool</h3>
+
+<p>The client pool lets you call methods on the server. The client pool is made for sending only and is often used in legacy applications to boost them to real-time with 2 lines of code.</p>
+
+<p>For example, if you have a half-duplex service such as a WCF you can boost it to real-time by just doing this.</p>
+
+<pre><code>var conn = ClientPool.GetInstance("ws://localhost:4502","http://localhost");
+conn.Send("Hello from client pool","chatmessage","chat");
+</code></pre>
+
+<p>Above we send the text <code>Hello from client pool</code> to the method <code>ChatMessage</code> on the controller <code>Chat</code>. As always you can send any object that can be serialized.</p>
+
+<h3>
+<a name="using-in-memory-storage" class="anchor" href="#using-in-memory-storage"><span class="octicon octicon-link"></span></a>Using In-Memory Storage</h3>
+
+<p>This feature lets you store any serializable object on the server by using simple methods on the client API's. This is useful when you need to store data between connections/pages for the client. You are responsible for cleaning up the memory your self since data written to the storage will remain there until you remove it or the server stops.</p>
+
+<p>When you use the storage you always work on a controller instance since each controller can have its own storage</p>
+
+<p><strong><em>Note: You can set any serializable object as value in the storage</em></strong></p>
+
+<h4>
+<a name="setting-data-on-the-server" class="anchor" href="#setting-data-on-the-server"><span class="octicon octicon-link"></span></a>Setting data on the server</h4>
+
+<p>Set the generic type that you want to store (in this case string)</p>
+
+<pre><code>conn.Controller("chat").StorageSet("color","blue");
+</code></pre>
+
+<h4>
+<a name="get-notifications-when-the-data-changes-on-the-server" class="anchor" href="#get-notifications-when-the-data-changes-on-the-server"><span class="octicon octicon-link"></span></a>Get notifications when the data changes on the server</h4>
+
+<p>Since the storage is per client you will only get notifications for changes in the current client.</p>
+
+<pre><code>conn.Controller("chat").StorageOnSet&lt;string&gt;("color", s =&gt; Console.WriteLine("Color {0} was set in storage", s));
+</code></pre>
+
+<h4>
+<a name="getting-data-from-the-server" class="anchor" href="#getting-data-from-the-server"><span class="octicon octicon-link"></span></a>Getting data from the server</h4>
+
+<pre><code>var color = conn.Controller("chat").StorageGet&lt;string&gt;("color");
+Console.WriteLine("Got color {0} from storage", color);
+</code></pre>
+
+<h4>
+<a name="removing-data-on-the-server" class="anchor" href="#removing-data-on-the-server"><span class="octicon octicon-link"></span></a>Removing data on the server</h4>
+
+<pre><code>conn.Controller("chat").StorageRemove("color");
+</code></pre>
+
+<h4>
+<a name="get-notifications-when-the-data-is-removed-on-the-server" class="anchor" href="#get-notifications-when-the-data-is-removed-on-the-server"><span class="octicon octicon-link"></span></a>Get notifications when the data is removed on the server</h4>
+
+<pre><code>conn.Controller("chat").StorageOnRemove&lt;string&gt;("color", s =&gt; Console.WriteLine("Color {0} was removed from storage", s));
+</code></pre>
+
+<h4>
+<a name="clear-the-storage" class="anchor" href="#clear-the-storage"><span class="octicon octicon-link"></span></a>Clear the storage</h4>
+
+<pre><code>conn.Controller("chat").StorageClear();
+</code></pre>
+
+<hr><h2>
+<a name="javascript-client-api--guide" class="anchor" href="#javascript-client-api--guide"><span class="octicon octicon-link"></span></a>JavaScript Client API  Guide</h2>
+
+<p>To get the client just get the latest package from <a href="http://nuget.org/packages/xsockets.jsapi">nuget.org/packages/xsockets.jsapi</a></p>
+
+<p>The JavaScript API supports RPC, PUB/SUB and WebRTC.</p>
+
+<h3>
+<a name="client-setup-1" class="anchor" href="#client-setup-1"><span class="octicon octicon-link"></span></a>Client Setup</h3>
+
+<p>The JavaScript client has no dependencies, just add the <code>XSockets.latest.js</code> to your page.</p>
+
+<p>&lt;script src="Scripts/XSockets.latest.min.js"&gt;&lt;/script&gt;</p>
+
+<h3>
+<a name="how-to-establish-a-connection-1" class="anchor" href="#how-to-establish-a-connection-1"><span class="octicon octicon-link"></span></a>How to establish a connection</h3>
+
+<p>To get a connection just pass in the endpoint to the server.</p>
+
+<pre><code>var conn = new XSockets.WebSocket('ws://localhost:4502',['chat']);
+</code></pre>
+
+<p>Note that the second parameter is an array of controllers to connect to. We only use one controller in this sample.</p>
+
+<h3>
+<a name="how-to-configure-the-connection-1" class="anchor" href="#how-to-configure-the-connection-1"><span class="octicon octicon-link"></span></a>How to configure the connection</h3>
+
+<p>You have a few options when creating the connection, such as sub protocol, query strings and controllers.</p>
+
+<h4>
+<a name="how-to-specify-query-string-parameters-1" class="anchor" href="#how-to-specify-query-string-parameters-1"><span class="octicon octicon-link"></span></a>How to specify query string parameters</h4>
+
+<p>You might wanna pass in query string parameters in the connection. This is done by setting the third parameter to key-value pairs of JSON-object.</p>
+
+<pre><code>var conn = new XSockets.WebSocket('ws://localhost:4502',['chat'],{username:'steve',age:35});
+</code></pre>
+
+<h4>
+<a name="how-to-specify-controllers" class="anchor" href="#how-to-specify-controllers"><span class="octicon octicon-link"></span></a>How to specify controllers</h4>
+
+<p>Since you can multiplex over several controllers on one connection you can specify the controllers to use when you create the connection. If you would like to connect to three controllers <code>A</code>, <code>B</code> and <code>C</code> you would do:</p>
+
+<pre><code>var conn = new XSockets.WebSocket('ws://localhost:4502',['a','b','c']);
+</code></pre>
+
+<p>The names of the controllers is not case sensitive so <code>A</code> is the same as <code>a</code>.</p>
+
+<h3>
+<a name="rpc-2" class="anchor" href="#rpc-2"><span class="octicon octicon-link"></span></a>RPC</h3>
+
+<h4>
+<a name="how-to-set-properties-on-the-server-from-the-client" class="anchor" href="#how-to-set-properties-on-the-server-from-the-client"><span class="octicon octicon-link"></span></a>How to set properties on the server from the client</h4>
+
+<p>Since we have state on all controllers in the connection and can take advantage of that we can store information server side and not send trivial things like a user name each time we want to communicate.</p>
+
+<p><strong>Server</strong></p>
+
+<p>A simple model for a chat</p>
+
+<pre><code>public class ChatModel
+{
+    public string UserName {get;set;}
+    public string Text {get;set;}
+}
+</code></pre>
+
+<p>A controller where we use state to only send in text since the username is known.</p>
+
+<pre><code>public class Chat : XSocketController
+{
+    public string UserName {get;set;}
+    public void ChatMessage(ChatModel message)
+    {
+        message.UserName = this.UserName;
+        this.InvokeToAll(message,"chatmessage");
+    }
+}
+</code></pre>
+
+<p><strong>Client</strong></p>
+
+<pre><code>conn.controller('chat').setProperty('username','David');
+</code></pre>
+
+<h4>
+<a name="how-to-call-server-methods-from-the-client" class="anchor" href="#how-to-call-server-methods-from-the-client"><span class="octicon octicon-link"></span></a>How to call server methods from the client</h4>
+
+<p><strong>Server</strong></p>
+
+<p>A simple model for a chat</p>
+
+<pre><code>public class ChatModel
+{
+    public string UserName {get;set;}
+    public string Text {get;set;}
+}
+</code></pre>
+
+<p>A controller where we use state to only send in text since the user name is know. See <code>How to set properties on the server from the client</code></p>
+
+<pre><code>public class Chat : XSocketController
+{
+    public string UserName {get;set;}
+    public void ChatMessage(ChatModel message)
+    {
+        message.UserName = this.UserName;
+        this.InvokeToAll(message,"chatmessage");
+    }
+}
+</code></pre>
+
+<p><strong>Client</strong></p>
+
+<p>Since we already have set the property of <code>UserName</code> on the server we only need to send the <code>Text</code> property</p>
+
+<pre><code>conn.controller('chat').invoke('chatmessage',{Text:'Calling chatmessage on server and passing a part of the complex object'});
+</code></pre>
+
+<h4>
+<a name="how-to-define-methods-on-the-client-that-the-server-can-call-1" class="anchor" href="#how-to-define-methods-on-the-client-that-the-server-can-call-1"><span class="octicon octicon-link"></span></a>How to define methods on the client that the server can call</h4>
+
+<p>To define a method that the server can call from a <code>Controller</code>just add a method to the controller in JavaScript. The parameters can be complex objects.</p>
+
+<p>Method name has to be lowercase in the JavaScript API. 
+For example:</p>
+
+<pre><code>this.Invoke('Hello from server','ChatMessage'); 
+</code></pre>
+
+<p>on the server will execute <code>chatmessage</code> on the client.</p>
+
+<p><strong>Client</strong></p>
+
+<pre><code>var conn = new XSockets.WebSocket('ws://localhost:4502',['chat']);
+
+conn.controller('chat').chatmessage = function(data){
+    console.log(data.UserName + " - " + data.Text);
+};
+</code></pre>
+
+<p><strong>Server</strong></p>
+
+<p>A simple model for a chat</p>
+
+<pre><code>public class ChatModel
+{
+    public string UserName {get;set;}
+    public string Text {get;set;}
+}
+</code></pre>
+
+<p>A controller where we use state to only send in text since the user name is know. See <code>How to set properties on the server from the client</code></p>
+
+<pre><code>public class Chat : XSocketController
+{
+    public string UserName {get;set;}
+    public void ChatMessage(ChatModel message)
+    {
+        message.UserName = this.UserName;
+        this.InvokeToAll(message,"chatmessage");
+    }
+}
+</code></pre>
+
+<h4>
+<a name="how-to-call-a-server-side-method-and-wait-for-the-result-1" class="anchor" href="#how-to-call-a-server-side-method-and-wait-for-the-result-1"><span class="octicon octicon-link"></span></a>How to call a server side method and wait for the result</h4>
+
+<p><strong>Client</strong></p>
+
+<pre><code>conn.controller('stockticker').invoke('getstocks').then(function(data){
+    console.log(data);
+});
+</code></pre>
+
+<p><strong>Server</strong></p>
+
+<pre><code>public IEnumerable&lt;Stock&gt; GetStocks()
+{
+    return _stockService.GetAll();
+}
+</code></pre>
+
+<h3>
+<a name="pubsub-2" class="anchor" href="#pubsub-2"><span class="octicon octicon-link"></span></a>PUB/SUB</h3>
+
+<h4>
+<a name="how-to-define-subscription-methods-on-the-client-that-the-server-can-publish-to-1" class="anchor" href="#how-to-define-subscription-methods-on-the-client-that-the-server-can-publish-to-1"><span class="octicon octicon-link"></span></a>How to define subscription methods on the client that the server can publish to</h4>
+
+<pre><code>conn.controller('chat').subscribe('chatmessage', function(data) {
+    console.log(data);
+});
+</code></pre>
+
+<h5>
+<a name="how-to-subscribe-one-time-1" class="anchor" href="#how-to-subscribe-one-time-1"><span class="octicon octicon-link"></span></a>How to subscribe one time</h5>
+
+<p>If you only want to get a message once and then unsubscribe automatically you can use <code>one</code></p>
+
+<pre><code>conn.controller('chat').one('chatmessage', function(data){
+    console.log(data);
+});
+</code></pre>
+
+<p>This will make sure that the client unsubscribe to the topic after getting the first message.</p>
+
+<h5>
+<a name="how-to-subscribe-n-times-1" class="anchor" href="#how-to-subscribe-n-times-1"><span class="octicon octicon-link"></span></a>How to subscribe n times</h5>
+
+<p>If you want to get a message 1 to n times and then unsubscribe automatically you can use <code>many</code></p>
+
+<pre><code>conn.controller('chat').many('chatmessage', 3 function(data){
+    console.log(data);
+});
+</code></pre>
+
+<p>This will unsubscribe the <code>chatmessage</code> topic after getting 3 messages.    </p>
+
+<h4>
+<a name="how-to-know-when-the-subscription-is-ready-1" class="anchor" href="#how-to-know-when-the-subscription-is-ready-1"><span class="octicon octicon-link"></span></a>How to know when the subscription is ready</h4>
+
+<p>When you compare PUB/SUB with RPC an obvious disadvantage with PUB/SUB is that you do not know if the server has bound the subscription when you do a publish. Therefor you can pass in an additional function to get a callback from the server when the subscription is completed.</p>
+
+<p>This works similar for all subscribe methods.</p>
+
+<pre><code>subscribe(topic, fn, cb);
+one(topic, fn, cb);
+many(topic, n, fn, cb);
+</code></pre>
+
+<p>where <code>fn</code> is called when a publish occurs and <code>cb</code> is the callback that confirms the subscription.</p>
+
+<h4>
+<a name="how-to-publish-to-server-methods-from-the-client-1" class="anchor" href="#how-to-publish-to-server-methods-from-the-client-1"><span class="octicon octicon-link"></span></a>How to publish to server methods from the client</h4>
+
+<p><strong>Client</strong></p>
+
+<pre><code>conn.controller("chat").publish("chatmessage",{Text= "Hello people!"});
+</code></pre>
+
+<p><strong>Server</strong></p>
+
+<pre><code>//The server migth publish the message back to all clients subscribing
+public void ChatMessage(ChatModel chatModel)
+{
+    this.PublishToAll(chatModel, "chatmessage");
+}
+</code></pre>
+
+<h3>
+<a name="how-to-handle-connection-lifetime-events-1" class="anchor" href="#how-to-handle-connection-lifetime-events-1"><span class="octicon octicon-link"></span></a>How to handle connection lifetime events</h3>
+
+<p>The events on connection level provide information about the socket being opened/closed. The controllers has their own lifetime events.</p>
+
+<h4>
+<a name="onconnected-1" class="anchor" href="#onconnected-1"><span class="octicon octicon-link"></span></a>OnConnected</h4>
+
+<pre><code>conn.onconnected = function(){
+    console.log('socket connected');
+};
+</code></pre>
+
+<h4>
+<a name="ondisconnected-1" class="anchor" href="#ondisconnected-1"><span class="octicon octicon-link"></span></a>OnDisconnected</h4>
+
+<pre><code>conn.ondisconnected = function(){
+    console.log('socket disconnected');
+};
+</code></pre>
+
+<h3>
+<a name="how-to-handle-controller-lifetime-events-1" class="anchor" href="#how-to-handle-controller-lifetime-events-1"><span class="octicon octicon-link"></span></a>How to handle controller lifetime events</h3>
+
+<p>The controller has nothing to do with the actual socket. These events tell you about the controllers you are using over your connection.</p>
+
+<h4>
+<a name="onopen-event" class="anchor" href="#onopen-event"><span class="octicon octicon-link"></span></a>OnOpen Event</h4>
+
+<pre><code>conn.controller("chat").onopen = function(ci){
+    console.log('opened',ci);
+};
+</code></pre>
+
+<h4>
+<a name="onclose-event" class="anchor" href="#onclose-event"><span class="octicon octicon-link"></span></a>OnClose Event</h4>
+
+<pre><code>conn.controller("chat").onclose = function(ci){
+    console.log('closed',ci);
+};
+</code></pre>
+
+<h3>
+<a name="open-a-controller-1" class="anchor" href="#open-a-controller-1"><span class="octicon octicon-link"></span></a>Open a controller</h3>
+
+<p>As soon as you start to communicate over a new controller the <code>OnOpen</code> event will fire. You actually do not need to specify the controller in the connection. As long as the controller exists on the server the <code>OnOpen</code> event will fire.</p>
+
+<h3>
+<a name="close-a-controller-1" class="anchor" href="#close-a-controller-1"><span class="octicon octicon-link"></span></a>Close a controller</h3>
+
+<p>To close as controller (not the actual connection/socket) you just call the <code>Close</code> method on the controller instance. This will fire the <code>OnClose</code> event on the controller.</p>
+
+<pre><code>conn.controller("chat").close();
+</code></pre>
+
+<h3>
+<a name="how-to-handle-errors-1" class="anchor" href="#how-to-handle-errors-1"><span class="octicon octicon-link"></span></a>How to handle errors</h3>
+
+<pre><code>conn.controller("chat").onerror = function(err){
+    console.log(err);
+};
+</code></pre>
+
+<h3>
+<a name="using-in-memory-storage-1" class="anchor" href="#using-in-memory-storage-1"><span class="octicon octicon-link"></span></a>Using In-Memory Storage</h3>
+
+<p>This feature lets you store any serializable object on the server by using simple methods on the client API's. This is useful when you need to store data between connections/pages for the client. You are responsible for cleaning up the memory your self since data written to the storage will remain there until you remove it or the server stops.</p>
+
+<p><strong><em>Note: You can set any serializable object as value in the storage</em></strong></p>
+
+<h4>
+<a name="setting-data-on-the-server-1" class="anchor" href="#setting-data-on-the-server-1"><span class="octicon octicon-link"></span></a>Setting data on the server</h4>
+
+<p>Set the generic type that you want to store (in this case string)</p>
+
+<pre><code>conn.controller('chat').storageSet('color','red');
+</code></pre>
+
+<h4>
+<a name="getting-data-from-the-server-1" class="anchor" href="#getting-data-from-the-server-1"><span class="octicon octicon-link"></span></a>Getting data from the server</h4>
+
+<pre><code>conn.controller('chat').storageGet('color', function(data){console.log(data)});
+</code></pre>
+
+<h4>
+<a name="removing-data-on-the-server-1" class="anchor" href="#removing-data-on-the-server-1"><span class="octicon octicon-link"></span></a>Removing data on the server</h4>
+
+<pre><code>conn.controller('chat').storageRemove('color');
+</code></pre>
+
+<h4>
+<a name="clear-the-storage-1" class="anchor" href="#clear-the-storage-1"><span class="octicon octicon-link"></span></a>Clear the storage</h4>
+
+<pre><code>conn.controller('chat').storageClear();
+</code></pre>
+
+<hr><h2>
+<a name="configuration" class="anchor" href="#configuration"><span class="octicon octicon-link"></span></a>Configuration</h2>
+
+<p>When self-hosted the XSockets server will start with two endpoints loopback &amp; machine IP (both on port 4502). For example my current machine would start the server at <code>ws://127.0.0.1:4502</code> and <code>ws:192.168.1.6:4502</code></p>
+
+<h3>
+<a name="custom-configuration" class="anchor" href="#custom-configuration"><span class="octicon octicon-link"></span></a>Custom configuration</h3>
+
+<p>The namespace for configuration is <code>XSockets.Core.Configuration</code></p>
+
+<p>There are two ways of creating custom configuration. </p>
+
+<h4>
+<a name="pass-in-configurationssettings-to-the-startservers-method" class="anchor" href="#pass-in-configurationssettings-to-the-startservers-method"><span class="octicon octicon-link"></span></a>Pass in configurations/settings to the StartServers method</h4>
+
+<p>Create one or more configuration classes that XSockets will implement at startup
+Passing configuration as a parametertop</p>
+
+<p>Just create the configurations needed and pass them to StartServers</p>
+
+<pre><code>//List of IConfigurationSettings
+var myCustomConfigs = new List&lt;IConfigurationSetting&gt;();
+
+//Add one configuration
+myCustomConfigs.Add(new ConfigurationSetting("ws://192.74.38.15:4502"));  
+
+using (var server = Composable.GetExport&lt;IXSocketServerContainer&gt;())
+{
+    server.StartServers(configurationSettings:myCustomConfigs);
+    Console.WriteLine("Started, hit enter to quit");
+    Console.ReadLine();
+    server.StopServers();
+}
+</code></pre>
+
+<p>Note: you can of course pass in several configuration.</p>
+
+<h4>
+<a name="configuration-as-a-plugin" class="anchor" href="#configuration-as-a-plugin"><span class="octicon octicon-link"></span></a>Configuration as a plugin</h4>
+
+<p>Just inherit the <code>XSockets.Core.Configuration.ConfigurationSetting</code> class and implement your configuration. XSockets will find and and use these custom configurations.</p>
+
+<pre><code>public class MyTestConfig : ConfigurationSetting
+{
+    public MyTestConfig() : base("ws://195.74.38.15:4502")
+    {
+    }
+}
+</code></pre>
+
+<p>Now there is no need to pass in anything to the StartServers method, it will find the configuration above. When you use this technique the server will not create the default configuration. If you want to have for example 127.0.0.1:4502 as a configuration you have to add that as a plugin as well.</p>
+
+<pre><code>container.Start();
+</code></pre>
+
+<h3>
+<a name="what-can-i-configure" class="anchor" href="#what-can-i-configure"><span class="octicon octicon-link"></span></a>What can I configure</h3>
+
+<p>The <code>Start</code> method has a number of options, and then the <code>ConfigurationSetting</code> class itself has a number of options.</p>
+
+<h4>
+<a name="method-signature-of-start" class="anchor" href="#method-signature-of-start"><span class="octicon octicon-link"></span></a>Method signature of Start</h4>
+
+<pre><code>void Start(bool useLoopback = true, bool withInterceptors = true, IList&lt;IConfigurationSetting&gt; configurationSettings = null);
+</code></pre>
+
+<p>*Note: Interceptors are by default enabled!</p>
+
+<h4>
+<a name="dns-configuration" class="anchor" href="#dns-configuration"><span class="octicon octicon-link"></span></a>DNS Configuration</h4>
+
+<p>One of the most common questions about configuration is how to enable DNS configuration.</p>
+
+<h5>
+<a name="public-endpoint" class="anchor" href="#public-endpoint"><span class="octicon octicon-link"></span></a>Public Endpoint</h5>
+
+<p>Let's say that you want to connect (client &lt;-&gt; server) to ws://chucknorris.com:4502 the configuration for that could look like</p>
+
+<pre><code>public class ChuckNorrisConfig : ConfigurationSetting
+{
+    public ChuckNorrisConfig() : base(new Uri("ws://chucknorris.com:4502")) { }
+}
+</code></pre>
+
+<p>**Note: This setup will create an endpoint based on the DNS provided. Note that port 4502 have to be open.</p>
+
+<h5>
+<a name="public--private-endpoint" class="anchor" href="#public--private-endpoint"><span class="octicon octicon-link"></span></a>Public &amp; Private Endpoint</h5>
+
+<p>Let's say that you want to connect (client &lt;-&gt; firewall &lt;-&gt; server) to ws://chucknorris.com:4502, but the public endpoint is represented by a firewall. Your firewall will then forward the connection to our servers private IP address (for example 192.168.1.7).</p>
+
+<pre><code>public class ChuckNorrisConfig : ConfigurationSetting
+{
+    public ChuckNorrisConfig() : base(new Uri("ws://chucknorris.com:4502"), new Uri("ws://192.168.1.7:4510")) { }
+}
+</code></pre>
+
+<p>**Note: This setup requires that you forward traffic in your firewall to <code>192.168.1.7:4510</code></p>
+
+<h5>
+<a name="ssltls" class="anchor" href="#ssltls"><span class="octicon octicon-link"></span></a>SSL/TLS</h5>
+
+<p>To get WSS you have to set the endpoint to be ´wss´ instead of ws, and you will also specify you certificate. This can either be done by setting <code>CertificateLocation</code> and <code>CertificateSubjectDistinguishedName</code> (as in the sample) or load the certificate from disk.</p>
+
+<pre><code>//Sample 1 - Certificate from store
+public class ChuckNorrisConfig : ConfigurationSetting
+{
+    public ChuckNorrisConfig() : base(new Uri("wss://chucknorris.com:4502"))
+    {
+        this.CertificateLocation = StoreLocation.LocalMachine;
+        this.CertificateSubjectDistinguishedName = "cn=chucknorris.com";
+    }
+}
+
+//Sample 2 - X509Certificate2
+public class ChuckNorrisConfig : ConfigurationSetting
+{
+    public ChuckNorrisConfig() : base(new Uri("wss://chucknorris.com:4502"))
+    {
+        this.Certificate = new X509Certificate2("file.name", "password");
+    }
+}
+</code></pre>
+
+<hr><h2>
+<a name="hosting" class="anchor" href="#hosting"><span class="octicon octicon-link"></span></a>Hosting</h2>
+
+<h3>
+<a name="owin" class="anchor" href="#owin"><span class="octicon octicon-link"></span></a>OWIN</h3>
+
+<p>To host XSockets in OWIN is easy and also let you access the HttpContext and the authenticated user (if any).</p>
+
+<p><strong>Install</strong>
+<code>PM&gt; Install-Package XSockets.Owin.Host</code></p>
+
+<p>Register XSockets in Owin IAppBuilder</p>
+
+<pre><code>public class Startup
+{
+    public void Configuration(IAppBuilder app)
+    {
+        app.UseXSockets(true);
+    }
+}
+</code></pre>
+
+<h3>
+<a name="windows-service" class="anchor" href="#windows-service"><span class="octicon octicon-link"></span></a>Windows Service</h3>
+
+<p>Use the XSockets.Windows.Service package from chocolatey to install XSockets as a windows service. You can then add you custom configurations, controller, interceptors etc into the location of the service and restart it to make it find you custom code.</p>
+
+<p>Note that by default you will get the <code>Generic</code> controller as well as the <code>WebRTC</code> controller named "Broker" installed with the service.</p>
+
+<p><strong>Install:</strong></p>
+
+<ol>
+<li>If not done install chocolatey (<a href="http://chocolatey.org/">http://chocolatey.org/</a>)</li>
+<li>Open up the Command Prompt and type cinst XSockets.Windows.Service</li>
+</ol><h3>
+<a name="console-application" class="anchor" href="#console-application"><span class="octicon octicon-link"></span></a>Console Application</h3>
+
+<p>Create a new ConsoleApplication and install the package XSockets. This will output some sample code for getting the server started.</p>
+
+<p><strong>Install:</strong>
+<code>PM&gt; Install-package XSockets</code></p>
+
+<pre><code>using (var container = XSockets.Plugin.Framework.Composable.GetExport&lt;IXSocketServerContainer&gt;())
+{
+    container.Start();
+    foreach(var server in container.Servers)
+    {
+        Console.WriteLine(server.ConfigurationSetting.Endpoint);
+    }
+    Console.WriteLine("Server started, hit enter to quit");
+    Console.ReadLine();
+}
+</code></pre>
+
+<h3>
+<a name="azure" class="anchor" href="#azure"><span class="octicon octicon-link"></span></a>Azure</h3>
+
+<p>You will have to have the Azure SDK installed.</p>
+
+<ol>
+<li>Create a Windows Azure Worker Role</li>
+<li>Open the Package Manager Console</li>
+<li>
+<p>Install the XSockets.Server using</p>
+
+<pre><code>PM -&gt; Install-Package XSockets.Server
+</code></pre>
+</li>
+<li><p>Open the Property Page for the Worker Role. 
+You will find it in the /Roles/ foler of your WorkerRole Project.</p></li>
+<li>
+<p>Add a TCP endpoint using the Endpoints Tab.</p>
+
+<ul>
+<li>Name the Endpoint i.e 'MyEndoint'</li>
+<li>Set the type to input</li>
+<li>Set the protocol, to TCP</li>
+<li>Define the Public &amp; Private port that you want to use.</li>
+</ul>
+</li>
+<li>
+<p>Add a configuration setting using the Settings tab, we need to define the EndPoint Uri here.</p>
+
+<ul>
+<li>Set a name on the setting i.e 'MyUri'</li>
+<li>Set the type to string</li>
+<li>Set the value to i.e <code>ws://127.0.0.1:4510</code> (this depends on your enviorment).</li>
+</ul>
+</li>
+<li>
+<p>Add the following code the the OnStart() method of your WorkerRole (WorkerRole.cs)</p>
+
+<pre><code>var container = XSockets.Plugin.Framework.Composable.GetExport&lt;IXSocketServerContainer&gt;();
+// Create a Custom Configuration based on what we have defined using property pages.
+var myCustomConfig = new List&lt;IConfigurationSetting&gt;();
+var config = new ConfigurationSetting(new Uri(RoleEnvironment.GetConfigurationSettingValue("MyUri")))
+{
+    Endpoint = RoleEnvironment.CurrentRoleInstance.InstanceEndpoints.FirstOrDefault(n =&gt; n.Key.Equals("MyEndpoint"))
+        .Value.IPEndpoint
+};
+myCustomConfig.Add(config);
+container.Start(configurationSetting: myCustomConfig);
+</code></pre>
+</li>
+<li><p>Compile and run</p></li>
+</ol><p>Now, Try connect to the Generic Controller using the following piece of JavaScript Code</p>
+
+<pre><code>var ws = new XSockets.WebSocket('ws://127.0.0.1:4510',['generic']);
+</code></pre>
+
+<h3>
+<a name="amazon" class="anchor" href="#amazon"><span class="octicon octicon-link"></span></a>Amazon</h3>
+
+<pre><code>TODO
+</code></pre>
+
+<hr><h2>
+<a name="fallback" class="anchor" href="#fallback"><span class="octicon octicon-link"></span></a>Fallback</h2>
+
+<p>To use the fallback in XSockets you have to have .NET 4.5 and WebAPI.</p>
+
+<pre><code>TODO (will be included in next pre-release)
+</code></pre>
+
+<hr><h2>
+<a name="performance--scaling" class="anchor" href="#performance--scaling"><span class="octicon octicon-link"></span></a>Performance &amp; Scaling</h2>
+
+<pre><code>TODO
+</code></pre>
+
+<h3>
+<a name="performance-counters" class="anchor" href="#performance-counters"><span class="octicon octicon-link"></span></a>Performance Counters</h3>
+
+<pre><code>TODO
+</code></pre>
+
+<h3>
+<a name="cluster" class="anchor" href="#cluster"><span class="octicon octicon-link"></span></a>Cluster</h3>
+
+<pre><code>TODO
+</code></pre>
+
+<hr><h2>
+<a name="faq" class="anchor" href="#faq"><span class="octicon octicon-link"></span></a>FAQ</h2>
+
+<pre><code>TODO
+</code></pre>
+
+<hr><h2>
+<a name="security" class="anchor" href="#security"><span class="octicon octicon-link"></span></a>Security</h2>
+
+<p>XSockets.NET does not provide any features for authenticating users. Instead, you integrate the XSockets:NET features into the existing authentication structure for an application. You authenticate users as you would normally in your application, and work with the results of the authentication in your XSockets.NET code. For example, you might authenticate your users with ASP.NET forms authentication, and then in your <code>Controller</code>, enforce which users or roles are authorized to call a method.</p>
+
+<p>XSockets provides the Authorize attribute to specify which users have access to a <code>controller</code> or <code>method</code>. You apply the Authorize attribute to either a <code>controller</code> or particular <code>methods</code> in a <code>controller</code>. Without the Authorize attribute, all public methods on the controller are available to a client that is connected to the controller. </p>
+
+<p>If you want to allow unrestrcited access on some methods you can add the <code>AllowAnonymous</code> attribute the these methods.</p>
+
+<p>More information about attributes and methods below</p>
+
+<h3>
+<a name="authorize-attribute-1" class="anchor" href="#authorize-attribute-1"><span class="octicon octicon-link"></span></a>Authorize Attribute</h3>
+
+<p>This attribute can be set on Controller or Method level. If set at controller level all action methods that do not have the AllowAnonymous attribute will require authentication.</p>
+
+<p>The authorize attribute can take Roles and Users but if using that you will have to implement your own authentication by overriding OnAuthorization(AuthorizeAttribute authorizeAttribute)</p>
+
+<h3>
+<a name="allowanonymous-attribute-1" class="anchor" href="#allowanonymous-attribute-1"><span class="octicon octicon-link"></span></a>AllowAnonymous Attribute</h3>
+
+<p>This attribute can be set on action methods and will then allow anonymous access.</p>
+
+<h3>
+<a name="get-formsauthentication-ticket-1" class="anchor" href="#get-formsauthentication-ticket-1"><span class="octicon octicon-link"></span></a>Get FormsAuthentication Ticket</h3>
+
+<p>When you have custom authentication you can get the FormsAuthenticationTicket from this method.</p>
+
+<pre><code>var ticket = GetFormsAuthenticationTicket();
+</code></pre>
+
+<p><strong>Note: If you do not pass in a cookiename .ASPXAUTH will be used.</strong></p>
+
+<p><strong>Important: If you have separate project you will have to use the same origin to be able to get cookies and also use machine-key in the config to be able to get the AuthCookie.</strong>
+<strong><em>See</em></strong> <a href="http://msdn.microsoft.com/en-us/library/system.web.configuration.machinekeysection.compatibilitymode%28v=vs.110%29.aspx">machinekey compability mode</a> <strong><em>if you are using different framework versions in the projects.</em></strong></p>
+
+<h3>
+<a name="write-a-custom-authenticationpipeline-2" class="anchor" href="#write-a-custom-authenticationpipeline-2"><span class="octicon octicon-link"></span></a>Write a custom AuthenticationPipeline</h3>
+
+<p>When the socket is connected and the handshake is completed the <code>AuthenticationPipeline</code> will be called. By default the pipeline will look for a FormsAuthenticationTicket, but you can override this pipline by just implementing a interface <code>XSockets.Core.Common.Socket.IXSocketAuthenticationPipeline</code></p>
+
+<p>There can only be one pipeline so even if you implement several pipelines only one wil be used.</p>
+
+<pre><code>[Export(typeof(IXSocketAuthenticationPipeline))]
+public class MyAuthenticationPipeline : IXSocketAuthenticationPipeline
+{
+    public IPrincipal GetPrincipal(IXSocketProtocol protocol)
+    {            
+        if (protocol.ConnectionContext.User == null)
+        {
+            //creating a fake super user ;)
+            var roles = new string[]{"superman","hulk"};
+            var userIdentity = new GenericIdentity("David");
+            protocol.ConnectionContext.User = new GenericPrincipal(userIdentity, roles);
+        }            
+
+        return protocol.ConnectionContext.User;
+    }
+}
+</code></pre>
+
+<h3>
+<a name="how-to-override-the-onauthorization-method-1" class="anchor" href="#how-to-override-the-onauthorization-method-1"><span class="octicon octicon-link"></span></a>How to override the OnAuthorization method</h3>
+
+<p>The <code>OnAuthorization</code> method is called for every method on a controller that has authentication. The attribute for the method (or controller) is passed in and we check that </p>
+
+<ol>
+<li>That the user is authenticated</li>
+<li>If the user name is required we verify a match</li>
+<li>
+<p>If user name was not required or did not match we check roles</p>
+
+<pre><code>public virtual bool OnAuthorization(IAuthorizeAttribute authorizeAttribute)
+{
+    try
+    {
+        var user = this.ProtocolInstance.ConnectionContext.User;
+        if (user.Identity.IsAuthenticated)
+        {
+            if (!string.IsNullOrEmpty(authorizeAttribute.Roles) || !string.IsNullOrEmpty(authorizeAttribute.Users))
+            {                    
+                if (authorizeAttribute.Users.Split(',').Contains(user.Identity.Name)){
+                    return true;
+                }
+                return authorizeAttribute.Roles.Split(',').Any(user.IsInRole);      
+            }
+            return true;
+        }
+        return false;
+    }
+    catch
+    {
+        return false;
+    }
+}
+</code></pre>
+</li>
+</ol><p><strong>Example</strong>
+Based on the <code>Write a custom AuthenticationPipeline</code> where we added the username <code>Hero</code> and the roles <code>hulk</code>, <code>superman</code> we have the following scenario</p>
+
+<pre><code>[Authorize()] //would be valid since we have a authorized `fake` user
+
+[Authorize(Users = "David")] //would be valid
+
+[Authorize(Roles = "batman,robin")] //would be invalid
+
+[Authorize(Roles = "batman,hulk")] //would be valid
+</code></pre>
+
+<h3>
+<a name="how-to-know-when-authorization-fails-1" class="anchor" href="#how-to-know-when-authorization-fails-1"><span class="octicon octicon-link"></span></a>How to know when authorization fails</h3>
+
+<p>Every time a method on a controller needs authorization the <code>OnAuthorization</code> method is called (which was overridden in previous sample).</p>
+
+<p>When the <code>OnAuthorization</code> returns false the <code>OnAuthorizationFailed</code> event is fired.</p>
+
+<pre><code>//Constructor
+public Chat()
+{
+    this.OnAuthorizationFailed += Chat_OnAuthorizationFailed;
+}
+
+void Chat_OnAuthorizationFailed(object sender, OnAuthorizationFailedArgs e)
+{
+    Console.WriteLine("Auth Failed: {0},{1}", e.Controller, e.MethodName); 
+}
+</code></pre>
+
+<p>The <code>OnAuthorizationFailedArgs</code> contains information about the controller and the method being called. Information about the user that called the method can be accessed from <code>this.ProtocolInstance.ConnectionContext.User</code></p>
+
+<hr><h2>
+<a name="the-plugin-framework" class="anchor" href="#the-plugin-framework"><span class="octicon octicon-link"></span></a>The Plugin Framework</h2>
+
+<p>The plugin framework is inspired by MEF (Managed Extensibility Framework). MEF is awesome, but we wrote our own plugin framework to be able to run everywhere and also to avoid any dependencies. We did not copy stuff from MEF that we did not need and we added some extra features the we thought would be nice to have.</p>
+
+<h3>
+<a name="quick-start" class="anchor" href="#quick-start"><span class="octicon octicon-link"></span></a>Quick Start</h3>
+
+<p>A very basic example based on a MEF sample that you can find at <a href="http://www.amazedsaint.com/2010/06/mef-or-managed-extensibility-framework.html">http://www.amazedsaint.com/2010/06/mef-or-managed-extensibility-framework.html</a></p>
+
+<p>First of all... Open up the <code>Package Manager Console</code> (Tools-&gt;Library Package Manager-&gt;Package Manager Console) below called PMC. Install by typing <code>Install-Package XSockets.Plugin.Framework</code> into the PMC and hit enter.</p>
+
+<p>The plugin framework has <code>no dependencies</code> and can be used in any project without using the rest of XSockets.NET</p>
+
+<h4>
+<a name="introduction" class="anchor" href="#introduction"><span class="octicon octicon-link"></span></a>Introduction</h4>
+
+<p>Just like in MEF it is all about <code>Exports</code> and <code>Imports</code>. In <code>XSockets.Plugin.Framework</code> you can choose to export on interface level which means that you only have to implement the interface to get <code>Exports</code> and <code>Imports</code> to work. You actually dont event need the <code>Exports/Imports</code> since the framework allows you to register exported types at runtime, but the default scenario is to use the attributes.</p>
+
+<h4>
+<a name="define-interfaces" class="anchor" href="#define-interfaces"><span class="octicon octicon-link"></span></a>Define Interfaces</h4>
+
+<p>So lets build a zoo (just like the example in the link above).</p>
+
+<p>First of all we need a <code>IAnimal</code> interface for our animals. We also decorate the class with the <code>Export</code> attribute</p>
+
+<pre><code>[Export(typeof(IAnimal))] 
+public interface IAnimal
+{
+    void Eat();
+}
+</code></pre>
+
+<p>We also need A <code>IZoo</code> interface, it has an <code>IEnumerable of IAnimal</code>. Just like the IAnimal interface the <code>IZoo</code> has the <code>Export</code> attribute. Also note that we use the <code>ÌmportMany</code> attribute to get all <code>Exports</code> of <code>IAnimal</code></p>
+
+<pre><code>[Export(typeof(IZoo))]
+public interface IZoo
+{
+    [ImportMany(typeof(IAnimal))]
+    IEnumerable&lt;IAnimal&gt; Animals { get; set; }
+}
+</code></pre>
+
+<h4>
+<a name="classes-implementing-interfaces" class="anchor" href="#classes-implementing-interfaces"><span class="octicon octicon-link"></span></a>Classes Implementing Interfaces</h4>
+
+<p>First we create <code>Lion</code> and <code>Rabbit</code> classes and implement the <code>IAnimal</code> interface so that the classes become modules/plugins</p>
+
+<p>Note that we do not have to specify anything on the classes since the interfaces has the <code>Exports</code> and <code>Imports</code></p>
+
+<pre><code>public class Lion : IAnimal
+{
+    public Lion()
+    {
+        Console.WriteLine("Grr.. Lion got created");
+    } 
+    public void Eat()
+    {
+        Console.WriteLine("Grr.. Lion eating meat");
+    }
+}
+
+public class Rabbit : IAnimal
+{
+    public Rabbit()
+    {
+        Console.WriteLine("Meeep.. Rabbit got created");
+    } 
+    public void Eat()
+    {
+        Console.WriteLine("Meeep.. Rabbit eating carrot");
+    }
+}
+</code></pre>
+
+<p>Now we just need a <code>Zoo</code> to keep the <code>Animals</code> in.</p>
+
+<pre><code>public class Zoo : IZoo
+{
+    public IEnumerable&lt;IAnimal&gt; Animals { get; set; }
+} 
+</code></pre>
+
+<h4>
+<a name="using-the-plugin-framework" class="anchor" href="#using-the-plugin-framework"><span class="octicon octicon-link"></span></a>Using the Plugin Framework</h4>
+
+<p>Note that the the interfaces decides how the classes should behave regarding Exports/Imports</p>
+
+<pre><code>class Program
+{
+    static void Main(string[] args)
+    {
+        //Get a single instance of Zoo... We only expect one zoo to exist
+        var zoo = Composable.GetExport&lt;IZoo&gt;();
+        //List the animals found in the zoo
+        foreach (var animal in zoo.Animals)
+            animal.Eat();
+        Console.ReadLine();
+    }
+}
+</code></pre>
+
+<p>The output from the program would be...</p>
+
+<pre><code>Grr.. Lion got created
+Meeep.. Rabbit got created
+Grr.. Lion eating meat
+Meeep.. Rabbit eating carrot
+</code></pre>
+
+<h3>
+<a name="understanding-the-concept--add-custom-plugins" class="anchor" href="#understanding-the-concept--add-custom-plugins"><span class="octicon octicon-link"></span></a>Understanding the concept &amp; add custom plugins</h3>
+
+<p>The concept of the plugin framework is all about exporting and importing interfaces. We believe that all you need at compile time is the knowledge of the interface. The framework should load all exported and imported types at startup (runtime).</p>
+
+<p>By having that kind of architecture we get very decoupled systems. We can replace current functionality (or add new functionality) by just implementing an interface. We can even do so at runtime if we want to.</p>
+
+<h4>
+<a name="config" class="anchor" href="#config"><span class="octicon octicon-link"></span></a>Config</h4>
+
+<p>By default the plugin framework will search for plugins at the location where the executable (or eqvivalent) is running. The plugin will be loaded at first usage of the plugin framework, but you can add assemblies (or paths to search) at runtime.</p>
+
+<p>The framework will by defualt load assemblies (<em>.dll) and executables (</em>.exe) but you can also add your own filters to the configuration.</p>
+
+<h4>
+<a name="exports--imports" class="anchor" href="#exports--imports"><span class="octicon octicon-link"></span></a>Exports &amp; Imports</h4>
+
+<p>By setting the Export attribute on a interface or class you tell the framework that you want to export this. And not surprising you import stuff by using ImportOne or ImportMany.</p>
+
+<h4>
+<a name="attributes" class="anchor" href="#attributes"><span class="octicon octicon-link"></span></a>Attributes</h4>
+
+<p>To explain the concept easily we will create a few simple classes and decorate them.</p>
+
+<h5>
+<a name="importone" class="anchor" href="#importone"><span class="octicon octicon-link"></span></a>ImportOne</h5>
+
+<pre><code>TODO:
+</code></pre>
+
+<h5>
+<a name="importmany" class="anchor" href="#importmany"><span class="octicon octicon-link"></span></a>ImportMany</h5>
+
+<pre><code>TODO:
+</code></pre>
+
+<h5>
+<a name="importingconstructor" class="anchor" href="#importingconstructor"><span class="octicon octicon-link"></span></a>ImportingConstructor</h5>
+
+<pre><code>TODO:
+</code></pre>
+
+<h5>
+<a name="export" class="anchor" href="#export"><span class="octicon octicon-link"></span></a>Export</h5>
+
+<p>By adding the Export attribute to an interface (or a class) the plugin framework will detect and use the instance as a module/plugin. You always have to provide the type being exported when using the Export attribute, but there other setting as well</p>
+
+<h6>
+<a name="instancepolicy" class="anchor" href="#instancepolicy"><span class="octicon octicon-link"></span></a>InstancePolicy</h6>
+
+<p>Sets the lifecycle for the export. Using InstancePolicy.Shared will create a singleton of the export and only one instance will live in the app-domain. The default lifecycle is InstancePolicy.NewInstance and you will not need to set this option.</p>
+
+<h6>
+<a name="rewritable" class="anchor" href="#rewritable"><span class="octicon octicon-link"></span></a>Rewritable</h6>
+
+<p>By default the Rewritable option is set to Rewritable.No, but if you set it to Rewritable.Yes your module/plugin can be overridden if someone implements the interface on another class. That framework will then throw your version away and use the new module/plugin.</p>
+
+<h5>
+<a name="metadataexport" class="anchor" href="#metadataexport"><span class="octicon octicon-link"></span></a>MetaDataExport</h5>
+
+<pre><code>TODO:
+</code></pre>
+
+<h4>
+<a name="adding-functionality-at-runtime-re-compose" class="anchor" href="#adding-functionality-at-runtime-re-compose"><span class="octicon octicon-link"></span></a>Adding functionality at runtime (re-compose)</h4>
+
+<p>Sometimes you might want to add both new interfaces and plugins at runtime, below is a simple example of howto do so.</p>
+
+<p>Lets say that we have an interface IAnimal located in a separate assembly (project)</p>
+
+<pre><code>/// &lt;summary&gt;
+/// This interface is not exported and 
+/// will not be available in the XSockets.Plugin.Framework (by default)
+/// 
+/// All interfaces that you are planning on using have to be known a compile time
+/// &lt;/summary&gt;
+public interface IAnimal
+{
+    void Says();
+}
+</code></pre>
+
+<p>In another assembly (not referenced) we have a class Lion that implements the IAnimal interface</p>
+
+<pre><code>/// &lt;summary&gt;
+/// This class does not have to be know at compile time
+/// It might be added later and added to the XSockets.Plugin.Framework
+/// It can be used since it has an interface!
+/// &lt;/summary&gt;
+public class Lion : IAnimal
+{
+    public void Says() { Console.WriteLine("Grrr"); }
+}
+</code></pre>
+
+<p>In our XSockets solution we only reference the project/assembly with the interface IAnimal. This interface is not exported by default, so we tell the plugin framework (at runtime) to also use IAnimal as an export.</p>
+
+<p>That is done by</p>
+
+<pre><code>Composable.RegisterExport&lt;IAnimal&gt;();
+</code></pre>
+
+<p>But the Lion class is unknown so we add the assembly with Lion</p>
+
+<pre><code>Composable.LoadAssembly(@"C:\temp\someassembly.dll");
+</code></pre>
+
+<p>Then we tell the plugin framework to "recompose" = satisfy all imports/exports</p>
+
+<pre><code>Composable.ReCompose();
+</code></pre>
+
+<p>We can now get all instances of IAnimal using GetExport or GetExports...</p>
+
+<h5>
+<a name="two-different-approaches-listed-below" class="anchor" href="#two-different-approaches-listed-below"><span class="octicon octicon-link"></span></a>Two different approaches listed below!</h5>
+
+<p><strong>Approach 1</strong></p>
+
+<p>Here the classes implementing IAnimal is known in the current solution so we do not have to load any assemblies.</p>
+
+<pre><code>//Lets make the plugin framework aware of IAnimal
+Composable.RegisterExport&lt;IAnimal&gt;();
+Composable.ReCompose();
+foreach (var animal in Composable.GetExports&lt;IAnimal&gt;())
+{
+    animal.Says();
+}
+</code></pre>
+
+<p><strong>Approach 2</strong></p>
+
+<p>Here there are implementations of IAnimal in a assembly not yet loaded.</p>
+
+<pre><code>Composable.RegisterExport&lt;IAnimal&gt;();
+Composable.LoadAssembly(@"C:\temp\PluginDemo.dll");
+//OR... load many assemblies from a folder and possibly subfolders
+//Composable.AddLocation(@"c:\temp\", SearchOption.AllDirectories);
+Composable.ReCompose();
+foreach (var animal in Composable.GetExports&lt;IAnimal&gt;())
+{
+    animal.Says();
+}
+</code></pre>
+
+<hr><h2>
+<a name="packages" class="anchor" href="#packages"><span class="octicon octicon-link"></span></a>Packages</h2>
+
+<p>Describes all available packages on <a href="http://nuget.org">Nuget</a> and <a href="http://chocolatey.org">Chocolatey</a></p>
+
+<h3>
+<a name="chocolatey-packages" class="anchor" href="#chocolatey-packages"><span class="octicon octicon-link"></span></a>Chocolatey Packages</h3>
+
+<h4>
+<a name="xsocketswindowsservice" class="anchor" href="#xsocketswindowsservice"><span class="octicon octicon-link"></span></a>XSockets.Windows.Service</h4>
+
+<p>You can view <a href="https://www.youtube.com/watch?v=vDYKdB9Vuos">this video</a> on how to install our Windows Service from Chocolatey</p>
+
+<h3>
+<a name="nuget-packages" class="anchor" href="#nuget-packages"><span class="octicon octicon-link"></span></a>Nuget Packages</h3>
+
+<h4>
+<a name="xsockets" class="anchor" href="#xsockets"><span class="octicon octicon-link"></span></a>XSockets</h4>
+
+<p>This package will behave in different ways depending on where you install it. If you do not know what to do, use this package.</p>
+
+<p>This package will install ItemTemplates for XSockets.NET 4 into Visual Studio.</p>
+
+<ul>
+<li>XSockets.Server</li>
+<li>XSockets.Core</li>
+<li>XSockets.Plugin.Framework</li>
+<li>XSockets.Fallback (if installed into a web-application with .NET 4.5+)</li>
+</ul><h4>
+<a name="xsocketscore" class="anchor" href="#xsocketscore"><span class="octicon octicon-link"></span></a>XSockets.Core</h4>
+
+<p>This package contains the functionality to write custom real-time controllers. Install this package into a class-library if you want to develop custom server-side functionality</p>
+
+<p>Dependencies: - XSockets.Plugin.Framework</p>
+
+<h4>
+<a name="xsocketsowinhost" class="anchor" href="#xsocketsowinhost"><span class="octicon octicon-link"></span></a>XSockets.OWIN.Host</h4>
+
+<p>This package contains the functionality to host XSockets inside of OWIN.</p>
+
+<p>Dependencies: - XSockets.Server</p>
+
+<h4>
+<a name="xsocketspluginframework" class="anchor" href="#xsocketspluginframework"><span class="octicon octicon-link"></span></a>XSockets.Plugin.Framework</h4>
+
+<p>A package for building modular applications in a blink.</p>
+
+<p>Dependencies: none</p>
+
+<h4>
+<a name="xsocketsfallback" class="anchor" href="#xsocketsfallback"><span class="octicon octicon-link"></span></a>XSockets.Fallback</h4>
+
+<p>A fallback from websocket to longpolling via WebAPI if installed into .NET 4.5+</p>
+
+<p>Dependencies: - none</p>
+
+<h4>
+<a name="xsocketsclient" class="anchor" href="#xsocketsclient"><span class="octicon octicon-link"></span></a>XSockets.Client</h4>
+
+<p>Provides a socket client for connecting to a XSockets.NET server.
+Supported platforms are:</p>
+
+<ul>
+<li>Mono</li>
+<li>.NET 4.0+</li>
+<li>iOS (MonoTouch)</li>
+<li>Android (MonoDroid)</li>
+<li>NETMF 4.2, 4.3</li>
+</ul><p>Dependencies: - XSockets.Core</p>
+
+<h4>
+<a name="xsocketsjsapi" class="anchor" href="#xsocketsjsapi"><span class="octicon octicon-link"></span></a>XSockets.JsApi</h4>
+
+<p>Provides a JavaScript API for communication with text/binary messages to a XSockets server with a publish/subscribe pattern</p>
+
+<p>Dependencies: none</p>
+
+<h4>
+<a name="xsocketssamplestockticker" class="anchor" href="#xsocketssamplestockticker"><span class="octicon octicon-link"></span></a>XSockets.Sample.Stockticker</h4>
+
+<p>A sample project copied from the SignalR stockticker but rewritten for XSockets so that you can compare it easier with SignalR.</p>
+
+<p>Dependencies: XSockets</p>
+
+<h4>
+<a name="xsocketssamplewebrtc" class="anchor" href="#xsocketssamplewebrtc"><span class="octicon octicon-link"></span></a>XSockets.Sample.WebRTC</h4>
+
+<p>A sample project that will provide a sample of a multi-video chat within the browser. Source code found at: <a href="https://github.com/XSockets/WebRTC">https://github.com/XSockets/WebRTC</a></p>
+
+<p>Dependencies: XSockets</p>
+
+<hr><h1>
+<a name="instructions-for-alpha-testers" class="anchor" href="#instructions-for-alpha-testers"><span class="octicon octicon-link"></span></a>Instructions for Alpha Testers</h1>
+
+<p>Thank you for signing up to be a tester of XSockets 4.0 alpha-1.</p>
+
+<p>We have been working very hard on this release and we tried to add/fix all the stuff the community have asked for or pointed out. </p>
+
+<h2>
+<a name="some-of-the-new-features-in-40" class="anchor" href="#some-of-the-new-features-in-40"><span class="octicon octicon-link"></span></a>Some of the new features in 4.0</h2>
+
+<p>You have probably been reading about most of them since you signed up for this alpha, but a unordered list with the biggest changes are:</p>
+
+<ul>
+<li>Support for RPC (as a complement or replacement for pub/sub)</li>
+<li>Multiplexing over several controllers on one connection</li>
+<li>Owin Support</li>
+<li>Clients for iOS (MonoTouch), Android (MonoDroid), C# that all use full-duplex/bi-directional communication</li>
+<li>Synchron communication so that you can wait for the result from a controller method</li>
+<li>IMessage replace ITextArgs and IBinaryArgs, much easier and better binary support</li>
+<li>Binary support to any method in a controller (just like any object)</li>
+<li>You can pass meta data with binary data to get information about files etc being sent</li>
+<li>Hearbeat helpers for sending control-frames (pings/pongs)</li>
+<li>AuthenticationPipline, a new plugin that you can use to set the IPrincipal of the ConnectionContext</li>
+<li>Easier to create custom protocols for connecting InternetOfThings etc</li>
+<li>Enterprise: scaling, loadbalancing (not in alpha-1)</li>
+</ul><h2>
+<a name="setting-up-the-local-nuget-repository" class="anchor" href="#setting-up-the-local-nuget-repository"><span class="octicon octicon-link"></span></a>Setting up the local nuget repository</h2>
+
+<ol>
+<li>If you do not have a local nuget repository <a href="http://docs.nuget.org/docs/creating-packages/hosting-your-own-nuget-feeds">follow this guide</a>
+</li>
+<li>Unzip the file attached in your email</li>
+<li>Copy all folders into the root of your local nuget repository created in step 1</li>
+</ol><h2>
+<a name="using-the-xsockets-pre-release-packages" class="anchor" href="#using-the-xsockets-pre-release-packages"><span class="octicon octicon-link"></span></a>Using the XSockets pre-release packages</h2>
+
+<p>By default pre-release packages are hidden so you will not get any help from the package manager console. You will have to spell the names correctly and also add <code>-IncludePrerelease</code></p>
+
+<p>Example: <code>PM&gt; Install-Package XSockets -IncludePrerelease</code></p>
+
+<p>If you use the graphical tool for managing nuget packages you will need to change the drop down from ´stable only´ to <code>include pre-release</code></p>
+
+<h2>
+<a name="documentation-for-alpha-1" class="anchor" href="#documentation-for-alpha-1"><span class="octicon octicon-link"></span></a>Documentation for Alpha-1</h2>
+
+<p>We are working on a new site and will add the docs in a better format as soon as we have it online (be patient).</p>
+
+<h2>
+<a name="feedback" class="anchor" href="#feedback"><span class="octicon octicon-link"></span></a>Feedback</h2>
+
+<p>If you are a experienced XSockets user you will see many changes and new features. The documentation covers almost all the new things, and we are adding stuff to the docs rapidly.</p>
+
+<p>We appreciate all feedback yo can give (good and bad). So just try it and have fun! 
+And if you break it, we love it so that we can improve to next alpha or maybe beta!</p>
+
+<p>Regards
+Team XSockets.NET</p>
+
+<hr>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Xsockets.net-4.0 maintained by <a href="https://github.com/XSockets">XSockets</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
