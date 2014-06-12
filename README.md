@@ -1,5 +1,8 @@
 Rev. Alpha-1
 
+#Do you want to try the 4.0 alpha?
+Send an email to contact@xsockets.net and we will provide you with information on how to get started.
+
 #XSockets.NET 4 - Introduction
 
 **Important: Do not save this file since it will be update during the alpha/beta releases. Instead bookmark it so that you can get the latest available content!**
