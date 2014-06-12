@@ -5,8 +5,6 @@ Send an email to contact@xsockets.net and we will provide you with information o
 
 #XSockets.NET 4 - Introduction
 
-**Important: Do not save this file since it will be update during the alpha/beta releases. Instead bookmark it so that you can get the latest available content!**
-
 ## What is it?
 XSockets.NET is a real-time messaging system that allows communication between any device that has TCP/IP. The server can be hosted anywhere (.NET/Mono) and the clients cover every major browser + C#, VB.NET, Android, iOS, NETMF. And it is very easy to connect anything else that has a TCP/IP stack.
 
