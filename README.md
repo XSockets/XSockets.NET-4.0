@@ -1,5 +1,8 @@
 Rev. Alpha-1
 
+#Also available on GitHub Pages
+[http://xsockets.github.io/XSockets.NET-4.0/][1]
+
 #Do you want to try the 4.0 alpha?
 Send an email to contact@xsockets.net and we will provide you with information on how to get started.
 
@@ -137,7 +140,7 @@ The architecture for XSockets.NET is simple yet powerful. Each client connects t
 Different clients have different capabilities, browsers for example have the RFC6455 (websockets) protocol implemented, but other things devices might talk a protocol that you have created. Since XSockets allows “cross-protocol communication” all connected clients can communicate with each other very easily.
 
 ####Basic architecture
-![XSockets basic architecture][3]
+![XSockets basic architecture][2]
 
 The red clients are clients libraries written by XSockets.NET and the blue clients are examples of what we have easily connected with custom protocols.
 
@@ -716,7 +719,7 @@ When you have custom authentication you can get the `FormsAuthenticationTicket` 
 **Note: If you do not pass in a cookiename .ASPXAUTH will be used.**
 
 **Important: If you have separate project you will have to use the same origin to be able to get cookies and also use machine-key in the config to be able to get the AuthCookie.**
-***See*** [machinekey compability mode][4] ***if you are using different framework versions in the projects.***
+***See*** [machinekey compability mode][3] ***if you are using different framework versions in the projects.***
 
 #### Write a custom AuthenticationPipeline
 When the socket is connected and the handshake is completed the `AuthenticationPipeline` will be called. By default the pipeline will look for a FormsAuthenticationTicket, but you can override this pipline by just implementing a interface `XSockets.Core.Common.Socket.IXSocketAuthenticationPipeline`
@@ -854,7 +857,7 @@ The C# Client API has support for:
  - .NET MicroFramework 4.2, 4.3
 
 ###Client Setup
-To get the client just get the latest package from [nuget.org/packages/xsockets.client][5]
+To get the client just get the latest package from [nuget.org/packages/xsockets.client][4]
 
 The C# clients ALWAYS talk full-duplex/bi-directional communication, and just like the XSockets server this behavior has nothing to do with what OS or WebServer you are running.
 
@@ -1198,7 +1201,7 @@ Since the storage is per client you will only get notifications for changes in t
 
 ----------
 ##JavaScript Client API  Guide
-To get the client just get the latest package from [nuget.org/packages/xsockets.jsapi][6]
+To get the client just get the latest package from [nuget.org/packages/xsockets.jsapi][5]
 
 The JavaScript API supports RPC, PUB/SUB and WebRTC.
 
@@ -1710,7 +1713,7 @@ When you have custom authentication you can get the FormsAuthenticationTicket fr
 **Note: If you do not pass in a cookiename .ASPXAUTH will be used.**
 
 **Important: If you have separate project you will have to use the same origin to be able to get cookies and also use machine-key in the config to be able to get the AuthCookie.**
-***See*** [machinekey compability mode][7] ***if you are using different framework versions in the projects.***
+***See*** [machinekey compability mode][6] ***if you are using different framework versions in the projects.***
 
 ### Write a custom AuthenticationPipeline
 When the socket is connected and the handshake is completed the `AuthenticationPipeline` will be called. By default the pipeline will look for a FormsAuthenticationTicket, but you can override this pipline by just implementing a interface `XSockets.Core.Common.Socket.IXSocketAuthenticationPipeline`
@@ -1800,7 +1803,7 @@ The `OnAuthorizationFailedArgs` contains information about the controller and th
 The plugin framework is inspired by MEF (Managed Extensibility Framework). MEF is awesome, but we wrote our own plugin framework to be able to run everywhere and also to avoid any dependencies. We did not copy stuff from MEF that we did not need and we added some extra features the we thought would be nice to have.
 
 ### Quick Start
-A very basic example based on a MEF sample that you can find at [http://www.amazedsaint.com/2010/06/mef-or-managed-extensibility-framework.html][8]
+A very basic example based on a MEF sample that you can find at [http://www.amazedsaint.com/2010/06/mef-or-managed-extensibility-framework.html][7]
 
 First of all... Open up the `Package Manager Console` (Tools->Library Package Manager->Package Manager Console) below called PMC. Install by typing `Install-Package XSockets.Plugin.Framework` into the PMC and hit enter.
 
@@ -2007,11 +2010,11 @@ Here there are implementations of IAnimal in a assembly not yet loaded.
 
 ----------
 ## Packages
-Describes all available packages on [Nuget][9] and [Chocolatey][10]
+Describes all available packages on [Nuget][8] and [Chocolatey][9]
 ###Chocolatey Packages
 ####XSockets.Windows.Service
 
-You can view [this video][11] on how to install our Windows Service from Chocolatey
+You can view [this video][10] on how to install our Windows Service from Chocolatey
 
 ###Nuget Packages
 ####XSockets
@@ -2104,7 +2107,7 @@ You have probably been reading about most of them since you signed up for this a
  - Enterprise: scaling, loadbalancing (not in alpha-1)
 
 ##Setting up the local nuget repository
- 1. If you do not have a local nuget repository [follow this guide][1]
+ 1. If you do not have a local nuget repository [follow this guide][11]
  2. Unzip the file attached in your email
  3. Copy all folders into the root of your local nuget repository created in step 1
 
@@ -2130,14 +2133,14 @@ Team XSockets.NET
 ----------
 
 
-  [1]: http://docs.nuget.org/docs/creating-packages/hosting-your-own-nuget-feeds
-  [2]: http://bit.ly/1xzgXSL
-  [3]: http://xsockets.net/$2/file/xsocketscommunication-1.png
-  [4]: http://msdn.microsoft.com/en-us/library/system.web.configuration.machinekeysection.compatibilitymode%28v=vs.110%29.aspx
-  [5]: http://nuget.org/packages/xsockets.client
-  [6]: http://nuget.org/packages/xsockets.jsapi
-  [7]: http://msdn.microsoft.com/en-us/library/system.web.configuration.machinekeysection.compatibilitymode%28v=vs.110%29.aspx
-  [8]: http://www.amazedsaint.com/2010/06/mef-or-managed-extensibility-framework.html
-  [9]: http://nuget.org
-  [10]: http://chocolatey.org
-  [11]: https://www.youtube.com/watch?v=vDYKdB9Vuos
+  [1]: http://xsockets.github.io/XSockets.NET-4.0/
+  [2]: http://xsockets.net/$2/file/xsocketscommunication-1.png
+  [3]: http://msdn.microsoft.com/en-us/library/system.web.configuration.machinekeysection.compatibilitymode%28v=vs.110%29.aspx
+  [4]: http://nuget.org/packages/xsockets.client
+  [5]: http://nuget.org/packages/xsockets.jsapi
+  [6]: http://msdn.microsoft.com/en-us/library/system.web.configuration.machinekeysection.compatibilitymode%28v=vs.110%29.aspx
+  [7]: http://www.amazedsaint.com/2010/06/mef-or-managed-extensibility-framework.html
+  [8]: http://nuget.org
+  [9]: http://chocolatey.org
+  [10]: https://www.youtube.com/watch?v=vDYKdB9Vuos
+  [11]: http://docs.nuget.org/docs/creating-packages/hosting-your-own-nuget-feeds
