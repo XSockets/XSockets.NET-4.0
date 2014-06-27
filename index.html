@@ -31,7 +31,12 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <p>Rev. Alpha-1</p>
+        <p>Rev. Alpha-2</p>
+
+<h1>
+<a name="also-available-on-github-pages" class="anchor" href="#also-available-on-github-pages"><span class="octicon octicon-link"></span></a>Also available on GitHub Pages</h1>
+
+<p><a href="http://xsockets.github.io/XSockets.NET-4.0/">http://xsockets.github.io/XSockets.NET-4.0/</a></p>
 
 <h1>
 <a name="do-you-want-to-try-the-40-alpha" class="anchor" href="#do-you-want-to-try-the-40-alpha"><span class="octicon octicon-link"></span></a>Do you want to try the 4.0 alpha?</h1>
@@ -798,6 +803,8 @@ this.PublishTo&lt;T&gt;(Func&lt;T,bool&gt; expression, object obj, string target
 <h3>
 <a name="modulesplugins" class="anchor" href="#modulesplugins"><span class="octicon octicon-link"></span></a>Modules/Plugins</h3>
 
+<p>This section covers how to create custom modules/plugins for different parts of XSockets. This only covers the <code>Interfaces</code> within XSockets, but you can ofcourse add your custom interfaces as plugins by telling the plugin framework about the interfaces you want to use. Read more about custom plugin in <code>The Plugin Framework</code> section</p>
+
 <h4>
 <a name="how-to-implement-your-custom-pipeline" class="anchor" href="#how-to-implement-your-custom-pipeline"><span class="octicon octicon-link"></span></a>How to implement your custom Pipeline</h4>
 
@@ -851,20 +858,22 @@ public class MyAuthenticationPipeline : IXSocketAuthenticationPipeline
 
 <p>There can only be one <code>Pipeline</code>, and one <code>AuthenticationPipeline</code>, but interceptors can be 0 to N. Every interceptor will be called at a specific time. ConnectionInterceptors for example will be called when someone connects, disconnects or when a handshake is completed (ok or not).</p>
 
-<h4>
-<a name="how-to-write-connectioninterceptors" class="anchor" href="#how-to-write-connectioninterceptors"><span class="octicon octicon-link"></span></a>How to write ConnectionInterceptors</h4>
+<p>Interceptors are common when debugging or logging, but XSockets does not choose a logger for you. Implement the interface and do whatever you want inside of the interceptor(s).</p>
+
+<h5>
+<a name="how-to-write-connectioninterceptors" class="anchor" href="#how-to-write-connectioninterceptors"><span class="octicon octicon-link"></span></a>How to write ConnectionInterceptors</h5>
 
 <pre><code>TODO
 </code></pre>
 
-<h4>
-<a name="how-to-write-messageinterceptors" class="anchor" href="#how-to-write-messageinterceptors"><span class="octicon octicon-link"></span></a>How to write MessageInterceptors</h4>
+<h6>
+<a name="how-to-write-messageinterceptors" class="anchor" href="#how-to-write-messageinterceptors"><span class="octicon octicon-link"></span></a>How to write MessageInterceptors</h6>
 
 <pre><code>TODO
 </code></pre>
 
-<h4>
-<a name="how-to-write-errorinterceptors" class="anchor" href="#how-to-write-errorinterceptors"><span class="octicon octicon-link"></span></a>How to write ErrorInterceptors</h4>
+<h6>
+<a name="how-to-write-errorinterceptors" class="anchor" href="#how-to-write-errorinterceptors"><span class="octicon octicon-link"></span></a>How to write ErrorInterceptors</h6>
 
 <pre><code>TODO
 </code></pre>
@@ -1238,6 +1247,8 @@ conn.Cookies.Add(authcookie);
 
 <pre><code>conn.Controller("chat").On("chatmessage", data =&gt; Console.WriteLine(data.Text));
 </code></pre>
+
+<p><em>Note: Dynamic keyword will not exist in clients for Android/iOS or .NET 3.5 and earlier.</em></p>
 
 <p><strong>Server</strong></p>
 
@@ -1885,6 +1896,35 @@ public void ChatMessage(ChatModel chatModel)
 </code></pre>
 
 <hr><h2>
+<a name="logging" class="anchor" href="#logging"><span class="octicon octicon-link"></span></a>Logging</h2>
+
+<p>As of 4.0 XSockets will use <a href="http://serilog.net/">SeriLog.NET</a> as the default logger. Since it is a plugin you can of course replace SeriLog with something else if you want to.</p>
+
+<p>By default the logger will log everything in <code>Debug</code> and only <code>Fatal</code> level in <code>Release</code>.</p>
+
+<p>It is very easy to set your custom SeriLogger/Configuration/Sink. Just implement the <code>IDefaultLogger</code> interface and set the configuraiton of choice. For more information about SerilLog see <a href="http://serilog.net">SeriLog.NET</a></p>
+
+<pre><code>//
+// Sample below will write to file and console
+//
+
+[Export(typeof(IDefaultLogger))]
+public class MyLogger : IDefaultLogger
+{       
+    public ILogger Logger
+    {
+        get
+        {
+            return new LoggerConfiguration()
+                .WriteTo.ColoredConsole()
+                .WriteTo.File("log.txt")
+                .CreateLogger();
+        }
+    }
+}
+</code></pre>
+
+<hr><h2>
 <a name="configuration" class="anchor" href="#configuration"><span class="octicon octicon-link"></span></a>Configuration</h2>
 
 <p>When self-hosted the XSockets server will start with two endpoints loopback &amp; machine IP (both on port 4502). For example my current machine would start the server at <code>ws://127.0.0.1:4502</code> and <code>ws:192.168.1.6:4502</code></p>
@@ -2394,6 +2434,15 @@ public class Rabbit : IAnimal
 Meeep.. Rabbit got created
 Grr.. Lion eating meat
 Meeep.. Rabbit eating carrot
+</code></pre>
+
+<h3>
+<a name="handling-exceptions" class="anchor" href="#handling-exceptions"><span class="octicon octicon-link"></span></a>Handling Exceptions</h3>
+
+<p>You can use the <code>Composable.AddErrorAction</code> to get information about any exceptions taht occurs inside of the plugin framework. If you add several <code>actions</code> they will all be called when/if an exception is thrown.</p>
+
+<pre><code>Composable.AddErrorAction(ex =&gt; Console.WriteLine("First ErrorAction: {0}", ex.Message));
+Composable.AddErrorAction(ex =&gt; Console.WriteLine("Second ErrorAction: {0}", ex.Message));
 </code></pre>
 
 <h3>
