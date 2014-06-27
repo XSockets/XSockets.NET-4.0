@@ -1,4 +1,4 @@
-Rev. Alpha-1
+Rev. Alpha-2
 
 #Also available on GitHub Pages
 [http://xsockets.github.io/XSockets.NET-4.0/][1]
@@ -625,6 +625,8 @@ You can implement custom logic for sending/receiving these frames on the server,
     }
 
 ### Modules/Plugins
+This section covers how to create custom modules/plugins for different parts of XSockets. This only covers the `Interfaces` within XSockets, but you can ofcourse add your custom interfaces as plugins by telling the plugin framework about the interfaces you want to use. Read more about custom plugin in `The Plugin Framework` section
+
 ####How to implement your custom Pipeline
 The server will only have one `XSockets.Core.Common.Socket.IXSocketPipeline`, but you can override the default one by just deriving it.
 
@@ -670,16 +672,17 @@ There can only be one pipeline so even if you implement several pipelines only o
 #### Interceptors Concept
 There can only be one `Pipeline`, and one `AuthenticationPipeline`, but interceptors can be 0 to N. Every interceptor will be called at a specific time. ConnectionInterceptors for example will be called when someone connects, disconnects or when a handshake is completed (ok or not).
 
-####How to write ConnectionInterceptors
+Interceptors are common when debugging or logging, but XSockets does not choose a logger for you. Implement the interface and do whatever you want inside of the interceptor(s).
 
-
-    TODO
-    
-####How to write MessageInterceptors
+##### How to write ConnectionInterceptors
 
     TODO
     
-####How to write ErrorInterceptors
+######How to write MessageInterceptors
+
+    TODO
+    
+######How to write ErrorInterceptors
 
     TODO
     
@@ -973,6 +976,8 @@ As an alternative to specifying parameters as generic types of the On method, yo
 
     conn.Controller("chat").On("chatmessage", data => Console.WriteLine(data.Text));
     
+*Note: Dynamic keyword will not exist in clients for Android/iOS or .NET 3.5 and earlier.*
+
 **Server**
 
 The server code for the examples with the `ChatModel` can look like
@@ -1465,6 +1470,34 @@ Set the generic type that you want to store (in this case string)
     conn.controller('chat').storageClear();
     
 ----------
+##Logging
+
+As of 4.0 XSockets will use [SeriLog.NET][6] as the default logger. Since it is a plugin you can of course replace SeriLog with something else if you want to.
+
+By default the logger will log everything in `Debug` and only `Fatal` level in `Release`.
+
+It is very easy to set your custom SeriLogger/Configuration/Sink. Just implement the `IDefaultLogger` interface and set the configuraiton of choice. For more information about SerilLog see [SeriLog.NET][7]
+
+    //
+    // Sample below will write to file and console
+    //
+    
+    [Export(typeof(IDefaultLogger))]
+    public class MyLogger : IDefaultLogger
+    {       
+        public ILogger Logger
+        {
+            get
+            {
+                return new LoggerConfiguration()
+                    .WriteTo.ColoredConsole()
+                    .WriteTo.File("log.txt")
+                    .CreateLogger();
+            }
+        }
+    }
+
+----------
 
 ##Configuration
 When self-hosted the XSockets server will start with two endpoints loopback & machine IP (both on port 4502). For example my current machine would start the server at `ws://127.0.0.1:4502` and `ws:192.168.1.6:4502`
@@ -1713,7 +1746,7 @@ When you have custom authentication you can get the FormsAuthenticationTicket fr
 **Note: If you do not pass in a cookiename .ASPXAUTH will be used.**
 
 **Important: If you have separate project you will have to use the same origin to be able to get cookies and also use machine-key in the config to be able to get the AuthCookie.**
-***See*** [machinekey compability mode][6] ***if you are using different framework versions in the projects.***
+***See*** [machinekey compability mode][8] ***if you are using different framework versions in the projects.***
 
 ### Write a custom AuthenticationPipeline
 When the socket is connected and the handshake is completed the `AuthenticationPipeline` will be called. By default the pipeline will look for a FormsAuthenticationTicket, but you can override this pipline by just implementing a interface `XSockets.Core.Common.Socket.IXSocketAuthenticationPipeline`
@@ -1803,7 +1836,7 @@ The `OnAuthorizationFailedArgs` contains information about the controller and th
 The plugin framework is inspired by MEF (Managed Extensibility Framework). MEF is awesome, but we wrote our own plugin framework to be able to run everywhere and also to avoid any dependencies. We did not copy stuff from MEF that we did not need and we added some extra features the we thought would be nice to have.
 
 ### Quick Start
-A very basic example based on a MEF sample that you can find at [http://www.amazedsaint.com/2010/06/mef-or-managed-extensibility-framework.html][7]
+A very basic example based on a MEF sample that you can find at [http://www.amazedsaint.com/2010/06/mef-or-managed-extensibility-framework.html][9]
 
 First of all... Open up the `Package Manager Console` (Tools->Library Package Manager->Package Manager Console) below called PMC. Install by typing `Install-Package XSockets.Plugin.Framework` into the PMC and hit enter.
 
@@ -1892,6 +1925,12 @@ The output from the program would be...
     Meeep.. Rabbit got created
     Grr.. Lion eating meat
     Meeep.. Rabbit eating carrot
+
+### Handling Exceptions
+You can use the `Composable.AddErrorAction` to get information about any exceptions taht occurs inside of the plugin framework. If you add several `actions` they will all be called when/if an exception is thrown.
+
+    Composable.AddErrorAction(ex => Console.WriteLine("First ErrorAction: {0}", ex.Message));
+    Composable.AddErrorAction(ex => Console.WriteLine("Second ErrorAction: {0}", ex.Message));
 
 ### Understanding the concept & add custom plugins
 The concept of the plugin framework is all about exporting and importing interfaces. We believe that all you need at compile time is the knowledge of the interface. The framework should load all exported and imported types at startup (runtime).
@@ -2010,11 +2049,11 @@ Here there are implementations of IAnimal in a assembly not yet loaded.
 
 ----------
 ## Packages
-Describes all available packages on [Nuget][8] and [Chocolatey][9]
+Describes all available packages on [Nuget][10] and [Chocolatey][11]
 ###Chocolatey Packages
 ####XSockets.Windows.Service
 
-You can view [this video][10] on how to install our Windows Service from Chocolatey
+You can view [this video][12] on how to install our Windows Service from Chocolatey
 
 ###Nuget Packages
 ####XSockets
@@ -2107,7 +2146,7 @@ You have probably been reading about most of them since you signed up for this a
  - Enterprise: scaling, loadbalancing (not in alpha-1)
 
 ##Setting up the local nuget repository
- 1. If you do not have a local nuget repository [follow this guide][11]
+ 1. If you do not have a local nuget repository [follow this guide][13]
  2. Unzip the file attached in your email
  3. Copy all folders into the root of your local nuget repository created in step 1
 
@@ -2138,9 +2177,11 @@ Team XSockets.NET
   [3]: http://msdn.microsoft.com/en-us/library/system.web.configuration.machinekeysection.compatibilitymode%28v=vs.110%29.aspx
   [4]: http://nuget.org/packages/xsockets.client
   [5]: http://nuget.org/packages/xsockets.jsapi
-  [6]: http://msdn.microsoft.com/en-us/library/system.web.configuration.machinekeysection.compatibilitymode%28v=vs.110%29.aspx
-  [7]: http://www.amazedsaint.com/2010/06/mef-or-managed-extensibility-framework.html
-  [8]: http://nuget.org
-  [9]: http://chocolatey.org
-  [10]: https://www.youtube.com/watch?v=vDYKdB9Vuos
-  [11]: http://docs.nuget.org/docs/creating-packages/hosting-your-own-nuget-feeds
+  [6]: http://serilog.net/
+  [7]: http://serilog.net
+  [8]: http://msdn.microsoft.com/en-us/library/system.web.configuration.machinekeysection.compatibilitymode%28v=vs.110%29.aspx
+  [9]: http://www.amazedsaint.com/2010/06/mef-or-managed-extensibility-framework.html
+  [10]: http://nuget.org
+  [11]: http://chocolatey.org
+  [12]: https://www.youtube.com/watch?v=vDYKdB9Vuos
+  [13]: http://docs.nuget.org/docs/creating-packages/hosting-your-own-nuget-feeds
