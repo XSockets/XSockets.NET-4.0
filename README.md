@@ -481,8 +481,14 @@ So, if you are on `Controller` A and want to send to all clients on `Controller`
     this.InvokeTo<T>(Func<T,bool> expression, object obj, string target);
 
 ####How to call client methods outside the Controller class
+Just create a controller instance (or ask the plugin framework after the specific controller) and then use the extensions to send data
 
-    N/A
+    //Create the instance your self
+    var chat = new Chat();
+    //Then just use one of the extensions to target, one, some, others or all...
+    chat.InvokeToAll<Chat>("Hello from manual instance","say");
+    
+*Note: there is no point in using Invoke/Publish/Send since the actual controller does not have a socket since there is no client connected to it (we created the instance manually).*
 
 ----------
 
@@ -566,8 +572,14 @@ So, if you are on `Controller` A and want to publish to all `chatmessage` subscr
     this.PublishTo<T>(Func<T,bool> expression, object obj, string target);
 
 ####How to call subscribers outside the Controller class
+Just create a controller instance (or ask the plugin framework after the specific controller) and then use the extensions to send data
+
+    //Create the instance your self
+    var chat = new Chat();
+    //Then just use one of the extensions to target, one, some, others or all...
+    chat.PublishToAll<Chat>("Hello from manual instance","say");
     
-    TBD
+*Note: there is no point in using Invoke/Publish/Send since the actual controller does not have a socket since there is no client connected to it (we created the instance manually).*
     
 ----------
 
