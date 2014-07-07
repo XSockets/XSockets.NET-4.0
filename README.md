@@ -821,8 +821,35 @@ When needed you can also send the error to the `ErrorInterceptors` if you have i
     }
 
 ###How to create internal (long-running) Controllers
+A common scenario is that you want to do something every x seconds on the server. It can be polling a legacy database etc. And then push information to clients based on criterias just as you do in any XSockets server side method.
 
-    TODO
+In XSockets you can write long-running controllers. A long-running controller will be a `singleton` that only executes inside of the server. Clients can´t connect to a long-running controller.
+
+The simple sample below will send a chatmessage to all clients connected to the `Chat` controller from the long-running controller. The line that will make the controller a long-running controller is `[XSocketMetadata("MyLongrunningController", PluginRange.Internal)]` That tells XSockets to use the controller as a singleton and that it should be internal only.
+
+    /// <summary>
+    /// This is a longrunning controller. This cant be connected to.
+    /// It is a singleton that will run inside xsockets as long as the server is alive.
+    /// Most common is to start a timer in it to perform some task
+    /// </summary>
+    [XSocketMetadata("MyLongrunningController", PluginRange.Internal)]   
+    public class MyLongrunningController : XSocketController
+    {
+        private Timer timer;
+        
+        public MyLongrunningController()
+        {
+            timer = new Timer(10000);
+            timer.Elapsed += timer_Elapsed;
+            timer.Start();
+        }
+
+        void timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            //Sending a message to all clients on the Chat controller
+            this.InvokeToAll<Chat>("Hello from long-running controller", "say");
+        }
+    }
 
 ###How to get information about the client from the ConnectionContext
 
