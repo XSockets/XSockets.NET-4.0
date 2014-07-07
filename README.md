@@ -488,6 +488,8 @@ Just create a controller instance (or ask the plugin framework after the specifi
     //Then just use one of the extensions to target, one, some, others or all...
     chat.InvokeToAll<Chat>("Hello from manual instance","say");
     
+Notice that you have to pass in <T> in the extension regardless of what controller you want to use. So you can even do `new Chat().InvokeToAll<Stock>("Hello to stock clients from chat instance","hi");`
+    
 *Note: there is no point in using Invoke/Publish/Send since the actual controller does not have a socket since there is no client connected to it (we created the instance manually).*
 
 ----------
@@ -579,6 +581,8 @@ Just create a controller instance (or ask the plugin framework after the specifi
     //Then just use one of the extensions to target, one, some, others or all...
     chat.PublishToAll<Chat>("Hello from manual instance","say");
     
+Notice that you have to pass in <T> in the extension regardless of what controller you want to use. So you can even do `new Chat().PublishToAll<Stock>("Hello to stock clients from chat instance","hi");`
+
 *Note: there is no point in using Invoke/Publish/Send since the actual controller does not have a socket since there is no client connected to it (we created the instance manually).*
     
 ----------
