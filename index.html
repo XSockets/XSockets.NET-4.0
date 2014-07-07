@@ -635,6 +635,8 @@ var chat = new Chat();
 chat.InvokeToAll&lt;Chat&gt;("Hello from manual instance","say");
 </code></pre>
 
+<p>Notice that you have to pass in  in the extension regardless of what controller you want to use. So you can even do <code>new Chat().InvokeToAll&lt;Stock&gt;("Hello to stock clients from chat instance","hi");</code></p>
+
 <p><em>Note: there is no point in using Invoke/Publish/Send since the actual controller does not have a socket since there is no client connected to it (we created the instance manually).</em></p>
 
 <hr><h3>
@@ -747,6 +749,8 @@ var chat = new Chat();
 //Then just use one of the extensions to target, one, some, others or all...
 chat.PublishToAll&lt;Chat&gt;("Hello from manual instance","say");
 </code></pre>
+
+<p>Notice that you have to pass in  in the extension regardless of what controller you want to use. So you can even do <code>new Chat().PublishToAll&lt;Stock&gt;("Hello to stock clients from chat instance","hi");</code></p>
 
 <p><em>Note: there is no point in using Invoke/Publish/Send since the actual controller does not have a socket since there is no client connected to it (we created the instance manually).</em></p>
 
