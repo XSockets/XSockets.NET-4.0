@@ -627,8 +627,15 @@ this.InvokeTo&lt;T&gt;(Func&lt;T,bool&gt; expression, object obj, string target)
 <h4>
 <a name="how-to-call-client-methods-outside-the-controller-class" class="anchor" href="#how-to-call-client-methods-outside-the-controller-class"><span class="octicon octicon-link"></span></a>How to call client methods outside the Controller class</h4>
 
-<pre><code>N/A
+<p>Just create a controller instance (or ask the plugin framework after the specific controller) and then use the extensions to send data</p>
+
+<pre><code>//Create the instance your self
+var chat = new Chat();
+//Then just use one of the extensions to target, one, some, others or all...
+chat.InvokeToAll&lt;Chat&gt;("Hello from manual instance","say");
 </code></pre>
+
+<p><em>Note: there is no point in using Invoke/Publish/Send since the actual controller does not have a socket since there is no client connected to it (we created the instance manually).</em></p>
 
 <hr><h3>
 <a name="pubsub" class="anchor" href="#pubsub"><span class="octicon octicon-link"></span></a>PUB/SUB</h3>
@@ -733,8 +740,15 @@ this.PublishTo&lt;T&gt;(Func&lt;T,bool&gt; expression, object obj, string target
 <h4>
 <a name="how-to-call-subscribers-outside-the-controller-class" class="anchor" href="#how-to-call-subscribers-outside-the-controller-class"><span class="octicon octicon-link"></span></a>How to call subscribers outside the Controller class</h4>
 
-<pre><code>TBD
+<p>Just create a controller instance (or ask the plugin framework after the specific controller) and then use the extensions to send data</p>
+
+<pre><code>//Create the instance your self
+var chat = new Chat();
+//Then just use one of the extensions to target, one, some, others or all...
+chat.PublishToAll&lt;Chat&gt;("Hello from manual instance","say");
 </code></pre>
+
+<p><em>Note: there is no point in using Invoke/Publish/Send since the actual controller does not have a socket since there is no client connected to it (we created the instance manually).</em></p>
 
 <hr><h3>
 <a name="how-to-handle-connection-lifetime-events-in-the-controller-class" class="anchor" href="#how-to-handle-connection-lifetime-events-in-the-controller-class"><span class="octicon octicon-link"></span></a>How to handle connection lifetime events in the Controller class</h3>
