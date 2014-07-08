@@ -956,6 +956,7 @@ using XSockets.Core.Common.Utility.Serialization;
 
 namespace MyNameSpace.Serialization
 {
+    [Export(typeof(IXSocketJsonSerializer))]
     public class MyJsonSerializer : IXSocketJsonSerializer
     {
         public MyJsonSerializer()
