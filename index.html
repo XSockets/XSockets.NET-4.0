@@ -1,36 +1,44 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-
   <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Xsockets.net-4.0 : Super duper real-time framework" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Xsockets.net-4.0 by XSockets</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/main.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-
-    <title>Xsockets.net-4.0</title>
   </head>
-
   <body>
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/XSockets/XSockets.NET-4.0">View on GitHub</a>
+      <header>
+        <h1>Xsockets.net-4.0</h1>
+        <p>Super duper real-time framework</p>
+      </header>
 
-          <h1 id="project_title">Xsockets.net-4.0</h1>
-          <h2 id="project_tagline">Super duper real-time framework</h2>
+      <div id="banner">
+        <span id="logo"></span>
 
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/XSockets/XSockets.NET-4.0/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/XSockets/XSockets.NET-4.0/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
-    </div>
+        <a href="https://github.com/XSockets/XSockets.NET-4.0" class="button fork"><strong>View On GitHub</strong></a>
+        <div class="downloads">
+          <span>Downloads:</span>
+          <ul>
+            <li><a href="https://github.com/XSockets/XSockets.NET-4.0/zipball/master" class="button">ZIP</a></li>
+            <li><a href="https://github.com/XSockets/XSockets.NET-4.0/tarball/master" class="button">TAR</a></li>
+          </ul>
+        </div>
+      </div><!-- end banner -->
 
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
+    <div class="wrapper">
+      <nav>
+        <ul></ul>
+      </nav>
+      <section>
         <p>Rev. Alpha-2</p>
 
 <h1>
@@ -881,25 +889,116 @@ public class MyAuthenticationPipeline : IXSocketAuthenticationPipeline
 <h5>
 <a name="how-to-write-connectioninterceptors" class="anchor" href="#how-to-write-connectioninterceptors"><span class="octicon octicon-link"></span></a>How to write ConnectionInterceptors</h5>
 
-<pre><code>TODO
+<p>Sample of a connection interceptor that logs handshake and connect/disconnect with <code>debug</code> level</p>
+
+<pre><code>public class MyConnectionInterceptor : IConnectionInterceptor
+{
+
+    public void Connected(IXSocketProtocol protocol, string controller)
+    {
+        LogHelper.Log(LogEventLevel.Verbose, "Connected {controller} {@protocol}",controller ,protocol.ConnectionContext);            
+    }
+
+    public void Disconnected(IXSocketProtocol protocol, string controller)
+    {
+        LogHelper.Log(LogEventLevel.Verbose, "Disconnected {controller} {@protocol}", controller, protocol.ConnectionContext);
+    }
+
+    public void HandshakeCompleted(IXSocketProtocol protocol)
+    {
+        LogHelper.Log(LogEventLevel.Verbose, "Handshake ok {@protocol}", protocol.ConnectionContext);
+    }
+
+    public void HandshakeInvalid(string rawHandshake)
+    {
+        LogHelper.Log(LogEventLevel.Verbose, "Handshake failed {raw}", rawHandshake);
+    }
+}
 </code></pre>
 
 <h6>
 <a name="how-to-write-messageinterceptors" class="anchor" href="#how-to-write-messageinterceptors"><span class="octicon octicon-link"></span></a>How to write MessageInterceptors</h6>
 
-<pre><code>TODO
+<p>Sample of a message interceptor that logs in/out messages with <code>debug</code> level</p>
+
+<pre><code>public class MyMessageInterceptor : IMessageInterceptor
+{
+    public void OnIncomingMessage(IXSocketProtocol protocol, IMessage message)
+    {
+        LogHelper.Log(LogEventLevel.Debug, "{incoming message {@message}}", message);
+    }
+
+    public void OnOutgoingMessage(IXSocketProtocol protocol, IMessage message)
+    {
+        LogHelper.Log(LogEventLevel.Debug, "{outgoing message {@message}}", message);
+    }
+}
 </code></pre>
 
 <h6>
 <a name="how-to-write-errorinterceptors" class="anchor" href="#how-to-write-errorinterceptors"><span class="octicon octicon-link"></span></a>How to write ErrorInterceptors</h6>
 
-<pre><code>TODO
+<p>Sample of a error interceptor that logs exceptions with <code>error</code> level</p>
+
+<pre><code>public class MyErrorInterceptor : IErrorInterceptor
+{
+    public void OnError(IXSocketException exception)
+    {
+        LogHelper.Log(LogEventLevel.Error, "{Exception {@ex}}", exception);
+    }
+}
 </code></pre>
 
 <h4>
-<a name="how-to-write-a-custom-serializer" class="anchor" href="#how-to-write-a-custom-serializer"><span class="octicon octicon-link"></span></a>How to write a custom Serializer</h4>
+<a name="how-to-write-a-custom-json-serializer" class="anchor" href="#how-to-write-a-custom-json-serializer"><span class="octicon octicon-link"></span></a>How to write a custom JSON Serializer</h4>
 
-<pre><code>TODO
+<p>You can replace the default serializer with your own favorite serializer. As everything else in XSockets.NET it is just a module/plugin. Implement the <code>IXSocketJsonSerializer</code> interface and export the new plugin to tell XSockets to use your serializer instead of the defualt one.</p>
+
+<p>In the sample below we use the ServiceStack.Text serializer</p>
+
+<pre><code>using System;
+using System.Collections.Generic;
+using System.Linq;
+using ServiceStack.Text;
+using XSockets.Core.Common.Utility.Serialization;
+
+namespace MyNameSpace.Serialization
+{
+    public class MyJsonSerializer : IXSocketJsonSerializer
+    {
+        public MyJsonSerializer()
+        {
+            JsConfig.ExcludeTypeInfo = true;
+            JsConfig.IncludeTypeInfo = false;
+        }
+
+        public string SerializeToString&lt;T&gt;(T obj)
+        {
+            return JsonSerializer.SerializeToString(obj);            
+        }
+
+        public string SerializeToString(object obj, Type type)
+        {
+            return JsonSerializer.SerializeToString(obj, type);
+        }
+
+        public T DeserializeFromString&lt;T&gt;(string json)
+        {
+            return JsonSerializer.DeserializeFromString&lt;T&gt;(json);
+        }
+
+        public object DeserializeFromString(string json, Type type)
+        {           
+            return JsonSerializer.DeserializeFromString(json, type);
+        }
+
+        public IDictionary&lt;string,string&gt; DeserializeFromString(string json, params string[] keys)
+        {
+            var obj = JsonSerializer.DeserializeFromString&lt;List&lt;JsonObject&gt;&gt;(@json);
+            return keys.ToDictionary(key =&gt; key, key =&gt; obj[0].Child(key));
+        }
+    }    
+}
 </code></pre>
 
 <h4>
@@ -2787,17 +2886,12 @@ Team XSockets.NET</p>
 
 <hr>
       </section>
-    </div>
-
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Xsockets.net-4.0 maintained by <a href="https://github.com/XSockets">XSockets</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      <footer>
+        <p>Project maintained by <a href="https://github.com/XSockets">XSockets</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></small></p>
       </footer>
     </div>
-
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
     
-
   </body>
 </html>
