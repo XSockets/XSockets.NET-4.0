@@ -691,20 +691,107 @@ There can only be one `Pipeline`, and one `AuthenticationPipeline`, but intercep
 Interceptors are common when debugging or logging, but XSockets does not choose a logger for you. Implement the interface and do whatever you want inside of the interceptor(s).
 
 ##### How to write ConnectionInterceptors
+Sample of a connection interceptor that logs handshake and connect/disconnect with `debug` level
 
-    TODO
+    public class MyConnectionInterceptor : IConnectionInterceptor
+    {
+
+        public void Connected(IXSocketProtocol protocol, string controller)
+        {
+            LogHelper.Log(LogEventLevel.Verbose, "Connected {controller} {@protocol}",controller ,protocol.ConnectionContext);            
+        }
+
+        public void Disconnected(IXSocketProtocol protocol, string controller)
+        {
+            LogHelper.Log(LogEventLevel.Verbose, "Disconnected {controller} {@protocol}", controller, protocol.ConnectionContext);
+        }
+
+        public void HandshakeCompleted(IXSocketProtocol protocol)
+        {
+            LogHelper.Log(LogEventLevel.Verbose, "Handshake ok {@protocol}", protocol.ConnectionContext);
+        }
+
+        public void HandshakeInvalid(string rawHandshake)
+        {
+            LogHelper.Log(LogEventLevel.Verbose, "Handshake failed {raw}", rawHandshake);
+        }
+    }
     
 ######How to write MessageInterceptors
+Sample of a message interceptor that logs in/out messages with `debug` level
 
-    TODO
+    public class MyMessageInterceptor : IMessageInterceptor
+    {
+        public void OnIncomingMessage(IXSocketProtocol protocol, IMessage message)
+        {
+            LogHelper.Log(LogEventLevel.Debug, "{incoming message {@message}}", message);
+        }
+
+        public void OnOutgoingMessage(IXSocketProtocol protocol, IMessage message)
+        {
+            LogHelper.Log(LogEventLevel.Debug, "{outgoing message {@message}}", message);
+        }
+    }
     
 ######How to write ErrorInterceptors
+Sample of a error interceptor that logs exceptions with `error` level
 
-    TODO
+    public class MyErrorInterceptor : IErrorInterceptor
+    {
+        public void OnError(IXSocketException exception)
+        {
+            LogHelper.Log(LogEventLevel.Error, "{Exception {@ex}}", exception);
+        }
+    }
     
-####How to write a custom Serializer
+####How to write a custom JSON Serializer
+You can replace the default serializer with your own favorite serializer. As everything else in XSockets.NET it is just a module/plugin. Implement the `IXSocketJsonSerializer` interface and export the new plugin to tell XSockets to use your serializer instead of the defualt one.
 
-    TODO
+In the sample below we use the ServiceStack.Text serializer
+
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using ServiceStack.Text;
+    using XSockets.Core.Common.Utility.Serialization;
+
+    namespace MyNameSpace.Serialization
+    {
+        public class MyJsonSerializer : IXSocketJsonSerializer
+        {
+            public MyJsonSerializer()
+            {
+                JsConfig.ExcludeTypeInfo = true;
+                JsConfig.IncludeTypeInfo = false;
+            }
+
+            public string SerializeToString<T>(T obj)
+            {
+                return JsonSerializer.SerializeToString(obj);            
+            }
+
+            public string SerializeToString(object obj, Type type)
+            {
+                return JsonSerializer.SerializeToString(obj, type);
+            }
+
+            public T DeserializeFromString<T>(string json)
+            {
+                return JsonSerializer.DeserializeFromString<T>(json);
+            }
+
+            public object DeserializeFromString(string json, Type type)
+            {           
+                return JsonSerializer.DeserializeFromString(json, type);
+            }
+
+            public IDictionary<string,string> DeserializeFromString(string json, params string[] keys)
+            {
+                var obj = JsonSerializer.DeserializeFromString<List<JsonObject>>(@json);
+                return keys.ToDictionary(key => key, key => obj[0].Child(key));
+            }
+        }    
+    }
     
 ####How to write custom Protocols
 
