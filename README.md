@@ -757,6 +757,7 @@ In the sample below we use the ServiceStack.Text serializer
 
     namespace MyNameSpace.Serialization
     {
+        [Export(typeof(IXSocketJsonSerializer))]
         public class MyJsonSerializer : IXSocketJsonSerializer
         {
             public MyJsonSerializer()
