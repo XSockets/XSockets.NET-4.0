@@ -1165,7 +1165,7 @@ void Chat_OnAuthorizationFailed(object sender, OnAuthorizationFailedArgs e)
 catch(Exception ex)
 {
     this.HandleError(ex);
-    ErrorInterceptorsQueue.Push(new XSocketException(ex));
+    ErrorInterceptorsQueue.Push(ex);
 }
 </code></pre>
 
