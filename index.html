@@ -31,7 +31,7 @@
         <hr>
 
         <section id="main_content">
-          <p>Rev. Alpha-2</p>
+          <p>Rev. Beta-1</p>
 
 <h1>
 <a name="also-available-on-github-pages" class="anchor" href="#also-available-on-github-pages"><span class="octicon octicon-link"></span></a>Also available on GitHub Pages</h1>
@@ -39,7 +39,7 @@
 <p><a href="http://xsockets.github.io/XSockets.NET-4.0/">http://xsockets.github.io/XSockets.NET-4.0/</a></p>
 
 <h1>
-<a name="do-you-want-to-try-the-40-alpha" class="anchor" href="#do-you-want-to-try-the-40-alpha"><span class="octicon octicon-link"></span></a>Do you want to try the 4.0 alpha?</h1>
+<a name="do-you-want-to-try-the-40-beta" class="anchor" href="#do-you-want-to-try-the-40-beta"><span class="octicon octicon-link"></span></a>Do you want to try the 4.0 beta?</h1>
 
 <p>Send an email to <a href="mailto:contact@xsockets.net">contact@xsockets.net</a> and we will provide you with information on how to get started.</p>
 
@@ -243,6 +243,28 @@ JavaScript  Browser with websockets (there is a fallback for IE 9 &amp; IE 8)
 </code></pre>
 
 <p>In this example, a connected client can call the ChatMessage method, and when it does, the data received is broadcasted (RPC) to all clients connected to the <code>Controller</code>.</p>
+
+<p><strong>Give the controller an Alias</strong></p>
+
+<p>If you want to specify a different name for clients to use, add the <code>XSocketsMetadata</code> attribute and set the <code>Alias</code> to the name you want for the controller. You might wanna do this is you have long and complex names for controller on the server.</p>
+
+<p>Server</p>
+
+<pre><code>[XSocketMetadata(PluginAlias = "Chat")]
+public class MyToLongAndComplexClassNameForTheChat : XSocketController
+</code></pre>
+
+<p>And then you can connect using the <code>Alias</code> as shown below.</p>
+
+<p>Client - JavaScript</p>
+
+<pre><code>var conn = new XSockets.WebSocket('ws://127.0.0.1:4502',['chat']);
+</code></pre>
+
+<p>Client - C#</p>
+
+<pre><code>var conn = new XSocketsClient("ws://127.0.0.1:4502","http://localhost","chat");
+</code></pre>
 
 <h4>
 <a name="controller-object-lifetime" class="anchor" href="#controller-object-lifetime"><span class="octicon octicon-link"></span></a>Controller object lifetime</h4>
@@ -467,7 +489,7 @@ Console.WriteLine(echo.Result);
 <h4>
 <a name="how-to-do-overloading-of-methods" class="anchor" href="#how-to-do-overloading-of-methods"><span class="octicon octicon-link"></span></a>How to do overloading of methods</h4>
 
-<pre><code>N/A
+<pre><code>TBD
 </code></pre>
 
 <h4>
@@ -1396,6 +1418,29 @@ conn.Cookies.Add(authcookie);
 </code></pre>
 
 <h4>
+<a name="methods-with-parameter-of-type-imessage" class="anchor" href="#methods-with-parameter-of-type-imessage"><span class="octicon octicon-link"></span></a>Methods with parameter of type IMessage</h4>
+
+<p>If you for some reason want the actual IMessage sent from the server to the client you can specify IMessage as the type. You will then get the complete object that the client received!</p>
+
+<pre><code>conn.Controller("chat").On&lt;IMessage&gt;("chatmessage", o =&gt; Console.WriteLine("{0}, {1} {2}, {3},",o.Controller, o.Topic, o.Data, o.MessageType);
+</code></pre>
+
+<p>If you know the type contained in the Data part of the IMessage you can use Extract to get the value.</p>
+
+<pre><code>//example extracting the JSON into a specific type
+var chatModel = o.Extract&lt;ChatModel&gt;();
+</code></pre>
+
+<p><em>Note: Dynamic keyword will not exist in clients for Android/iOS or .NET 3.5 and earlier.</em></p>
+
+<p><strong>Server</strong></p>
+
+<p>The server code for the examples with the <code>ChatModel</code> can look like</p>
+
+<pre><code>this.InvokeToAll(new ChatModel{Name="Yogi", Text="I am a gummi bear"},"chatmessage");
+</code></pre>
+
+<h4>
 <a name="how-to-remove-a-handler" class="anchor" href="#how-to-remove-a-handler"><span class="octicon octicon-link"></span></a>How to remove a handler</h4>
 
 <p>When you want to dispose of a handler you have to remove it from the <code>Controller</code> where it was used.</p>
@@ -2305,7 +2350,7 @@ container.Start(configurationSetting: myCustomConfig);
 <hr><h2>
 <a name="fallback" class="anchor" href="#fallback"><span class="octicon octicon-link"></span></a>Fallback</h2>
 
-<p>To use the fallback in XSockets you have to have .NET 4.5 and WebAPI.</p>
+<p>To use the fallback in XSockets you have to have OWIN, .NET 4.5 and WebAPI.</p>
 
 <pre><code>TODO (will be included in next pre-release)
 </code></pre>
@@ -2820,16 +2865,16 @@ Supported platforms are:</p>
 <p>Dependencies: XSockets</p>
 
 <hr><h1>
-<a name="instructions-for-alpha-testers" class="anchor" href="#instructions-for-alpha-testers"><span class="octicon octicon-link"></span></a>Instructions for Alpha Testers</h1>
+<a name="instructions-for-beta-testers" class="anchor" href="#instructions-for-beta-testers"><span class="octicon octicon-link"></span></a>Instructions for Beta Testers</h1>
 
-<p>Thank you for signing up to be a tester of XSockets 4.0 alpha-1.</p>
+<p>Thank you for signing up to be a tester of XSockets 4.0 beta.</p>
 
 <p>We have been working very hard on this release and we tried to add/fix all the stuff the community have asked for or pointed out. </p>
 
 <h2>
 <a name="some-of-the-new-features-in-40" class="anchor" href="#some-of-the-new-features-in-40"><span class="octicon octicon-link"></span></a>Some of the new features in 4.0</h2>
 
-<p>You have probably been reading about most of them since you signed up for this alpha, but a unordered list with the biggest changes are:</p>
+<p>You have probably been reading about most of them since you signed up for this beta, but a unordered list with the biggest changes are:</p>
 
 <ul>
 <li>Support for RPC (as a complement or replacement for pub/sub)</li>
@@ -2843,7 +2888,7 @@ Supported platforms are:</p>
 <li>Hearbeat helpers for sending control-frames (pings/pongs)</li>
 <li>AuthenticationPipline, a new plugin that you can use to set the IPrincipal of the ConnectionContext</li>
 <li>Easier to create custom protocols for connecting InternetOfThings etc</li>
-<li>Enterprise: scaling, loadbalancing (not in alpha-1)</li>
+<li>Enterprise: scaling, loadbalancing</li>
 </ul><h2>
 <a name="setting-up-the-local-nuget-repository" class="anchor" href="#setting-up-the-local-nuget-repository"><span class="octicon octicon-link"></span></a>Setting up the local nuget repository</h2>
 
@@ -2862,7 +2907,7 @@ Supported platforms are:</p>
 <p>If you use the graphical tool for managing nuget packages you will need to change the drop down from ´stable only´ to <code>include pre-release</code></p>
 
 <h2>
-<a name="documentation-for-alpha-1" class="anchor" href="#documentation-for-alpha-1"><span class="octicon octicon-link"></span></a>Documentation for Alpha-1</h2>
+<a name="documentation-for-beta" class="anchor" href="#documentation-for-beta"><span class="octicon octicon-link"></span></a>Documentation for Beta</h2>
 
 <p>We are working on a new site and will add the docs in a better format as soon as we have it online (be patient).</p>
 
@@ -2872,7 +2917,7 @@ Supported platforms are:</p>
 <p>If you are a experienced XSockets user you will see many changes and new features. The documentation covers almost all the new things, and we are adding stuff to the docs rapidly.</p>
 
 <p>We appreciate all feedback yo can give (good and bad). So just try it and have fun! 
-And if you break it, we love it so that we can improve to next alpha or maybe beta!</p>
+And if you break it, we love it so that we can improve!</p>
 
 <p>Regards
 Team XSockets.NET</p>
