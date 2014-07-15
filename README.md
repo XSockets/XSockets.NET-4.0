@@ -1,9 +1,9 @@
-Rev. Alpha-2
+Rev. Beta-1
 
 #Also available on GitHub Pages
 [http://xsockets.github.io/XSockets.NET-4.0/][1]
 
-#Do you want to try the 4.0 alpha?
+#Do you want to try the 4.0 beta?
 Send an email to contact@xsockets.net and we will provide you with information on how to get started.
 
 #XSockets.NET 4 - Introduction
@@ -163,6 +163,25 @@ To create a `Controller`, create a class that derives from `XSockets.Core.XSocke
     }
 
 In this example, a connected client can call the ChatMessage method, and when it does, the data received is broadcasted (RPC) to all clients connected to the `Controller`.
+
+**Give the controller an Alias**
+
+If you want to specify a different name for clients to use, add the `XSocketsMetadata` attribute and set the `Alias` to the name you want for the controller. You might wanna do this is you have long and complex names for controller on the server.
+
+Server
+
+    [XSocketMetadata(PluginAlias = "Chat")]
+    public class MyToLongAndComplexClassNameForTheChat : XSocketController
+    
+And then you can connect using the `Alias` as shown below.
+    
+Client - JavaScript
+
+    var conn = new XSockets.WebSocket('ws://127.0.0.1:4502',['chat']);
+
+Client - C#
+
+    var conn = new XSocketsClient("ws://127.0.0.1:4502","http://localhost","chat");
 
 ####Controller object lifetime
 
@@ -353,7 +372,7 @@ Client - C#
 
 ####How to do overloading of methods
 
-    N/A
+    TBD
 
 ####How to handle binary data
 Lets say that we have a file `c:\temp\xfile.txt` with the text `This file was sent with XSockets.NET` and we want to send that file to the server.
@@ -1115,6 +1134,24 @@ The server code for the examples with the `ChatModel` can look like
 
     this.InvokeToAll(new ChatModel{Name="Yogi", Text="I am a gummi bear"},"chatmessage");
     
+####Methods with parameter of type IMessage
+If you for some reason want the actual IMessage sent from the server to the client you can specify IMessage as the type. You will then get the complete object that the client received!
+
+    conn.Controller("chat").On<IMessage>("chatmessage", o => Console.WriteLine("{0}, {1} {2}, {3},",o.Controller, o.Topic, o.Data, o.MessageType);
+    
+If you know the type contained in the Data part of the IMessage you can use Extract<T> to get the value.
+
+    //example extracting the JSON into a specific type
+    var chatModel = o.Extract<ChatModel>();
+    
+*Note: Dynamic keyword will not exist in clients for Android/iOS or .NET 3.5 and earlier.*
+
+**Server**
+
+The server code for the examples with the `ChatModel` can look like
+
+    this.InvokeToAll(new ChatModel{Name="Yogi", Text="I am a gummi bear"},"chatmessage");
+    
 ####How to remove a handler
 When you want to dispose of a handler you have to remove it from the `Controller` where it was used.
 
@@ -1823,7 +1860,7 @@ Now, Try connect to the Generic Controller using the following piece of JavaScri
 
 ----------
 ## Fallback
-To use the fallback in XSockets you have to have .NET 4.5 and WebAPI.
+To use the fallback in XSockets you have to have OWIN, .NET 4.5 and WebAPI.
 
     TODO (will be included in next pre-release)
     
@@ -2255,13 +2292,13 @@ Dependencies: XSockets
 
 ----------
 
-#Instructions for Alpha Testers
-Thank you for signing up to be a tester of XSockets 4.0 alpha-1.
+#Instructions for Beta Testers
+Thank you for signing up to be a tester of XSockets 4.0 beta.
 
 We have been working very hard on this release and we tried to add/fix all the stuff the community have asked for or pointed out. 
 
 ## Some of the new features in 4.0
-You have probably been reading about most of them since you signed up for this alpha, but a unordered list with the biggest changes are:
+You have probably been reading about most of them since you signed up for this beta, but a unordered list with the biggest changes are:
 
  - Support for RPC (as a complement or replacement for pub/sub)
  - Multiplexing over several controllers on one connection
@@ -2274,7 +2311,7 @@ You have probably been reading about most of them since you signed up for this a
  - Hearbeat helpers for sending control-frames (pings/pongs)
  - AuthenticationPipline, a new plugin that you can use to set the IPrincipal of the ConnectionContext
  - Easier to create custom protocols for connecting InternetOfThings etc
- - Enterprise: scaling, loadbalancing (not in alpha-1)
+ - Enterprise: scaling, loadbalancing
 
 ##Setting up the local nuget repository
  1. If you do not have a local nuget repository [follow this guide][13]
@@ -2288,14 +2325,14 @@ Example: `PM> Install-Package XSockets -IncludePrerelease`
 
 If you use the graphical tool for managing nuget packages you will need to change the drop down from ´stable only´ to `include pre-release`
 
-##Documentation for Alpha-1
+##Documentation for Beta
 We are working on a new site and will add the docs in a better format as soon as we have it online (be patient).
 
 ##Feedback
 If you are a experienced XSockets user you will see many changes and new features. The documentation covers almost all the new things, and we are adding stuff to the docs rapidly.
 
 We appreciate all feedback yo can give (good and bad). So just try it and have fun! 
-And if you break it, we love it so that we can improve to next alpha or maybe beta!
+And if you break it, we love it so that we can improve!
 
 Regards
 Team XSockets.NET
