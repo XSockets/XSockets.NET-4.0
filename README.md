@@ -940,7 +940,7 @@ When needed you can also send the error to the `ErrorInterceptors` if you have i
     catch(Exception ex)
     {
         this.HandleError(ex);
-        ErrorInterceptorsQueue.Push(new XSocketException(ex));
+        ErrorInterceptorsQueue.Push(ex);
     }
 
 ###How to create internal (long-running) Controllers
