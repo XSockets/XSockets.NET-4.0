@@ -1,4 +1,4 @@
-Rev. Beta-1
+Rev. Beta-2
 
 #Also available on GitHub Pages
 [http://xsockets.github.io/XSockets.NET-4.0/][1]
@@ -127,9 +127,9 @@ XSockets can be used from any client that has TCP/IP, and since XSockets.NET sup
 The XSockets.NET team has built a few client libraries to make life easier for our developers. All client libraries is using full-duplex/bi-directional communication.
 
     Language    Requirements
-    C#          .NET 2.0, 3.5, 4.0
-    iOS         .NET 4.0 (MonoTouch)
-    Android     .NET 4.0 (MonoDroid)
+    C#          .NET 3.5, 4.0+
+    iOS         .NET 4.0+ (MonoTouch)
+    Android     .NET 4.0+ (MonoDroid)
     NETMF       4.2, 4.3
     JavaScript  Browser with websockets (there is a fallback for IE 9 & IE 8)
 
@@ -1004,7 +1004,7 @@ You can get/set the IPrincipal by using
 ## C# Client API Guide
 The C# Client API has support for:
 
- - .NET 2.0, 3.5, 4.0+
+ - .NET 3.5, 4.0+
  - iOS (MonoTouch)
  - Android (MonoDroid)
  - .NET MicroFramework 4.2, 4.3
@@ -1200,12 +1200,42 @@ The Stock class used for return value
 
 **Client - calling a method that has a return value in a synchronous method**
 
-    var stocks = conn.Controller("stockticker").Invoke<IEnumerable<Stock>>("GetStocks").Result;
+    var stocks = conn.Controller("stockticker").Invoke<IEnumerable<Stock>>("GetStocks");
     foreach (Stock stock in stocks)
     {
         Console.WriteLine("Symbol: {0} price: {1}\n", stock.Symbol, stock.Price);
     }
+    
+If there is no respons for 2000 ms there will be a `TimeoutException` so you should wrap the synchronous call like:
 
+    try
+    {
+        var stocks = conn.Controller("stockticker").Invoke<IEnumerable<Stock>>("GetStocks");
+        foreach (Stock stock in stocks)
+        {
+            Console.WriteLine("Symbol: {0} price: {1}\n", stock.Symbol, stock.Price);
+        }
+    }
+    catch (AggregateException ae)
+    {
+        ae.Handle((x) =>
+        {
+            if (x is TimeoutException)
+            {
+                //The communication did not respond within given time frame
+                //Handle it...
+                return true;
+            }
+            //Another exception handle it... or return false to stop app
+            return false;
+        });
+    }
+    
+Of course you can set the default 2000 ms to be longer or shorter if needed. Just pass in your timeout as a parameter in the call like
+    
+    //Timeout will now be 5 seconds
+    var stocks = conn.Controller("stockticker").Invoke<IEnumerable<Stock>>("GetStocks",5000);
+    
 ###PUB/SUB
 ####How to define subscription methods on the client that the server can publish to
 
@@ -1875,9 +1905,20 @@ To use the fallback in XSockets you have to have OWIN, .NET 4.5 and WebAPI.
     TODO
     
 ### Cluster
+In the `Enterprise` version you can scaleout XSockets over `n` servers. By default XSockets offers scaleout over sockets, this means that there will be no bottle neck like in other solutions that scaleout over MSSQL etc.
+
+You can add several servers to the scaleout, this is done by requesting the `IXSocketsScaleOut` plugin from the `plugin framework` and then just add a server using the method `AddScaleOut`.
+
+Note that this will scale in one direction from this server to `ws://127.0.0.1:4503`. So to get scaling both ways you just add this servers location to the server on `4503`
+
+    Composable.GetExport<IXSocketsScaleOut>().AddScaleOut("ws://127.0.0.1", 4503);
+    
+#### Implementing Custom ScaleOut
+If you rather scaleout over SQL, Redis etc you can write a custom scaleout by implementing the ´IXSocketsScaleOut´ interface
 
     TODO
     
+### Loadbalacing
 ----------
 
 ##FAQ
