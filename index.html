@@ -4,9 +4,9 @@
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
@@ -31,7 +31,7 @@
         <hr>
 
         <section id="main_content">
-          <p>Rev. Beta-1</p>
+          <p>Rev. Beta-2</p>
 
 <h1>
 <a name="also-available-on-github-pages" class="anchor" href="#also-available-on-github-pages"><span class="octicon octicon-link"></span></a>Also available on GitHub Pages</h1>
@@ -199,9 +199,9 @@ namespace MyApplication
 <p>The XSockets.NET team has built a few client libraries to make life easier for our developers. All client libraries is using full-duplex/bi-directional communication.</p>
 
 <pre><code>Language    Requirements
-C#          .NET 2.0, 3.5, 4.0
-iOS         .NET 4.0 (MonoTouch)
-Android     .NET 4.0 (MonoDroid)
+C#          .NET 3.5, 4.0+
+iOS         .NET 4.0+ (MonoTouch)
+Android     .NET 4.0+ (MonoDroid)
 NETMF       4.2, 4.3
 JavaScript  Browser with websockets (there is a fallback for IE 9 &amp; IE 8)
 </code></pre>
@@ -1246,7 +1246,7 @@ public class MyLongrunningController : XSocketController
 <p>The C# Client API has support for:</p>
 
 <ul>
-<li>.NET 2.0, 3.5, 4.0+</li>
+<li>.NET 3.5, 4.0+</li>
 <li>iOS (MonoTouch)</li>
 <li>Android (MonoDroid)</li>
 <li>.NET MicroFramework 4.2, 4.3</li>
@@ -1498,11 +1498,43 @@ conn.Controller("chat").DisposeListener(listener);
 
 <p><strong>Client - calling a method that has a return value in a synchronous method</strong></p>
 
-<pre><code>var stocks = conn.Controller("stockticker").Invoke&lt;IEnumerable&lt;Stock&gt;&gt;("GetStocks").Result;
+<pre><code>var stocks = conn.Controller("stockticker").Invoke&lt;IEnumerable&lt;Stock&gt;&gt;("GetStocks");
 foreach (Stock stock in stocks)
 {
     Console.WriteLine("Symbol: {0} price: {1}\n", stock.Symbol, stock.Price);
 }
+</code></pre>
+
+<p>If there is no respons for 2000 ms there will be a <code>TimeoutException</code> so you should wrap the synchronous call like:</p>
+
+<pre><code>try
+{
+    var stocks = conn.Controller("stockticker").Invoke&lt;IEnumerable&lt;Stock&gt;&gt;("GetStocks");
+    foreach (Stock stock in stocks)
+    {
+        Console.WriteLine("Symbol: {0} price: {1}\n", stock.Symbol, stock.Price);
+    }
+}
+catch (AggregateException ae)
+{
+    ae.Handle((x) =&gt;
+    {
+        if (x is TimeoutException)
+        {
+            //The communication did not respond within given time frame
+            //Handle it...
+            return true;
+        }
+        //Another exception handle it... or return false to stop app
+        return false;
+    });
+}
+</code></pre>
+
+<p>Of course you can set the default 2000 ms to be longer or shorter if needed. Just pass in your timeout as a parameter in the call like</p>
+
+<pre><code>//Timeout will now be 5 seconds
+var stocks = conn.Controller("stockticker").Invoke&lt;IEnumerable&lt;Stock&gt;&gt;("GetStocks",5000);
 </code></pre>
 
 <h3>
@@ -2370,8 +2402,25 @@ container.Start(configurationSetting: myCustomConfig);
 <h3>
 <a name="cluster" class="anchor" href="#cluster"><span class="octicon octicon-link"></span></a>Cluster</h3>
 
+<p>In the <code>Enterprise</code> version you can scaleout XSockets over <code>n</code> servers. By default XSockets offers scaleout over sockets, this means that there will be no bottle neck like in other solutions that scaleout over MSSQL etc.</p>
+
+<p>You can add several servers to the scaleout, this is done by requesting the <code>IXSocketsScaleOut</code> plugin from the <code>plugin framework</code> and then just add a server using the method <code>AddScaleOut</code>.</p>
+
+<p>Note that this will scale in one direction from this server to <code>ws://127.0.0.1:4503</code>. So to get scaling both ways you just add this servers location to the server on <code>4503</code></p>
+
+<pre><code>Composable.GetExport&lt;IXSocketsScaleOut&gt;().AddScaleOut("ws://127.0.0.1", 4503);
+</code></pre>
+
+<h4>
+<a name="implementing-custom-scaleout" class="anchor" href="#implementing-custom-scaleout"><span class="octicon octicon-link"></span></a>Implementing Custom ScaleOut</h4>
+
+<p>If you rather scaleout over SQL, Redis etc you can write a custom scaleout by implementing the ´IXSocketsScaleOut´ interface</p>
+
 <pre><code>TODO
 </code></pre>
+
+<h3>
+<a name="loadbalacing" class="anchor" href="#loadbalacing"><span class="octicon octicon-link"></span></a>Loadbalacing</h3>
 
 <hr><h2>
 <a name="faq" class="anchor" href="#faq"><span class="octicon octicon-link"></span></a>FAQ</h2>
