@@ -89,12 +89,42 @@ Inside of the Main method start the server with the code below.
         Console.ReadLine();
     }
 
-####Install into OWIN
+####Install into OWIN (self hosted)
+**Note: This requires .NET 4.5+**
+Open up the Package Manager Console and install the server
+
+`PM> Install-Package Microsoft.Owin.SelfHost`
+`PM> Install-Package XSockets.Owin.Host`
+
+#####How to register XSockets Middleware
+UseXSockets is an extension method for the OwinExtensions class.
+
+    public class Startup
+    {
+        public void Configuration(IAppBuilder app)
+        {
+            app.UseXSockets(true);
+        }
+    }
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            var url = "http://localhost:9090";
+            WebApp.Start<Startup>(url);
+            Console.WriteLine("Listening at " + url);
+            Console.ReadLine();
+        }
+    }
+
+####Install into OWIN (IIS)
+**Note: This requires .NET 4.5+**
 Open up the Package Manager Console and install the server
 
 `PM> Install-Package XSockets.Owin.Host`
 
-####How to register XSockets Middleware
+#####How to register XSockets Middleware
 UseXSockets is an extension method for the OwinExtensions class.
 
     using Microsoft.Owin;
@@ -1800,6 +1830,7 @@ To get WSS you have to set the endpoint to be ´wss´ instead of ws, and you wil
 ----------
 ##Hosting
 ###OWIN
+**Note: Requires .NET 4.5+**
 To host XSockets in OWIN is easy and also let you access the HttpContext and the authenticated user (if any).
 
 **Install**
