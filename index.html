@@ -153,14 +153,49 @@ using (var container = Composable.GetExport&lt;IXSocketServerContainer&gt;())
 </code></pre>
 
 <h4>
-<a name="install-into-owin" class="anchor" href="#install-into-owin"><span class="octicon octicon-link"></span></a>Install into OWIN</h4>
+<a name="install-into-owin-self-hosted" class="anchor" href="#install-into-owin-self-hosted"><span class="octicon octicon-link"></span></a>Install into OWIN (self hosted)</h4>
 
-<p>Open up the Package Manager Console and install the server</p>
+<p><strong>Note: This requires .NET 4.5+</strong>
+Open up the Package Manager Console and install the server</p>
+
+<p><code>PM&gt; Install-Package Microsoft.Owin.SelfHost</code>
+<code>PM&gt; Install-Package XSockets.Owin.Host</code></p>
+
+<h5>
+<a name="how-to-register-xsockets-middleware" class="anchor" href="#how-to-register-xsockets-middleware"><span class="octicon octicon-link"></span></a>How to register XSockets Middleware</h5>
+
+<p>UseXSockets is an extension method for the OwinExtensions class.</p>
+
+<pre><code>public class Startup
+{
+    public void Configuration(IAppBuilder app)
+    {
+        app.UseXSockets(true);
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        var url = "http://localhost:9090";
+        WebApp.Start&lt;Startup&gt;(url);
+        Console.WriteLine("Listening at " + url);
+        Console.ReadLine();
+    }
+}
+</code></pre>
+
+<h4>
+<a name="install-into-owin-iis" class="anchor" href="#install-into-owin-iis"><span class="octicon octicon-link"></span></a>Install into OWIN (IIS)</h4>
+
+<p><strong>Note: This requires .NET 4.5+</strong>
+Open up the Package Manager Console and install the server</p>
 
 <p><code>PM&gt; Install-Package XSockets.Owin.Host</code></p>
 
-<h4>
-<a name="how-to-register-xsockets-middleware" class="anchor" href="#how-to-register-xsockets-middleware"><span class="octicon octicon-link"></span></a>How to register XSockets Middleware</h4>
+<h5>
+<a name="how-to-register-xsockets-middleware-1" class="anchor" href="#how-to-register-xsockets-middleware-1"><span class="octicon octicon-link"></span></a>How to register XSockets Middleware</h5>
 
 <p>UseXSockets is an extension method for the OwinExtensions class.</p>
 
@@ -2269,7 +2304,8 @@ public class ChuckNorrisConfig : ConfigurationSetting
 <h3>
 <a name="owin" class="anchor" href="#owin"><span class="octicon octicon-link"></span></a>OWIN</h3>
 
-<p>To host XSockets in OWIN is easy and also let you access the HttpContext and the authenticated user (if any).</p>
+<p><strong>Note: Requires .NET 4.5+</strong>
+To host XSockets in OWIN is easy and also let you access the HttpContext and the authenticated user (if any).</p>
 
 <p><strong>Install</strong>
 <code>PM&gt; Install-Package XSockets.Owin.Host</code></p>
