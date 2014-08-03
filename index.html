@@ -1284,7 +1284,7 @@ public class MyLongrunningController : XSocketController
 <li>.NET 3.5, 4.0+</li>
 <li>iOS (MonoTouch)</li>
 <li>Android (MonoDroid)</li>
-<li>.NET MicroFramework 4.2, 4.3</li>
+<li>.NET MicroFramework 4.2, 4.3 (see specific API for NETMF)</li>
 </ul><h3>
 <a name="client-setup" class="anchor" href="#client-setup"><span class="octicon octicon-link"></span></a>Client Setup</h3>
 
@@ -2144,6 +2144,174 @@ public void ChatMessage(ChatModel chatModel)
 
 <pre><code>conn.controller('chat').storageClear();
 </code></pre>
+
+<hr><h2>
+<a name="net-microframework-client-api-guide" class="anchor" href="#net-microframework-client-api-guide"><span class="octicon octicon-link"></span></a>.NET MicroFramework Client API Guide</h2>
+
+<p>The .NET MicroFramework has support for .NET MicroFramework 4.2 and 4.3</p>
+
+<h3>
+<a name="client-setup-2" class="anchor" href="#client-setup-2"><span class="octicon octicon-link"></span></a>Client Setup</h3>
+
+<p>To get the client just get the latest package from <a href="http://nuget.org/packages/xsockets.client">nuget.org/packages/xsockets.client</a></p>
+
+<p>The C# clients ALWAYS talk full-duplex/bi-directional communication, and just like the XSockets server this behavior has nothing to do with what OS or WebServer you are running.</p>
+
+<h3>
+<a name="how-to-establish-a-connection-2" class="anchor" href="#how-to-establish-a-connection-2"><span class="octicon octicon-link"></span></a>How to establish a connection</h3>
+
+<p>Just like in the JavaScript client you can multiplex over several <code>Controller</code> on one connection. To get a connections just create an instance of the XSocketClient.</p>
+
+<pre><code>var conn = new XSocketClient("192.168.0.106", 4502);
+conn.OnOpen += (sender, args) =&gt;
+        {
+            //Connection open
+        };
+conn.Open();
+</code></pre>
+
+<ul>
+<li>The first parameter is the IP of the server</li>
+<li>The second parameter is the port of the server</li>
+</ul><p>Do note that the call to <code>Open</code> is asynchron and you will have to wait for the OnOpen event to fire before you communicate over the connection.</p>
+
+<h3>
+<a name="how-to-send-messages" class="anchor" href="#how-to-send-messages"><span class="octicon octicon-link"></span></a>How to send messages</h3>
+
+<p>Sending data is easy, just use the <code>Publish</code> method and pass in the <code>topic</code>, the <code>object</code> and the name of the <code>controller</code></p>
+
+<pre><code>conn.Publish("chatmessage","Hello from NetDuino", "Chat");
+</code></pre>
+
+<p>The code sample above would invoke the method "Message" on the controller "Chat" with the object/data "Hello from NetDuino".</p>
+
+<h3>
+<a name="how-to-receive-messages" class="anchor" href="#how-to-receive-messages"><span class="octicon octicon-link"></span></a>How to receive messages</h3>
+
+<p>When ever data is received on the NETMF client the OnMessage event will be invoked with an <code>IMessage</code> as parameter.</p>
+
+<p>The client will receive data if there is a <code>subscription</code> for the specific topic, or if the server is using RPC to target clients based on <code>state</code>. </p>
+
+<pre><code>public static void Main()
+{
+    var conn = new XSocketClient("192.168.0.106", 4502);
+    conn.OnOpen += (sender, args) =&gt;
+    {
+            //Connection open
+    };
+    conn.OnMessage += ConnOnMessage;
+    conn.Open();
+    Thread.Sleep(Timeout.Infinite);
+}
+
+private static void ConnOnMessage(object sender, IMessage message)
+{            
+    //TODO: Add logic to handle the IMessage arrived
+}
+</code></pre>
+
+<h3>
+<a name="how-to-parse-the-message-into-a-strongly-typed-object" class="anchor" href="#how-to-parse-the-message-into-a-strongly-typed-object"><span class="octicon octicon-link"></span></a>How to parse the message into a strongly typed object</h3>
+
+<p>When ever data is received on the NETMF client the OnMessage event will be invoked with an <code>IMessage</code> as parameter. 
+The property "D" on the message will contain the JSON representation of the data being sent. 
+"C" will contain the controller name and "T" will be the topic...
+So if we want to have some logic and parse the JSON into something useful you can do like this</p>
+
+<pre><code>private static void ConnOnMessage(object sender, IMessage message)
+{            
+    switch (message.C)
+    {
+        case "chat":
+            switch (message.T)
+            {
+                case "chatmessage":
+                    //A chatmessage was received form Chat controller, convert JSON into the ChatMessage object
+                    var chatmessage = (ChatMessage)conn.Parse(message.D, typeof (ChatMessage));
+                    //Do something clever :)
+                    Debug.Print(chatmessage.Text);
+                    break;
+            }
+            break;
+        default:
+            //Unknown controller
+            break;
+    }
+}
+</code></pre>
+
+<h3>
+<a name="pubsub-3" class="anchor" href="#pubsub-3"><span class="octicon octicon-link"></span></a>PUB/SUB</h3>
+
+<h4>
+<a name="how-to-subscribe-to-a-topic" class="anchor" href="#how-to-subscribe-to-a-topic"><span class="octicon octicon-link"></span></a>How to subscribe to a topic</h4>
+
+<p>Just pass in the <code>topic</code> and the <code>controller</code> to notify the server about the subscription.
+Do note that the client will receive data even if there is no subscription if the server-side logic uses RPC and he client is matching the requirements to where you send data.</p>
+
+<pre><code>conn.Subscribe("chatmessage","chat");
+</code></pre>
+
+<h4>
+<a name="how-to-remove-a-subscription-1" class="anchor" href="#how-to-remove-a-subscription-1"><span class="octicon octicon-link"></span></a>How to remove a subscription</h4>
+
+<p>When you no longer want to subscribe to a <code>topic</code> you just use the <code>unsubscribe</code> method to tell the server to remove the subscription.</p>
+
+<pre><code>conn.Unsubscribe("chatmessage", "chat");
+</code></pre>
+
+<h4>
+<a name="how-to-publish-to-server-methods-from-the-client-2" class="anchor" href="#how-to-publish-to-server-methods-from-the-client-2"><span class="octicon octicon-link"></span></a>How to publish to server methods from the client</h4>
+
+<p><strong>Client</strong></p>
+
+<pre><code>conn.Publish("chatmessage",new ChatModel{Text= "Hello people!","chat");
+</code></pre>
+
+<p><strong>Server</strong></p>
+
+<pre><code>//The server migth publish the message back to all clients subscribing
+public void ChatMessage(ChatModel chatModel)
+{
+    this.PublishToAll(chatModel, "chatmessage");
+}
+</code></pre>
+
+<h3>
+<a name="how-to-set-properties-on-the-server-from-the-client-1" class="anchor" href="#how-to-set-properties-on-the-server-from-the-client-1"><span class="octicon octicon-link"></span></a>How to set properties on the server from the client</h3>
+
+<p>Since we have state on all controllers in the connection and can take advantage of that we can store information server side and not send trivial things like a user-name each time we want to communicate.</p>
+
+<p><strong>Server</strong></p>
+
+<p>A simple model for a chat</p>
+
+<pre><code>public class ChatModel
+{
+    public string UserName {get;set;}
+    public string Text {get;set;}
+}
+</code></pre>
+
+<p>A controller where we use state to only send in text since the user-name is known.</p>
+
+<pre><code>public class Chat : XSocketController
+{
+    public string UserName {get;set;}
+    public void ChatMessage(ChatModel message)
+    {
+        message.UserName = this.UserName;
+        this.InvokeToAll(message,"chatmessage");
+    }
+}
+</code></pre>
+
+<p><strong>Client</strong></p>
+
+<pre><code>conn.SetProperty("username","David");
+</code></pre>
+
+<p>Note: If the property on the controller is an <code>Enum</code> use the <code>SetEnum</code> method instead</p>
 
 <hr><h2>
 <a name="logging" class="anchor" href="#logging"><span class="octicon octicon-link"></span></a>Logging</h2>
