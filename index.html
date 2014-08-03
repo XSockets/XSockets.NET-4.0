@@ -2705,6 +2705,18 @@ Meeep.. Rabbit eating carrot
 </code></pre>
 
 <h3>
+<a name="only-load-specific-assemblies" class="anchor" href="#only-load-specific-assemblies"><span class="octicon octicon-link"></span></a>Only load specific assemblies</h3>
+
+<p>If you for some reason do not want to load all assemblies/executables when the plugin framework starts you can tell the framework what to load.</p>
+
+<p>The sample below will  load only assemblies starting with XSockets.* and also a specific assembly named "SomeAssembly.dll"</p>
+
+<pre><code>Composable.ClearPluginFilters();
+Composable.AddPluginFilter("XSockets.*.dll");
+Composable.AddPluginFilter("SomeAssembly.dll");
+</code></pre>
+
+<h3>
 <a name="handling-exceptions" class="anchor" href="#handling-exceptions"><span class="octicon octicon-link"></span></a>Handling Exceptions</h3>
 
 <p>You can use the <code>Composable.AddErrorAction</code> to get information about any exceptions taht occurs inside of the plugin framework. If you add several <code>actions</code> they will all be called when/if an exception is thrown.</p>
