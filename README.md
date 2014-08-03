@@ -1037,7 +1037,7 @@ The C# Client API has support for:
  - .NET 3.5, 4.0+
  - iOS (MonoTouch)
  - Android (MonoDroid)
- - .NET MicroFramework 4.2, 4.3
+ - .NET MicroFramework 4.2, 4.3 (see specific API for NETMF)
 
 ###Client Setup
 To get the client just get the latest package from [nuget.org/packages/xsockets.client][4]
@@ -1697,6 +1697,142 @@ Set the generic type that you want to store (in this case string)
     
     conn.controller('chat').storageClear();
     
+----------
+## .NET MicroFramework Client API Guide
+The .NET MicroFramework has support for .NET MicroFramework 4.2 and 4.3
+
+###Client Setup
+To get the client just get the latest package from [nuget.org/packages/xsockets.client][4]
+
+The C# clients ALWAYS talk full-duplex/bi-directional communication, and just like the XSockets server this behavior has nothing to do with what OS or WebServer you are running.
+
+###How to establish a connection
+Just like in the JavaScript client you can multiplex over several `Controller` on one connection. To get a connections just create an instance of the XSocketClient.
+
+    var conn = new XSocketClient("192.168.0.106", 4502);
+    conn.OnOpen += (sender, args) =>
+            {
+                //Connection open
+            };
+    conn.Open();
+    
+- The first parameter is the IP of the server
+- The second parameter is the port of the server
+
+Do note that the call to `Open` is asynchron and you will have to wait for the OnOpen event to fire before you communicate over the connection.
+
+###How to send messages
+Sending data is easy, just use the `Publish` method and pass in the `topic`, the `object` and the name of the `controller`
+
+    conn.Publish("chatmessage","Hello from NetDuino", "Chat");
+    
+The code sample above would invoke the method "Message" on the controller "Chat" with the object/data "Hello from NetDuino".
+
+###How to receive messages
+When ever data is received on the NETMF client the OnMessage event will be invoked with an `IMessage` as parameter.
+
+The client will receive data if there is a `subscription` for the specific topic, or if the server is using RPC to target clients based on `state`. 
+
+    public static void Main()
+    {
+        var conn = new XSocketClient("192.168.0.106", 4502);
+        conn.OnOpen += (sender, args) =>
+        {
+                //Connection open
+        };
+        conn.OnMessage += ConnOnMessage;
+        conn.Open();
+        Thread.Sleep(Timeout.Infinite);
+    }
+
+    private static void ConnOnMessage(object sender, IMessage message)
+    {            
+        //TODO: Add logic to handle the IMessage arrived
+    }
+
+###How to parse the message into a strongly typed object
+When ever data is received on the NETMF client the OnMessage event will be invoked with an `IMessage` as parameter. 
+The property "D" on the message will contain the JSON representation of the data being sent. 
+"C" will contain the controller name and "T" will be the topic...
+So if we want to have some logic and parse the JSON into something useful you can do like this
+
+    private static void ConnOnMessage(object sender, IMessage message)
+    {            
+        switch (message.C)
+        {
+            case "chat":
+                switch (message.T)
+                {
+                    case "chatmessage":
+                        //A chatmessage was received form Chat controller, convert JSON into the ChatMessage object
+                        var chatmessage = (ChatMessage)conn.Parse(message.D, typeof (ChatMessage));
+                        //Do something clever :)
+                        Debug.Print(chatmessage.Text);
+                        break;
+                }
+                break;
+            default:
+                //Unknown controller
+                break;
+        }
+    }
+###PUB/SUB
+####How to subscribe to a topic
+Just pass in the `topic` and the `controller` to notify the server about the subscription.
+Do note that the client will receive data even if there is no subscription if the server-side logic uses RPC and he client is matching the requirements to where you send data.
+
+    conn.Subscribe("chatmessage","chat");
+        
+####How to remove a subscription
+When you no longer want to subscribe to a `topic` you just use the `unsubscribe` method to tell the server to remove the subscription.
+
+    conn.Unsubscribe("chatmessage", "chat");
+
+####How to publish to server methods from the client
+
+**Client**
+
+    conn.Publish("chatmessage",new ChatModel{Text= "Hello people!","chat");
+
+**Server**
+
+    //The server migth publish the message back to all clients subscribing
+    public void ChatMessage(ChatModel chatModel)
+    {
+        this.PublishToAll(chatModel, "chatmessage");
+    }
+    
+###How to set properties on the server from the client
+Since we have state on all controllers in the connection and can take advantage of that we can store information server side and not send trivial things like a user-name each time we want to communicate.
+
+**Server**
+
+A simple model for a chat
+
+    public class ChatModel
+    {
+        public string UserName {get;set;}
+        public string Text {get;set;}
+    }
+
+A controller where we use state to only send in text since the user-name is known.
+
+    public class Chat : XSocketController
+    {
+        public string UserName {get;set;}
+        public void ChatMessage(ChatModel message)
+        {
+            message.UserName = this.UserName;
+            this.InvokeToAll(message,"chatmessage");
+        }
+    }
+
+**Client**
+
+    conn.SetProperty("username","David");
+
+Note: If the property on the controller is an `Enum` use the `SetEnum` method instead
+
 ----------
 ##Logging
 
