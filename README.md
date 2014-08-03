@@ -3,8 +3,32 @@ Rev. Beta-2
 #Also available on GitHub Pages
 [http://xsockets.github.io/XSockets.NET-4.0/][1]
 
-#Do you want to try the 4.0 beta?
-Send an email to contact@xsockets.net and we will provide you with information on how to get started.
+## Some of the new features in 4.0
+You have probably been reading about most of them since you signed up for this beta, but a unordered list with the biggest changes are:
+
+ - Support for RPC (as a complement or replacement for pub/sub)
+ - Multiplexing over several controllers on one connection
+ - Owin Support
+ - Clients for iOS (MonoTouch), Android (MonoDroid), C# that all use full-duplex/bi-directional communication
+ - Synchron communication so that you can wait for the result from a controller method
+ - IMessage replace ITextArgs and IBinaryArgs, much easier and better binary support
+ - Binary support to any method in a controller (just like any object)
+ - You can pass meta data with binary data to get information about files etc being sent
+ - Hearbeat helpers for sending control-frames (pings/pongs)
+ - AuthenticationPipline, a new plugin that you can use to set the IPrincipal of the ConnectionContext
+ - Easier to create custom protocols for connecting InternetOfThings etc
+ - Enterprise: scaling, loadbalancing
+
+##Feedback
+If you are a experienced XSockets user you will see many changes and new features. The documentation covers almost all the new things, and we are adding stuff to the docs rapidly.
+
+We appreciate all feedback yo can give (good and bad). So just try it and have fun! 
+And if you break it, we love it so that we can improve!
+
+Regards
+Team XSockets.NET
+
+---------
 
 #XSockets.NET 4 - Introduction
 
@@ -1776,6 +1800,31 @@ So if we want to have some logic and parse the JSON into something useful you ca
                 break;
         }
     }
+
+###How to handle connection lifetime events
+The events on connection level provide information about the socket being opened/closed.
+
+#### OnOpen
+
+    conn.OnOpen += (sender, args) =>
+    {
+        //Connection open
+    };
+                
+#### OnClose
+    
+    conn.OnClose += (sender, args) =>
+    {
+        //Connection closed
+    };
+
+###How to handle errors
+
+    conn.OnError += (sender, args) =>
+        {                
+            //Error
+        };
+    
 ###PUB/SUB
 ####How to subscribe to a topic
 Just pass in the `topic` and the `controller` to notify the server about the subscription.
@@ -2509,54 +2558,6 @@ A sample project that will provide a sample of a multi-video chat within the bro
 Dependencies: XSockets
 
 ----------
-
-#Instructions for Beta Testers
-Thank you for signing up to be a tester of XSockets 4.0 beta.
-
-We have been working very hard on this release and we tried to add/fix all the stuff the community have asked for or pointed out. 
-
-## Some of the new features in 4.0
-You have probably been reading about most of them since you signed up for this beta, but a unordered list with the biggest changes are:
-
- - Support for RPC (as a complement or replacement for pub/sub)
- - Multiplexing over several controllers on one connection
- - Owin Support
- - Clients for iOS (MonoTouch), Android (MonoDroid), C# that all use full-duplex/bi-directional communication
- - Synchron communication so that you can wait for the result from a controller method
- - IMessage replace ITextArgs and IBinaryArgs, much easier and better binary support
- - Binary support to any method in a controller (just like any object)
- - You can pass meta data with binary data to get information about files etc being sent
- - Hearbeat helpers for sending control-frames (pings/pongs)
- - AuthenticationPipline, a new plugin that you can use to set the IPrincipal of the ConnectionContext
- - Easier to create custom protocols for connecting InternetOfThings etc
- - Enterprise: scaling, loadbalancing
-
-##Setting up the local nuget repository
- 1. If you do not have a local nuget repository [follow this guide][13]
- 2. Unzip the file attached in your email
- 3. Copy all folders into the root of your local nuget repository created in step 1
-
-##Using the XSockets pre-release packages
-By default pre-release packages are hidden so you will not get any help from the package manager console. You will have to spell the names correctly and also add `-IncludePrerelease`
-
-Example: `PM> Install-Package XSockets -IncludePrerelease`
-
-If you use the graphical tool for managing nuget packages you will need to change the drop down from ´stable only´ to `include pre-release`
-
-##Documentation for Beta
-We are working on a new site and will add the docs in a better format as soon as we have it online (be patient).
-
-##Feedback
-If you are a experienced XSockets user you will see many changes and new features. The documentation covers almost all the new things, and we are adding stuff to the docs rapidly.
-
-We appreciate all feedback yo can give (good and bad). So just try it and have fun! 
-And if you break it, we love it so that we can improve!
-
-Regards
-Team XSockets.NET
-
-----------
-
 
   [1]: http://xsockets.github.io/XSockets.NET-4.0/
   [2]: http://xsockets.net/$2/file/xsocketscommunication-1.png
