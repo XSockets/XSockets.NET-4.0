@@ -2166,6 +2166,16 @@ The output from the program would be...
     Grr.. Lion eating meat
     Meeep.. Rabbit eating carrot
 
+###Only load specific assemblies
+
+If you for some reason do not want to load all assemblies/executables when the plugin framework starts you can tell the framework what to load.
+
+The sample below will  load only assemblies starting with XSockets.* and also a specific assembly named "SomeAssembly.dll"
+
+    Composable.ClearPluginFilters();
+    Composable.AddPluginFilter("XSockets.*.dll");
+    Composable.AddPluginFilter("SomeAssembly.dll");
+
 ### Handling Exceptions
 You can use the `Composable.AddErrorAction` to get information about any exceptions taht occurs inside of the plugin framework. If you add several `actions` they will all be called when/if an exception is thrown.
 
