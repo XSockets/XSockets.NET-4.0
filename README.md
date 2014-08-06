@@ -19,21 +19,13 @@ You have probably been reading about most of them since you signed up for this b
  - Easier to create custom protocols for connecting InternetOfThings etc
  - Enterprise: scaling, loadbalancing
 
-##Feedback
-If you are a experienced XSockets user you will see many changes and new features. The documentation covers almost all the new things, and we are adding stuff to the docs rapidly.
-
-We appreciate all feedback yo can give (good and bad). So just try it and have fun! 
-And if you break it, we love it so that we can improve!
-
-Regards
-Team XSockets.NET
-
 ---------
 
 #XSockets.NET 4 - Introduction
-TBD
 
-## What is it?
+    TODO
+
+##What is it?
 XSockets.NET is a real-time messaging system that allows communication between any device that has TCP/IP. The server can be hosted anywhere (.NET/Mono) and the clients cover every major browser + C#, VB.NET, Android, iOS, NETMF. And it is very easy to connect anything else that has a TCP/IP stack.
 
 ***In short terms: RealTime, InternetOfThings and WebRTC in a single framework!***
@@ -44,8 +36,8 @@ XSockets.NET is a real-time messaging system that allows communication between a
 
 ----------
 
-## Getting started with real-time communication
-### 1. Start a server
+##Getting started with real-time communication
+###1. Start a server
 
     using (var container = Composable.GetExport<IXSocketServerContainer>())
     {
@@ -53,7 +45,7 @@ XSockets.NET is a real-time messaging system that allows communication between a
         Console.ReadLine();
     }
     
-### 2. Create a client and listen for "MyMessage"
+###2. Create a client and listen for "MyMessage"
 
 JavaScript
 
@@ -2134,7 +2126,10 @@ If you rather scaleout over SQL, Redis etc you can write a custom scaleout by im
 
     TODO
     
-### Loadbalacing
+###Loadbalacing
+
+    TODO
+
 ----------
 
 ##FAQ
