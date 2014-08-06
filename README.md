@@ -1,9 +1,4 @@
-Rev. Beta-2
-
-#Also available on GitHub Pages
-[http://xsockets.github.io/XSockets.NET-4.0/][1]
-
-## Some of the new features in 4.0
+# Some of the new features in 4.0
 You have probably been reading about most of them since you signed up for this beta, but a unordered list with the biggest changes are:
 
  - Support for RPC (as a complement or replacement for pub/sub)
