@@ -9,7 +9,7 @@ You have probably been reading about most of them since you signed up for this b
  - Support for RPC (as a complement or replacement for pub/sub)
  - Multiplexing over several controllers on one connection
  - Owin Support
- - Clients for iOS (MonoTouch), Android (MonoDroid), C# that all use full-duplex/bi-directional communication
+ - Clients for iOS (MonoTouch), Android (MonoDroid) and NETMF that all use full-duplex/bi-directional communication
  - Synchron communication so that you can wait for the result from a controller method
  - IMessage replace ITextArgs and IBinaryArgs, much easier and better binary support
  - Binary support to any method in a controller (just like any object)
@@ -31,6 +31,7 @@ Team XSockets.NET
 ---------
 
 #XSockets.NET 4 - Introduction
+TBD
 
 ## What is it?
 XSockets.NET is a real-time messaging system that allows communication between any device that has TCP/IP. The server can be hosted anywhere (.NET/Mono) and the clients cover every major browser + C#, VB.NET, Android, iOS, NETMF. And it is very easy to connect anything else that has a TCP/IP stack.
@@ -80,8 +81,7 @@ C#
 ### 4. What's next?
 #### JavaScript/C# Client API
 Learn to...
- - Use Pub/Sub or RPC
- - Use WebRTC for Video/Audio communication without plugins (JavaScript only)
+ - Use Pub/Sub, RPC or both!
 
 #### Server
 Create...
@@ -203,7 +203,7 @@ You may also notice that XSockets enables not only cross-protocol communication,
 ----------
 
 #XSockets.NET 4 - Documentation
-
+TBD
 ##Server API Guide
 ###How to create and use Controller classes
 To create a `Controller`, create a class that derives from `XSockets.Core.XSocket.XSocketController`. The following example shows a simple `Controller` class for a chat application.
