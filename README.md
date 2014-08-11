@@ -68,10 +68,12 @@ C#
 ### 4. What's next?
 #### JavaScript/C# Client API
 Learn to...
+
  - Use Pub/Sub, RPC or both!
 
 #### Server
 Create...
+
  - Powerful server-side controllers
  - Custom pipeline
  - Interceptors (for messages, connections and errors)
@@ -117,7 +119,6 @@ UseXSockets is an extension method for the OwinExtensions class.
             app.UseXSockets(true);
         }
     }
-
     class Program
     {
         static void Main(string[] args)
@@ -141,7 +142,6 @@ UseXSockets is an extension method for the OwinExtensions class.
     using Microsoft.Owin;
     using Owin;
     using XSockets.Owin.Host;
-
     [assembly: OwinStartupAttribute(typeof(MyApplication.Startup))]
     namespace MyApplication
     {
@@ -181,7 +181,7 @@ The architecture for XSockets.NET is simple yet powerful. Each client connects t
 Different clients have different capabilities, browsers for example have the RFC6455 (websockets) protocol implemented, but other things devices might talk a protocol that you have created. Since XSockets allows “cross-protocol communication” all connected clients can communicate with each other very easily.
 
 ####Basic architecture
-![XSockets basic architecture][2]
+http://xsockets.net/$2/file/xsocketscommunication-1.png
 
 The red clients are clients libraries written by XSockets.NET and the blue clients are examples of what we have easily connected with custom protocols.
 
@@ -886,7 +886,7 @@ When you have custom authentication you can get the `FormsAuthenticationTicket` 
 **Note: If you do not pass in a cookiename .ASPXAUTH will be used.**
 
 **Important: If you have separate project you will have to use the same origin to be able to get cookies and also use machine-key in the config to be able to get the AuthCookie.**
-***See*** [machinekey compability mode][3] ***if you are using different framework versions in the projects.***
+***See*** http://msdn.microsoft.com/en-us/library/system.web.configuration.machinekeysection.compatibilitymode%28v=vs.110%29.aspx ***if you are using different framework versions in the projects.***
 
 #### Write a custom AuthenticationPipeline
 When the socket is connected and the handshake is completed the `AuthenticationPipeline` will be called. By default the pipeline will look for a FormsAuthenticationTicket, but you can override this pipline by just implementing a interface `XSockets.Core.Common.Socket.IXSocketAuthenticationPipeline`
@@ -1051,7 +1051,7 @@ The C# Client API has support for:
  - .NET MicroFramework 4.2, 4.3 (see specific API for NETMF)
 
 ###Client Setup
-To get the client just get the latest package from [nuget.org/packages/xsockets.client][4]
+To get the client just get the latest package from http://nuget.org/packages/xsockets.client
 
 The C# clients ALWAYS talk full-duplex/bi-directional communication, and just like the XSockets server this behavior has nothing to do with what OS or WebServer you are running.
 
@@ -1445,7 +1445,7 @@ Since the storage is per client you will only get notifications for changes in t
 
 ----------
 ##JavaScript Client API  Guide
-To get the client just get the latest package from [nuget.org/packages/xsockets.jsapi][5]
+To get the client just get the latest package from http://nuget.org/packages/xsockets.jsapi
 
 The JavaScript API supports RPC, PUB/SUB and WebRTC.
 
@@ -1713,7 +1713,7 @@ Set the generic type that you want to store (in this case string)
 The .NET MicroFramework has support for .NET MicroFramework 4.2 and 4.3
 
 ###Client Setup
-To get the client just get the latest package from [nuget.org/packages/xsockets.client][4]
+To get the client just get the latest package from http://nuget.org/packages/xsockets.client
 
 The C# clients ALWAYS talk full-duplex/bi-directional communication, and just like the XSockets server this behavior has nothing to do with what OS or WebServer you are running.
 
@@ -1872,16 +1872,15 @@ Note: If the property on the controller is an `Enum` use the `SetEnum` method in
 ----------
 ##Logging
 
-As of 4.0 XSockets will use [SeriLog.NET][6] as the default logger. Since it is a plugin you can of course replace SeriLog with something else if you want to.
+As of 4.0 XSockets will use http://serilog.net as the default logger. Since it is a plugin you can of course replace SeriLog with something else if you want to.
 
 By default the logger will log everything in `Debug` and only `Fatal` level in `Release`.
 
-It is very easy to set your custom SeriLogger/Configuration/Sink. Just implement the `IDefaultLogger` interface and set the configuraiton of choice. For more information about SerilLog see [SeriLog.NET][7]
+It is very easy to set your custom SeriLogger/Configuration/Sink. Just implement the `IDefaultLogger` interface and set the configuraiton of choice. For more information about SerilLog see http://serilog.net
 
     //
     // Sample below will write to file and console
     //
-    
     [Export(typeof(IDefaultLogger))]
     public class MyLogger : IDefaultLogger
     {       
@@ -1915,10 +1914,8 @@ Just create the configurations needed and pass them to StartServers
 
     //List of IConfigurationSettings
     var myCustomConfigs = new List<IConfigurationSetting>();
-
     //Add one configuration
     myCustomConfigs.Add(new ConfigurationSetting("ws://192.74.38.15:4502"));  
-
     using (var server = Composable.GetExport<IXSocketServerContainer>())
     {
         server.StartServers(configurationSettings:myCustomConfigs);
@@ -1980,7 +1977,8 @@ Let's say that you want to connect (client <-> firewall <-> server) to ws://chuc
 ##### SSL/TLS
 To get WSS you have to set the endpoint to be ´wss´ instead of ws, and you will also specify you certificate. This can either be done by setting `CertificateLocation` and `CertificateSubjectDistinguishedName` (as in the sample) or load the certificate from disk.
 
-    //Sample 1 - Certificate from store
+######Sample 1 - Certificate from store
+
     public class ChuckNorrisConfig : ConfigurationSetting
     {
         public ChuckNorrisConfig() : base(new Uri("wss://chucknorris.com:4502"))
@@ -1989,8 +1987,9 @@ To get WSS you have to set the endpoint to be ´wss´ instead of ws, and you wil
             this.CertificateSubjectDistinguishedName = "cn=chucknorris.com";
         }
     }
+    
+######Sample 2 - X509Certificate2
 
-    //Sample 2 - X509Certificate2
     public class ChuckNorrisConfig : ConfigurationSetting
     {
         public ChuckNorrisConfig() : base(new Uri("wss://chucknorris.com:4502"))
@@ -2161,7 +2160,7 @@ When you have custom authentication you can get the FormsAuthenticationTicket fr
 **Note: If you do not pass in a cookiename .ASPXAUTH will be used.**
 
 **Important: If you have separate project you will have to use the same origin to be able to get cookies and also use machine-key in the config to be able to get the AuthCookie.**
-***See*** [machinekey compability mode][8] ***if you are using different framework versions in the projects.***
+***See*** http://msdn.microsoft.com/en-us/library/system.web.configuration.machinekeysection.compatibilitymode%28v=vs.110%29.aspx ***if you are using different framework versions in the projects.***
 
 ### Write a custom AuthenticationPipeline
 When the socket is connected and the handshake is completed the `AuthenticationPipeline` will be called. By default the pipeline will look for a FormsAuthenticationTicket, but you can override this pipline by just implementing a interface `XSockets.Core.Common.Socket.IXSocketAuthenticationPipeline`
@@ -2180,7 +2179,6 @@ There can only be one pipeline so even if you implement several pipelines only o
                 var userIdentity = new GenericIdentity("David");
                 protocol.ConnectionContext.User = new GenericPrincipal(userIdentity, roles);
             }            
-
             return protocol.ConnectionContext.User;
         }
     }
@@ -2220,11 +2218,8 @@ The `OnAuthorization` method is called for every method on a controller that has
 Based on the `Write a custom AuthenticationPipeline` where we added the username `Hero` and the roles `hulk`, `superman` we have the following scenario
 
     [Authorize()] //would be valid since we have a authorized `fake` user
-
     [Authorize(Users = "David")] //would be valid
-
     [Authorize(Roles = "batman,robin")] //would be invalid
-    
     [Authorize(Roles = "batman,hulk")] //would be valid
     
 ### How to know when authorization fails
@@ -2237,7 +2232,6 @@ When the `OnAuthorization` returns false the `OnAuthorizationFailed` event is fi
     {
         this.OnAuthorizationFailed += Chat_OnAuthorizationFailed;
     }
-
     void Chat_OnAuthorizationFailed(object sender, OnAuthorizationFailedArgs e)
     {
         Console.WriteLine("Auth Failed: {0},{1}", e.Controller, e.MethodName); 
@@ -2251,7 +2245,7 @@ The `OnAuthorizationFailedArgs` contains information about the controller and th
 The plugin framework is inspired by MEF (Managed Extensibility Framework). MEF is awesome, but we wrote our own plugin framework to be able to run everywhere and also to avoid any dependencies. We did not copy stuff from MEF that we did not need and we added some extra features the we thought would be nice to have.
 
 ### Quick Start
-A very basic example based on a MEF sample that you can find at [http://www.amazedsaint.com/2010/06/mef-or-managed-extensibility-framework.html][9]
+A very basic example based on a MEF sample that you can find at http://www.amazedsaint.com/2010/06/mef-or-managed-extensibility-framework.html
 
 First of all... Open up the `Package Manager Console` (Tools->Library Package Manager->Package Manager Console) below called PMC. Install by typing `Install-Package XSockets.Plugin.Framework` into the PMC and hit enter.
 
@@ -2296,7 +2290,6 @@ Note that we do not have to specify anything on the classes since the interfaces
             Console.WriteLine("Grr.. Lion eating meat");
         }
     }
-    
     public class Rabbit : IAnimal
     {
         public Rabbit()
@@ -2474,11 +2467,11 @@ Here there are implementations of IAnimal in a assembly not yet loaded.
 
 ----------
 ## Packages
-Describes all available packages on [Nuget][10] and [Chocolatey][11]
+Describes all available packages on http://nuget.org and http://chocolatey.org
 ###Chocolatey Packages
 ####XSockets.Windows.Service
 
-You can view [this video][12] on how to install our Windows Service from Chocolatey
+You can install XSockets as a windows service from chocolatey, see http://chocolatey.org/packages/XSockets.Windows.Service
 
 ###Nuget Packages
 ####XSockets
@@ -2496,25 +2489,33 @@ This package will install ItemTemplates for XSockets.NET 4 into Visual Studio.
 
 This package contains the functionality to write custom real-time controllers. Install this package into a class-library if you want to develop custom server-side functionality
 
-Dependencies: - XSockets.Plugin.Framework
+Dependencies:
+
+- XSockets.Plugin.Framework
 
 ####XSockets.OWIN.Host
 
 This package contains the functionality to host XSockets inside of OWIN.
 
-Dependencies: - XSockets.Server
+Dependencies: 
+
+- XSockets.Server
 
 ####XSockets.Plugin.Framework
 
 A package for building modular applications in a blink.
 
-Dependencies: none
+Dependencies:
+
+- none
 
 ####XSockets.Fallback
 
 A fallback from websocket to longpolling via WebAPI if installed into .NET 4.5+
 
-Dependencies: - none
+Dependencies:
+
+- none
 
 ####XSockets.Client
 
@@ -2527,38 +2528,32 @@ Supported platforms are:
  - Android (MonoDroid)
  - NETMF 4.2, 4.3
 
-Dependencies: - XSockets.Core
+Dependencies: 
+
+- XSockets.Core
 
 ####XSockets.JsApi
 
 Provides a JavaScript API for communication with text/binary messages to a XSockets server with a publish/subscribe pattern
 
-Dependencies: none
+Dependencies:
+
+- none
 
 ####XSockets.Sample.Stockticker
 
 A sample project copied from the SignalR stockticker but rewritten for XSockets so that you can compare it easier with SignalR.
 
-Dependencies: XSockets
+Dependencies:
+
+- XSockets
 
 ####XSockets.Sample.WebRTC
 
 A sample project that will provide a sample of a multi-video chat within the browser. Source code found at: https://github.com/XSockets/WebRTC
 
-Dependencies: XSockets
+Dependencies:
+
+- XSockets
 
 ----------
-
-  [1]: http://xsockets.github.io/XSockets.NET-4.0/
-  [2]: http://xsockets.net/$2/file/xsocketscommunication-1.png
-  [3]: http://msdn.microsoft.com/en-us/library/system.web.configuration.machinekeysection.compatibilitymode%28v=vs.110%29.aspx
-  [4]: http://nuget.org/packages/xsockets.client
-  [5]: http://nuget.org/packages/xsockets.jsapi
-  [6]: http://serilog.net/
-  [7]: http://serilog.net
-  [8]: http://msdn.microsoft.com/en-us/library/system.web.configuration.machinekeysection.compatibilitymode%28v=vs.110%29.aspx
-  [9]: http://www.amazedsaint.com/2010/06/mef-or-managed-extensibility-framework.html
-  [10]: http://nuget.org
-  [11]: http://chocolatey.org
-  [12]: https://www.youtube.com/watch?v=vDYKdB9Vuos
-  [13]: http://docs.nuget.org/docs/creating-packages/hosting-your-own-nuget-feeds
