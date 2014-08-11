@@ -2106,21 +2106,16 @@ To use the fallback in XSockets you have to have OWIN, .NET 4.5 and WebAPI.
 ----------
 
 ##Performance & Scaling
-    
-    TODO
-    
-### Performance Counters
-
-    TODO
-    
-### Cluster
+XSockets has a built-in scaling module for enterprise solutions. This module scales with sockets instead of a slow backplane like SQL-Server. You can scale in any direction you want, so if you only want to send data in one direction (from one server to another) that´s fine. However the most common scenario is to scale both ways so that all clients gets data regardless of what server they are connected to.
+ 
+### Scaleout
 In the `Enterprise` version you can scaleout XSockets over `n` servers. By default XSockets offers scaleout over sockets, this means that there will be no bottle neck like in other solutions that scaleout over MSSQL etc.
 
 You can add several servers to the scaleout, this is done by requesting the `IXSocketsScaleOut` plugin from the `plugin framework` and then just add a server using the method `AddScaleOut`.
 
 Note that this will scale in one direction from this server to `ws://127.0.0.1:4503`. So to get scaling both ways you just add this servers location to the server on `4503`
 
-    Composable.GetExport<IXSocketsScaleOut>().AddScaleOut("ws://127.0.0.1", 4503);
+    Composable.GetExport<IXSocketsScaleOut>().AddScaleOut("ws://127.0.0.1:4503");
     
 #### Implementing Custom ScaleOut
 If you rather scaleout over SQL, Redis etc you can write a custom scaleout by implementing the ´IXSocketsScaleOut´ interface
@@ -2128,6 +2123,10 @@ If you rather scaleout over SQL, Redis etc you can write a custom scaleout by im
     TODO
     
 ###Loadbalacing
+
+    TODO
+
+### Performance Counters
 
     TODO
 
