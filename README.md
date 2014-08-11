@@ -2101,7 +2101,7 @@ Now, Try connect to the Generic Controller using the following piece of JavaScri
 ## Fallback
 To use the fallback in XSockets you have to have OWIN, .NET 4.5 and WebAPI.
 
-    TODO (will be included in next pre-release)
+    TODO
     
 ----------
 
