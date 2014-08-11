@@ -85,10 +85,12 @@ Create...
 ## Installing XSockets.NET
 XSockets.NET is distributed through nuget.org and chocolatey.org. From Chocolatey you install our Windows Service and on Nuget we have all our packages for development. You can read more about all the packages after the installation samples.
 
+**NOTE: Use the suffix `-pre` to get XSockets 4.0 assemblies from nuget**
+
 ### Install into a Self-Hosted application
 In the nuget Package Manager Console run the command below to install the server.
 
-`PM> Install-Package XSockets.Server`
+`PM> Install-Package XSockets.Server` **(include `-pre` to get v 4.0)**
 ####Start the server
 
 Inside of the Main method start the server with the code below.
@@ -106,8 +108,8 @@ Inside of the Main method start the server with the code below.
 **Note: This requires .NET 4.5+**
 Open up the Package Manager Console and install the server
 
-`PM> Install-Package Microsoft.Owin.SelfHost`
-`PM> Install-Package XSockets.Owin.Host`
+`PM> Install-Package Microsoft.Owin.SelfHost` **(include `-pre` to get v 4.0)**
+`PM> Install-Package XSockets.Owin.Host` **(include `-pre` to get v 4.0)**
 
 #####How to register XSockets Middleware
 UseXSockets is an extension method for the OwinExtensions class.
@@ -134,7 +136,7 @@ UseXSockets is an extension method for the OwinExtensions class.
 **Note: This requires .NET 4.5+**
 Open up the Package Manager Console and install the server
 
-`PM> Install-Package XSockets.Owin.Host`
+`PM> Install-Package XSockets.Owin.Host` **(include `-pre` to get v 4.0)**
 
 #####How to register XSockets Middleware
 UseXSockets is an extension method for the OwinExtensions class.
@@ -1053,6 +1055,8 @@ The C# Client API has support for:
 ###Client Setup
 To get the client just get the latest package from http://nuget.org/packages/xsockets.client
 
+ **NOTE: Use the suffix `-pre` to get v 4.0**
+
 The C# clients ALWAYS talk full-duplex/bi-directional communication, and just like the XSockets server this behavior has nothing to do with what OS or WebServer you are running.
 
 ###How to establish a connection
@@ -1451,9 +1455,12 @@ The JavaScript API supports RPC, PUB/SUB and WebRTC.
 
 ###Client Setup
 The JavaScript client has no dependencies, just add the `XSockets.latest.js` to your page.
+You can get the latest package from http://nuget.org/packages/xsockets.jsapi
+
+**NOTE: Use the suffix `-pre` to get v 4.0**
 
    &lt;script src=&quot;Scripts/XSockets.latest.min.js&quot;&gt;&lt;/script&gt;
-   
+  
 ###How to establish a connection
 To get a connection just pass in the endpoint to the server.
 
