@@ -181,7 +181,6 @@ Open up the Package Manager Console and install the server</p>
         app.UseXSockets(true);
     }
 }
-
 class Program
 {
     static void Main(string[] args)
@@ -210,7 +209,6 @@ Open up the Package Manager Console and install the server</p>
 <pre><code>using Microsoft.Owin;
 using Owin;
 using XSockets.Owin.Host;
-
 [assembly: OwinStartupAttribute(typeof(MyApplication.Startup))]
 namespace MyApplication
 {
@@ -259,7 +257,7 @@ JavaScript  Browser with websockets (there is a fallback for IE 9 &amp; IE 8)
 <h4>
 <a name="basic-architecture" class="anchor" href="#basic-architecture"><span class="octicon octicon-link"></span></a>Basic architecture</h4>
 
-<p><img src="http://xsockets.net/%242/file/xsocketscommunication-1.png" alt="XSockets basic architecture"></p>
+<p><a href="http://xsockets.net/%242/file/xsocketscommunication-1.png">http://xsockets.net/$2/file/xsocketscommunication-1.png</a></p>
 
 <p>The red clients are clients libraries written by XSockets.NET and the blue clients are examples of what we have easily connected with custom protocols.</p>
 
@@ -1101,7 +1099,7 @@ namespace MyNameSpace.Serialization
 <p><strong>Note: If you do not pass in a cookiename .ASPXAUTH will be used.</strong></p>
 
 <p><strong>Important: If you have separate project you will have to use the same origin to be able to get cookies and also use machine-key in the config to be able to get the AuthCookie.</strong>
-<strong><em>See</em></strong> <a href="http://msdn.microsoft.com/en-us/library/system.web.configuration.machinekeysection.compatibilitymode%28v=vs.110%29.aspx">machinekey compability mode</a> <strong><em>if you are using different framework versions in the projects.</em></strong></p>
+<strong><em>See</em></strong> <a href="http://msdn.microsoft.com/en-us/library/system.web.configuration.machinekeysection.compatibilitymode%28v=vs.110%29.aspx">http://msdn.microsoft.com/en-us/library/system.web.configuration.machinekeysection.compatibilitymode%28v=vs.110%29.aspx</a> <strong><em>if you are using different framework versions in the projects.</em></strong></p>
 
 <h4>
 <a name="write-a-custom-authenticationpipeline-1" class="anchor" href="#write-a-custom-authenticationpipeline-1"><span class="octicon octicon-link"></span></a>Write a custom AuthenticationPipeline</h4>
@@ -1298,7 +1296,7 @@ public class MyLongrunningController : XSocketController
 </ul><h3>
 <a name="client-setup" class="anchor" href="#client-setup"><span class="octicon octicon-link"></span></a>Client Setup</h3>
 
-<p>To get the client just get the latest package from <a href="http://nuget.org/packages/xsockets.client">nuget.org/packages/xsockets.client</a></p>
+<p>To get the client just get the latest package from <a href="http://nuget.org/packages/xsockets.client">http://nuget.org/packages/xsockets.client</a></p>
 
 <p>The C# clients ALWAYS talk full-duplex/bi-directional communication, and just like the XSockets server this behavior has nothing to do with what OS or WebServer you are running.</p>
 
@@ -1814,7 +1812,7 @@ Console.WriteLine("Got color {0} from storage", color);
 <hr><h2>
 <a name="javascript-client-api--guide" class="anchor" href="#javascript-client-api--guide"><span class="octicon octicon-link"></span></a>JavaScript Client API  Guide</h2>
 
-<p>To get the client just get the latest package from <a href="http://nuget.org/packages/xsockets.jsapi">nuget.org/packages/xsockets.jsapi</a></p>
+<p>To get the client just get the latest package from <a href="http://nuget.org/packages/xsockets.jsapi">http://nuget.org/packages/xsockets.jsapi</a></p>
 
 <p>The JavaScript API supports RPC, PUB/SUB and WebRTC.</p>
 
@@ -2163,7 +2161,7 @@ public void ChatMessage(ChatModel chatModel)
 <h3>
 <a name="client-setup-2" class="anchor" href="#client-setup-2"><span class="octicon octicon-link"></span></a>Client Setup</h3>
 
-<p>To get the client just get the latest package from <a href="http://nuget.org/packages/xsockets.client">nuget.org/packages/xsockets.client</a></p>
+<p>To get the client just get the latest package from <a href="http://nuget.org/packages/xsockets.client">http://nuget.org/packages/xsockets.client</a></p>
 
 <p>The C# clients ALWAYS talk full-duplex/bi-directional communication, and just like the XSockets server this behavior has nothing to do with what OS or WebServer you are running.</p>
 
@@ -2358,16 +2356,15 @@ public void ChatMessage(ChatModel chatModel)
 <hr><h2>
 <a name="logging" class="anchor" href="#logging"><span class="octicon octicon-link"></span></a>Logging</h2>
 
-<p>As of 4.0 XSockets will use <a href="http://serilog.net/">SeriLog.NET</a> as the default logger. Since it is a plugin you can of course replace SeriLog with something else if you want to.</p>
+<p>As of 4.0 XSockets will use <a href="http://serilog.net">http://serilog.net</a> as the default logger. Since it is a plugin you can of course replace SeriLog with something else if you want to.</p>
 
 <p>By default the logger will log everything in <code>Debug</code> and only <code>Fatal</code> level in <code>Release</code>.</p>
 
-<p>It is very easy to set your custom SeriLogger/Configuration/Sink. Just implement the <code>IDefaultLogger</code> interface and set the configuraiton of choice. For more information about SerilLog see <a href="http://serilog.net">SeriLog.NET</a></p>
+<p>It is very easy to set your custom SeriLogger/Configuration/Sink. Just implement the <code>IDefaultLogger</code> interface and set the configuraiton of choice. For more information about SerilLog see <a href="http://serilog.net">http://serilog.net</a></p>
 
 <pre><code>//
 // Sample below will write to file and console
 //
-
 [Export(typeof(IDefaultLogger))]
 public class MyLogger : IDefaultLogger
 {       
@@ -2406,10 +2403,8 @@ Passing configuration as a parametertop</p>
 
 <pre><code>//List of IConfigurationSettings
 var myCustomConfigs = new List&lt;IConfigurationSetting&gt;();
-
 //Add one configuration
 myCustomConfigs.Add(new ConfigurationSetting("ws://192.74.38.15:4502"));  
-
 using (var server = Composable.GetExport&lt;IXSocketServerContainer&gt;())
 {
     server.StartServers(configurationSettings:myCustomConfigs);
@@ -2488,8 +2483,10 @@ using (var server = Composable.GetExport&lt;IXSocketServerContainer&gt;())
 
 <p>To get WSS you have to set the endpoint to be ´wss´ instead of ws, and you will also specify you certificate. This can either be done by setting <code>CertificateLocation</code> and <code>CertificateSubjectDistinguishedName</code> (as in the sample) or load the certificate from disk.</p>
 
-<pre><code>//Sample 1 - Certificate from store
-public class ChuckNorrisConfig : ConfigurationSetting
+<h6>
+<a name="sample-1---certificate-from-store" class="anchor" href="#sample-1---certificate-from-store"><span class="octicon octicon-link"></span></a>Sample 1 - Certificate from store</h6>
+
+<pre><code>public class ChuckNorrisConfig : ConfigurationSetting
 {
     public ChuckNorrisConfig() : base(new Uri("wss://chucknorris.com:4502"))
     {
@@ -2497,9 +2494,12 @@ public class ChuckNorrisConfig : ConfigurationSetting
         this.CertificateSubjectDistinguishedName = "cn=chucknorris.com";
     }
 }
+</code></pre>
 
-//Sample 2 - X509Certificate2
-public class ChuckNorrisConfig : ConfigurationSetting
+<h6>
+<a name="sample-2---x509certificate2" class="anchor" href="#sample-2---x509certificate2"><span class="octicon octicon-link"></span></a>Sample 2 - X509Certificate2</h6>
+
+<pre><code>public class ChuckNorrisConfig : ConfigurationSetting
 {
     public ChuckNorrisConfig() : base(new Uri("wss://chucknorris.com:4502"))
     {
@@ -2711,7 +2711,7 @@ container.Start(configurationSetting: myCustomConfig);
 <p><strong>Note: If you do not pass in a cookiename .ASPXAUTH will be used.</strong></p>
 
 <p><strong>Important: If you have separate project you will have to use the same origin to be able to get cookies and also use machine-key in the config to be able to get the AuthCookie.</strong>
-<strong><em>See</em></strong> <a href="http://msdn.microsoft.com/en-us/library/system.web.configuration.machinekeysection.compatibilitymode%28v=vs.110%29.aspx">machinekey compability mode</a> <strong><em>if you are using different framework versions in the projects.</em></strong></p>
+<strong><em>See</em></strong> <a href="http://msdn.microsoft.com/en-us/library/system.web.configuration.machinekeysection.compatibilitymode%28v=vs.110%29.aspx">http://msdn.microsoft.com/en-us/library/system.web.configuration.machinekeysection.compatibilitymode%28v=vs.110%29.aspx</a> <strong><em>if you are using different framework versions in the projects.</em></strong></p>
 
 <h3>
 <a name="write-a-custom-authenticationpipeline-2" class="anchor" href="#write-a-custom-authenticationpipeline-2"><span class="octicon octicon-link"></span></a>Write a custom AuthenticationPipeline</h3>
@@ -2732,7 +2732,6 @@ public class MyAuthenticationPipeline : IXSocketAuthenticationPipeline
             var userIdentity = new GenericIdentity("David");
             protocol.ConnectionContext.User = new GenericPrincipal(userIdentity, roles);
         }            
-
         return protocol.ConnectionContext.User;
     }
 }
@@ -2778,11 +2777,8 @@ public class MyAuthenticationPipeline : IXSocketAuthenticationPipeline
 Based on the <code>Write a custom AuthenticationPipeline</code> where we added the username <code>Hero</code> and the roles <code>hulk</code>, <code>superman</code> we have the following scenario</p>
 
 <pre><code>[Authorize()] //would be valid since we have a authorized `fake` user
-
 [Authorize(Users = "David")] //would be valid
-
 [Authorize(Roles = "batman,robin")] //would be invalid
-
 [Authorize(Roles = "batman,hulk")] //would be valid
 </code></pre>
 
@@ -2798,7 +2794,6 @@ public Chat()
 {
     this.OnAuthorizationFailed += Chat_OnAuthorizationFailed;
 }
-
 void Chat_OnAuthorizationFailed(object sender, OnAuthorizationFailedArgs e)
 {
     Console.WriteLine("Auth Failed: {0},{1}", e.Controller, e.MethodName); 
@@ -2868,7 +2863,6 @@ public interface IZoo
         Console.WriteLine("Grr.. Lion eating meat");
     }
 }
-
 public class Rabbit : IAnimal
 {
     public Rabbit()
@@ -3086,7 +3080,7 @@ foreach (var animal in Composable.GetExports&lt;IAnimal&gt;())
 <hr><h2>
 <a name="packages" class="anchor" href="#packages"><span class="octicon octicon-link"></span></a>Packages</h2>
 
-<p>Describes all available packages on <a href="http://nuget.org">Nuget</a> and <a href="http://chocolatey.org">Chocolatey</a></p>
+<p>Describes all available packages on <a href="http://nuget.org">http://nuget.org</a> and <a href="http://chocolatey.org">http://chocolatey.org</a></p>
 
 <h3>
 <a name="chocolatey-packages" class="anchor" href="#chocolatey-packages"><span class="octicon octicon-link"></span></a>Chocolatey Packages</h3>
@@ -3094,7 +3088,7 @@ foreach (var animal in Composable.GetExports&lt;IAnimal&gt;())
 <h4>
 <a name="xsocketswindowsservice" class="anchor" href="#xsocketswindowsservice"><span class="octicon octicon-link"></span></a>XSockets.Windows.Service</h4>
 
-<p>You can view <a href="https://www.youtube.com/watch?v=vDYKdB9Vuos">this video</a> on how to install our Windows Service from Chocolatey</p>
+<p>You can install XSockets as a windows service from chocolatey, see <a href="http://chocolatey.org/packages/XSockets.Windows.Service">http://chocolatey.org/packages/XSockets.Windows.Service</a></p>
 
 <h3>
 <a name="nuget-packages" class="anchor" href="#nuget-packages"><span class="octicon octicon-link"></span></a>Nuget Packages</h3>
@@ -3116,30 +3110,38 @@ foreach (var animal in Composable.GetExports&lt;IAnimal&gt;())
 
 <p>This package contains the functionality to write custom real-time controllers. Install this package into a class-library if you want to develop custom server-side functionality</p>
 
-<p>Dependencies: - XSockets.Plugin.Framework</p>
+<p>Dependencies:</p>
 
-<h4>
+<ul>
+<li>XSockets.Plugin.Framework</li>
+</ul><h4>
 <a name="xsocketsowinhost" class="anchor" href="#xsocketsowinhost"><span class="octicon octicon-link"></span></a>XSockets.OWIN.Host</h4>
 
 <p>This package contains the functionality to host XSockets inside of OWIN.</p>
 
-<p>Dependencies: - XSockets.Server</p>
+<p>Dependencies: </p>
 
-<h4>
+<ul>
+<li>XSockets.Server</li>
+</ul><h4>
 <a name="xsocketspluginframework" class="anchor" href="#xsocketspluginframework"><span class="octicon octicon-link"></span></a>XSockets.Plugin.Framework</h4>
 
 <p>A package for building modular applications in a blink.</p>
 
-<p>Dependencies: none</p>
+<p>Dependencies:</p>
 
-<h4>
+<ul>
+<li>none</li>
+</ul><h4>
 <a name="xsocketsfallback" class="anchor" href="#xsocketsfallback"><span class="octicon octicon-link"></span></a>XSockets.Fallback</h4>
 
 <p>A fallback from websocket to longpolling via WebAPI if installed into .NET 4.5+</p>
 
-<p>Dependencies: - none</p>
+<p>Dependencies:</p>
 
-<h4>
+<ul>
+<li>none</li>
+</ul><h4>
 <a name="xsocketsclient" class="anchor" href="#xsocketsclient"><span class="octicon octicon-link"></span></a>XSockets.Client</h4>
 
 <p>Provides a socket client for connecting to a XSockets.NET server.
@@ -3151,30 +3153,38 @@ Supported platforms are:</p>
 <li>iOS (MonoTouch)</li>
 <li>Android (MonoDroid)</li>
 <li>NETMF 4.2, 4.3</li>
-</ul><p>Dependencies: - XSockets.Core</p>
+</ul><p>Dependencies: </p>
 
-<h4>
+<ul>
+<li>XSockets.Core</li>
+</ul><h4>
 <a name="xsocketsjsapi" class="anchor" href="#xsocketsjsapi"><span class="octicon octicon-link"></span></a>XSockets.JsApi</h4>
 
 <p>Provides a JavaScript API for communication with text/binary messages to a XSockets server with a publish/subscribe pattern</p>
 
-<p>Dependencies: none</p>
+<p>Dependencies:</p>
 
-<h4>
+<ul>
+<li>none</li>
+</ul><h4>
 <a name="xsocketssamplestockticker" class="anchor" href="#xsocketssamplestockticker"><span class="octicon octicon-link"></span></a>XSockets.Sample.Stockticker</h4>
 
 <p>A sample project copied from the SignalR stockticker but rewritten for XSockets so that you can compare it easier with SignalR.</p>
 
-<p>Dependencies: XSockets</p>
+<p>Dependencies:</p>
 
-<h4>
+<ul>
+<li>XSockets</li>
+</ul><h4>
 <a name="xsocketssamplewebrtc" class="anchor" href="#xsocketssamplewebrtc"><span class="octicon octicon-link"></span></a>XSockets.Sample.WebRTC</h4>
 
 <p>A sample project that will provide a sample of a multi-video chat within the browser. Source code found at: <a href="https://github.com/XSockets/WebRTC">https://github.com/XSockets/WebRTC</a></p>
 
-<p>Dependencies: XSockets</p>
+<p>Dependencies:</p>
 
-<hr>
+<ul>
+<li>XSockets</li>
+</ul><hr>
         </section>
 
         <footer>
