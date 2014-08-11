@@ -63,7 +63,7 @@ JavaScript
     
 C#
 
-    c.Controller("generic").Invoke("mymessage",new {Text = "Hello C# RealTime"});
+    conn.Controller("generic").Invoke("mymessage",new {Text = "Hello C# RealTime"});
 
 ### 4. What's next?
 #### JavaScript/C# Client API
@@ -1102,7 +1102,11 @@ You can add querystrings to the `NameValueCollection` named `QueryString` on the
 
 ##### Connection header
     
-    TODO
+    var conn = new XSocketClient("ws://localhost:4502","http://xsockets.net", "chat");
+    conn.Headers.Add("myauthtoken", /* the token data */);
+    conn.Open();
+    
+Then verify the token in a custom `AuthenticationPipeline` or in the `OnOpen` even of the specific controller
 
 ##### Cookie with Forms Authentication
 
@@ -1113,7 +1117,9 @@ You can add querystrings to the `NameValueCollection` named `QueryString` on the
 
 ##### Certificate
     
-    TODO
+    var conn = new XSocketClient("ws://localhost:4502", "http://xsockets.net", "chat");
+    conn.AddClientCertificate(new X509Certificate2("mycert.pfx"));
+    conn.Open();
     
 ##### Windows Authentication
 
