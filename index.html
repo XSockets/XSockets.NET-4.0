@@ -138,12 +138,14 @@ conn.Controller("generic").On("mymessage", data =&gt; Console.WriteLine(data.Tex
 
 <p>XSockets.NET is distributed through nuget.org and chocolatey.org. From Chocolatey you install our Windows Service and on Nuget we have all our packages for development. You can read more about all the packages after the installation samples.</p>
 
+<p><strong>NOTE: Use the suffix <code>-pre</code> to get XSockets 4.0 assemblies from nuget</strong></p>
+
 <h3>
 <a name="install-into-a-self-hosted-application" class="anchor" href="#install-into-a-self-hosted-application"><span class="octicon octicon-link"></span></a>Install into a Self-Hosted application</h3>
 
 <p>In the nuget Package Manager Console run the command below to install the server.</p>
 
-<p><code>PM&gt; Install-Package XSockets.Server</code></p>
+<p><code>PM&gt; Install-Package XSockets.Server</code> <strong>(include <code>-pre</code> to get v 4.0)</strong></p>
 
 <h4>
 <a name="start-the-server" class="anchor" href="#start-the-server"><span class="octicon octicon-link"></span></a>Start the server</h4>
@@ -166,8 +168,8 @@ using (var container = Composable.GetExport&lt;IXSocketServerContainer&gt;())
 <p><strong>Note: This requires .NET 4.5+</strong>
 Open up the Package Manager Console and install the server</p>
 
-<p><code>PM&gt; Install-Package Microsoft.Owin.SelfHost</code>
-<code>PM&gt; Install-Package XSockets.Owin.Host</code></p>
+<p><code>PM&gt; Install-Package Microsoft.Owin.SelfHost</code> <strong>(include <code>-pre</code> to get v 4.0)</strong>
+<code>PM&gt; Install-Package XSockets.Owin.Host</code> <strong>(include <code>-pre</code> to get v 4.0)</strong></p>
 
 <h5>
 <a name="how-to-register-xsockets-middleware" class="anchor" href="#how-to-register-xsockets-middleware"><span class="octicon octicon-link"></span></a>How to register XSockets Middleware</h5>
@@ -199,7 +201,7 @@ class Program
 <p><strong>Note: This requires .NET 4.5+</strong>
 Open up the Package Manager Console and install the server</p>
 
-<p><code>PM&gt; Install-Package XSockets.Owin.Host</code></p>
+<p><code>PM&gt; Install-Package XSockets.Owin.Host</code> <strong>(include <code>-pre</code> to get v 4.0)</strong></p>
 
 <h5>
 <a name="how-to-register-xsockets-middleware-1" class="anchor" href="#how-to-register-xsockets-middleware-1"><span class="octicon octicon-link"></span></a>How to register XSockets Middleware</h5>
@@ -1298,6 +1300,8 @@ public class MyLongrunningController : XSocketController
 
 <p>To get the client just get the latest package from <a href="http://nuget.org/packages/xsockets.client">http://nuget.org/packages/xsockets.client</a></p>
 
+<p><strong>NOTE: Use the suffix <code>-pre</code> to get v 4.0</strong></p>
+
 <p>The C# clients ALWAYS talk full-duplex/bi-directional communication, and just like the XSockets server this behavior has nothing to do with what OS or WebServer you are running.</p>
 
 <h3>
@@ -1819,7 +1823,10 @@ Console.WriteLine("Got color {0} from storage", color);
 <h3>
 <a name="client-setup-1" class="anchor" href="#client-setup-1"><span class="octicon octicon-link"></span></a>Client Setup</h3>
 
-<p>The JavaScript client has no dependencies, just add the <code>XSockets.latest.js</code> to your page.</p>
+<p>The JavaScript client has no dependencies, just add the <code>XSockets.latest.js</code> to your page.
+You can get the latest package from <a href="http://nuget.org/packages/xsockets.jsapi">http://nuget.org/packages/xsockets.jsapi</a></p>
+
+<p><strong>NOTE: Use the suffix <code>-pre</code> to get v 4.0</strong></p>
 
 <p>&lt;script src="Scripts/XSockets.latest.min.js"&gt;&lt;/script&gt;</p>
 
