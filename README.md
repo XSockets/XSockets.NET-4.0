@@ -1,36 +1,24 @@
-# Some of the new features in 4.0
-You have probably been reading about most of them since you signed up for this beta, but a unordered list with the biggest changes are:
+#XSockets.NET 4 - Documentation
 
- - Support for RPC (as a complement or replacement for pub/sub)
- - Multiplexing over several controllers on one connection
- - Owin Support
- - Clients for iOS (MonoTouch), Android (MonoDroid) and NETMF that all use full-duplex/bi-directional communication
- - Synchron communication so that you can wait for the result from a controller method
- - IMessage replace ITextArgs and IBinaryArgs, much easier and better binary support
- - Binary support to any method in a controller (just like any object)
- - You can pass meta data with binary data to get information about files etc being sent
- - Hearbeat helpers for sending control-frames (pings/pongs)
- - AuthenticationPipline, a new plugin that you can use to set the IPrincipal of the ConnectionContext
- - Easier to create custom protocols for connecting InternetOfThings etc
- - Enterprise: scaling, loadbalancing
+This section covers server and cliens API´s for XSockets.NET
 
-#XSockets.NET 4 - Introduction
+##Introduction
 
-    TODO
+Start here if you are new to XSockets.NET
 
-##What is it?
+###What is it?
 XSockets.NET is a real-time messaging system that allows communication between any device that has TCP/IP. The server can be hosted anywhere (.NET/Mono) and the clients cover every major browser + C#, VB.NET, Android, iOS, NETMF. And it is very easy to connect anything else that has a TCP/IP stack.
 
 ***In short terms: RealTime, InternetOfThings and WebRTC in a single framework!***
 
-##Who uses it?
+###Who uses it?
 
     TODO: Add images here
 
 ----------
 
-##Getting started with real-time communication
-###1. Start a server
+###Getting started with real-time communication
+####1. Start a server
 
     using (var container = Composable.GetExport<IXSocketServerContainer>())
     {
@@ -38,7 +26,7 @@ XSockets.NET is a real-time messaging system that allows communication between a
         Console.ReadLine();
     }
     
-###2. Create a client and listen for "MyMessage"
+####2. Create a client and listen for "MyMessage"
 
 JavaScript
 
@@ -53,7 +41,7 @@ C#
     conn.Open();
     conn.Controller("generic").On("mymessage", data => Console.WriteLine(data.Text));
 
-### 3. Send message
+#### 3. Send message
 
 JavaScript
 
@@ -63,13 +51,13 @@ C#
 
     conn.Controller("generic").Invoke("mymessage",new {Text = "Hello C# RealTime"});
 
-### 4. What's next?
-#### JavaScript/C# Client API
+#### 4. What's next?
+##### JavaScript/C# Client API
 Learn to...
 
  - Use Pub/Sub, RPC or both!
 
-#### Server
+##### Server
 Create...
 
  - Powerful server-side controllers
@@ -188,9 +176,7 @@ The red clients are clients libraries written by XSockets.NET and the blue clien
 
 You may also notice that XSockets enables not only cross-protocol communication, but also cross-controller communication so that you can call a method on another controller. Or even send data to client on another controller with a single line of code.
 
-#XSockets.NET 4 - Documentation
-
-This section covers server and cliens API´s for XSockets.NET
+----------
 
 ##Server API Guide
 This section provides examples for server side development but contains sample code for both sever side and client side
