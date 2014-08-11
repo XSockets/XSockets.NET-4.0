@@ -1,6 +1,6 @@
 #XSockets.NET 4 - Documentation
 
-This section covers server and cliens API´s for XSockets.NET
+This section covers server and client API´s for XSockets.NET
 
 ##Introduction
 
@@ -17,8 +17,8 @@ XSockets.NET is a real-time messaging system that allows communication between a
 
 ----------
 
-###Getting started with real-time communication
-####1. Start a server
+##Getting started with real-time communication
+###1. Start a server
 
     using (var container = Composable.GetExport<IXSocketServerContainer>())
     {
@@ -26,7 +26,7 @@ XSockets.NET is a real-time messaging system that allows communication between a
         Console.ReadLine();
     }
     
-####2. Create a client and listen for "MyMessage"
+###2. Create a client and listen for "MyMessage"
 
 JavaScript
 
@@ -41,7 +41,7 @@ C#
     conn.Open();
     conn.Controller("generic").On("mymessage", data => Console.WriteLine(data.Text));
 
-#### 3. Send message
+### 3. Send message
 
 JavaScript
 
@@ -51,13 +51,13 @@ C#
 
     conn.Controller("generic").Invoke("mymessage",new {Text = "Hello C# RealTime"});
 
-#### 4. What's next?
-##### JavaScript/C# Client API
+### 4. What's next?
+#### JavaScript/C# Client API
 Learn to...
 
  - Use Pub/Sub, RPC or both!
 
-##### Server
+#### Server
 Create...
 
  - Powerful server-side controllers
