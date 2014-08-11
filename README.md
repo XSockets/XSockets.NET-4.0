@@ -14,8 +14,6 @@ You have probably been reading about most of them since you signed up for this b
  - Easier to create custom protocols for connecting InternetOfThings etc
  - Enterprise: scaling, loadbalancing
 
----------
-
 #XSockets.NET 4 - Introduction
 
     TODO
@@ -184,15 +182,13 @@ The architecture for XSockets.NET is simple yet powerful. Each client connects t
 Different clients have different capabilities, browsers for example have the RFC6455 (websockets) protocol implemented, but other things devices might talk a protocol that you have created. Since XSockets allows “cross-protocol communication” all connected clients can communicate with each other very easily.
 
 ####Basic architecture
-http://xsockets.net/$2/file/xsocketscommunication-1.png
+[image here]
 
 The red clients are clients libraries written by XSockets.NET and the blue clients are examples of what we have easily connected with custom protocols.
 
 You may also notice that XSockets enables not only cross-protocol communication, but also cross-controller communication so that you can call a method on another controller. Or even send data to client on another controller with a single line of code.
 
-----------
-
-#XSockets.NET 4 Documentation
+#XSockets.NET 4 - Documentation
 
 This section covers server and cliens API´s for XSockets.NET
 
@@ -212,7 +208,7 @@ To create a `Controller`, create a class that derives from `XSockets.Core.XSocke
 
 In this example, a connected client can call the ChatMessage method, and when it does, the data received is broadcasted (RPC) to all clients connected to the `Controller`.
 
-**Give the controller an Alias**
+####Give the controller an Alias
 
 If you want to specify a different name for clients to use, add the `XSocketsMetadata` attribute and set the `Alias` to the name you want for the controller. You might wanna do this is you have long and complex names for controller on the server.
 
