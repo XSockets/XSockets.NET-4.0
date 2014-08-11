@@ -109,6 +109,7 @@ Inside of the Main method start the server with the code below.
 Open up the Package Manager Console and install the server
 
 `PM> Install-Package Microsoft.Owin.SelfHost` **(include `-pre` to get v 4.0)**
+
 `PM> Install-Package XSockets.Owin.Host` **(include `-pre` to get v 4.0)**
 
 #####How to register XSockets Middleware
