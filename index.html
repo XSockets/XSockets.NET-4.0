@@ -953,14 +953,14 @@ public class MyAuthenticationPipeline : IXSocketAuthenticationPipeline
 <pre><code>public class MyConnectionInterceptor : IConnectionInterceptor
 {
 
-    public void Connected(IXSocketProtocol protocol, string controller)
+    public void Connected(IXSocketProtocol protocol)
     {
-        LogHelper.Log(LogEventLevel.Verbose, "Connected {controller} {@protocol}",controller ,protocol.ConnectionContext);            
+        LogHelper.Log(LogEventLevel.Verbose, "Connected {@protocol}" , protocol.ConnectionContext);            
     }
 
-    public void Disconnected(IXSocketProtocol protocol, string controller)
+    public void Disconnected(IXSocketProtocol protocol)
     {
-        LogHelper.Log(LogEventLevel.Verbose, "Disconnected {controller} {@protocol}", controller, protocol.ConnectionContext);
+        LogHelper.Log(LogEventLevel.Verbose, "Disconnected {@protocol}", protocol.ConnectionContext);
     }
 
     public void HandshakeCompleted(IXSocketProtocol protocol)
@@ -2637,23 +2637,16 @@ container.Start(configurationSetting: myCustomConfig);
 
 <p>To use the fallback in XSockets you have to have OWIN, .NET 4.5 and WebAPI.</p>
 
-<pre><code>TODO (will be included in next pre-release)
+<pre><code>TODO
 </code></pre>
 
 <hr><h2>
 <a name="performance--scaling" class="anchor" href="#performance--scaling"><span class="octicon octicon-link"></span></a>Performance &amp; Scaling</h2>
 
-<pre><code>TODO
-</code></pre>
+<p>XSockets has a built-in scaling module for enterprise solutions. This module scales with sockets instead of a slow backplane like SQL-Server. You can scale in any direction you want, so if you only want to send data in one direction (from one server to another) that´s fine. However the most common scenario is to scale both ways so that all clients gets data regardless of what server they are connected to.</p>
 
 <h3>
-<a name="performance-counters" class="anchor" href="#performance-counters"><span class="octicon octicon-link"></span></a>Performance Counters</h3>
-
-<pre><code>TODO
-</code></pre>
-
-<h3>
-<a name="cluster" class="anchor" href="#cluster"><span class="octicon octicon-link"></span></a>Cluster</h3>
+<a name="scaleout" class="anchor" href="#scaleout"><span class="octicon octicon-link"></span></a>Scaleout</h3>
 
 <p>In the <code>Enterprise</code> version you can scaleout XSockets over <code>n</code> servers. By default XSockets offers scaleout over sockets, this means that there will be no bottle neck like in other solutions that scaleout over MSSQL etc.</p>
 
@@ -2661,19 +2654,64 @@ container.Start(configurationSetting: myCustomConfig);
 
 <p>Note that this will scale in one direction from this server to <code>ws://127.0.0.1:4503</code>. So to get scaling both ways you just add this servers location to the server on <code>4503</code></p>
 
-<pre><code>Composable.GetExport&lt;IXSocketsScaleOut&gt;().AddScaleOut("ws://127.0.0.1", 4503);
+<pre><code>Composable.GetExport&lt;IXSocketsScaleOut&gt;().AddScaleOut("ws://127.0.0.1:4503");
 </code></pre>
 
 <h4>
 <a name="implementing-custom-scaleout" class="anchor" href="#implementing-custom-scaleout"><span class="octicon octicon-link"></span></a>Implementing Custom ScaleOut</h4>
 
-<p>If you rather scaleout over SQL, Redis etc you can write a custom scaleout by implementing the ´IXSocketsScaleOut´ interface</p>
+<p>If you rather scaleout over SQL, Redis etc you can write a custom scaleout by just deriving the ´BaseScaleout´ class</p>
+
+<pre><code>public class MyScaleOut : BaseScaleOut
+{
+    /// &lt;summary&gt;
+    /// Will be called by the BaseScaleout Ctor
+    /// &lt;/summary&gt;
+    public override void Init()
+    {
+        //Do stuff that may be needed at startup for your custom scaleout
+    }  
+    /// &lt;summary&gt;
+    /// Will be called when a message arrives at the server
+    /// &lt;/summary&gt;
+    /// &lt;param name="message"&gt;&lt;/param&gt;
+    public override void Publish(IMessage message)
+    {
+        //Save message to your selected scaleout, for example SQL-server
+    }
+    /// &lt;summary&gt;
+    /// Will be called by the BaseScaleout Ctor after the call to Init.        
+    /// &lt;/summary&gt;
+    public override void Subscribe()
+    {
+        //Poll every 10 sec            
+        var t = new Timer(10000);
+        t.Elapsed += (sender, args) =&gt;
+        {
+            //1: Implement a mechannism that will get data from a storage of some kind
+            IList&lt;IMessage&gt; messages = null;//get messages from service
+            foreach (var message in messages)
+            {
+                //2: Publish to the interceptors
+                if (this.Container.WithInterceptors)
+                    MessageInterceptorsQueue.Push(new MessageInfo { Message = message, MessageDirection = MessageDirection.In });
+                //3: send into the server by using the pipeline and the correct plugin
+                Pipeline.OnIncomingMessage(this.Factory.Plugins.Single(p =&gt; p.Alias == message.Controller), message);
+            }
+        };
+        t.Start();
+    }      
+}
+</code></pre>
+
+<h3>
+<a name="loadbalacing" class="anchor" href="#loadbalacing"><span class="octicon octicon-link"></span></a>Loadbalacing</h3>
 
 <pre><code>TODO
 </code></pre>
 
 <h3>
-<a name="loadbalacing" class="anchor" href="#loadbalacing"><span class="octicon octicon-link"></span></a>Loadbalacing</h3>
+<a name="performance-counters" class="anchor" href="#performance-counters"><span class="octicon octicon-link"></span></a>Performance Counters</h3>
 
 <pre><code>TODO
 </code></pre>
