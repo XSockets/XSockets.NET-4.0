@@ -192,10 +192,13 @@ You may also notice that XSockets enables not only cross-protocol communication,
 
 ----------
 
-#XSockets.NET 4 - Documentation
-TBD
+#XSockets.NET 4 Documentation
+
+This section covers server and cliens API´s for XSockets.NET
+
 ##Server API Guide
-This section provides examples with both sever side and client side code
+This section provides examples for server side development but contains sample code for both sever side and client side
+
 ###How to create and use Controller classes
 To create a `Controller`, create a class that derives from `XSockets.Core.XSocket.XSocketController`. The following example shows a simple `Controller` class for a chat application.
 
