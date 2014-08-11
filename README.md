@@ -758,14 +758,14 @@ Sample of a connection interceptor that logs handshake and connect/disconnect wi
     public class MyConnectionInterceptor : IConnectionInterceptor
     {
 
-        public void Connected(IXSocketProtocol protocol, string controller)
+        public void Connected(IXSocketProtocol protocol)
         {
-            LogHelper.Log(LogEventLevel.Verbose, "Connected {controller} {@protocol}",controller ,protocol.ConnectionContext);            
+            LogHelper.Log(LogEventLevel.Verbose, "Connected {@protocol}" , protocol.ConnectionContext);            
         }
 
-        public void Disconnected(IXSocketProtocol protocol, string controller)
+        public void Disconnected(IXSocketProtocol protocol)
         {
-            LogHelper.Log(LogEventLevel.Verbose, "Disconnected {controller} {@protocol}", controller, protocol.ConnectionContext);
+            LogHelper.Log(LogEventLevel.Verbose, "Disconnected {@protocol}", protocol.ConnectionContext);
         }
 
         public void HandshakeCompleted(IXSocketProtocol protocol)
