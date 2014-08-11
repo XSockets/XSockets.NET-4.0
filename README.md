@@ -2118,9 +2118,48 @@ Note that this will scale in one direction from this server to `ws://127.0.0.1:4
     Composable.GetExport<IXSocketsScaleOut>().AddScaleOut("ws://127.0.0.1:4503");
     
 #### Implementing Custom ScaleOut
-If you rather scaleout over SQL, Redis etc you can write a custom scaleout by implementing the ´IXSocketsScaleOut´ interface
+If you rather scaleout over SQL, Redis etc you can write a custom scaleout by just deriving the ´BaseScaleout´ class
 
-    TODO
+    public class MyScaleOut : BaseScaleOut
+    {
+        /// <summary>
+        /// Will be called by the BaseScaleout Ctor
+        /// </summary>
+        public override void Init()
+        {
+            //Do stuff that may be needed at startup for your custom scaleout
+        }  
+        /// <summary>
+        /// Will be called when a message arrives at the server
+        /// </summary>
+        /// <param name="message"></param>
+        public override void Publish(IMessage message)
+        {
+            //Save message to your selected scaleout, for example SQL-server
+        }
+        /// <summary>
+        /// Will be called by the BaseScaleout Ctor after the call to Init.        
+        /// </summary>
+        public override void Subscribe()
+        {
+            //Poll every 10 sec            
+            var t = new Timer(10000);
+            t.Elapsed += (sender, args) =>
+            {
+                //1: Implement a mechannism that will get data from a storage of some kind
+                IList<IMessage> messages = null;//get messages from service
+                foreach (var message in messages)
+                {
+                    //2: Publish to the interceptors
+                    if (this.Container.WithInterceptors)
+                        MessageInterceptorsQueue.Push(new MessageInfo { Message = message, MessageDirection = MessageDirection.In });
+                    //3: send into the server by using the pipeline and the correct plugin
+                    Pipeline.OnIncomingMessage(this.Factory.Plugins.Single(p => p.Alias == message.Controller), message);
+                }
+            };
+            t.Start();
+        }      
+    }
     
 ###Loadbalacing
 
