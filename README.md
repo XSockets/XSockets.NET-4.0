@@ -167,13 +167,15 @@ The XSockets.NET team has built a few client libraries to make life easier for o
     NETMF       4.2, 4.3
     JavaScript  Browser with websockets (there is a fallback for IE 9 & IE 8)
 
-###Communication - How it works
+##Communication - How it works
 
 The architecture for XSockets.NET is simple yet powerful. Each client connects to a protocol, the protocol will then allow communication over n controllers. So you can multiplex over several controller on one connection. This architecture enables communication cross-protocol as well as cross-controller.
 
 Different clients have different capabilities, browsers for example have the RFC6455 (websockets) protocol implemented, but other things devices might talk a protocol that you have created. Since XSockets allows “cross-protocol communication” all connected clients can communicate with each other very easily.
 
-####Basic architecture
+----------
+
+###Basic architecture
 [image here]
 
 The red clients are clients libraries written by XSockets.NET and the blue clients are examples of what we have easily connected with custom protocols.
