@@ -6,8 +6,8 @@ This section covers server and client API´s for XSockets.NET
 
 Start here if you are new to XSockets.NET
 
-###What is it?
-XSockets.NET is a real-time messaging system that allows communication between any device that has TCP/IP. The server can be hosted anywhere (.NET/Mono) and the clients cover every major browser + C#, VB.NET, Android, iOS, NETMF. And it is very easy to connect anything else that has a TCP/IP stack.
+###What is XSockets.NET?
+XSockets.NET is a real-time messaging system that allows communication between any device that has TCP/IP. The server can be hosted anywhere (.NET/Mono) and the clients cover every major browser + C#, VB.NET, Android, iOS, NETMF. And it is very easy to connect anything else that has a TCP/IP stack since XSockets allows custom protocols.
 
 ***In short terms: RealTime, InternetOfThings and WebRTC in a single framework!***
 
@@ -178,8 +178,8 @@ You may also notice that XSockets enables not only cross-protocol communication,
 
 ----------
 
-##Server API Guide
-This section provides examples for server side development but contains sample code for both sever side and client side
+##Controllers
+If you are familiar with the MVC pattern you will find it very easy to work with XSockets controllers.
 
 ###How to create and use Controller classes
 To create a `Controller`, create a class that derives from `XSockets.Core.XSocket.XSocketController`. The following example shows a simple `Controller` class for a chat application.
@@ -290,7 +290,59 @@ Client - C#
 
 *Above we get a dynamic since we do not specify the datatype, but we can of course use a complex type to get the message deserialized into the correct type and get intellisense.*
 
-#### How to use state on the server
+####How to hide methods and properties
+You might not wanna expose all publish methods and properties to the client API's. When you want to hide a publish method/property just decorate the method/property with the `[NoEvent]` attribute. The attribute is located under `XSockets.Core.Common.Socket.Event.Attributes`
+
+###How to handle errors in the Controller class
+Wrap you logic in a try catch block and call the `HandleError` method that will invoke the `OnError` event. 
+
+When needed you can also send the error to the `ErrorInterceptors` if you have implemented any.
+
+    try
+    {
+        throw new Exception("boom!");
+    }
+    catch(Exception ex)
+    {
+        this.HandleError(ex);
+        ErrorInterceptorsQueue.Push(ex);
+    }
+
+###How to create internal (long-running) Controllers
+A common scenario is that you want to do something every x seconds on the server. It can be polling a legacy database etc. And then push information to clients based on criterias just as you do in any XSockets server side method.
+
+In XSockets you can write long-running controllers. A long-running controller will be a `singleton` that only executes inside of the server. Clients can´t connect to a long-running controller.
+
+The simple sample below will send a chatmessage to all clients connected to the `Chat` controller from the long-running controller. The line that will make the controller a long-running controller is `[XSocketMetadata("MyLongrunningController", PluginRange.Internal)]` That tells XSockets to use the controller as a singleton and that it should be internal only.
+
+    /// <summary>
+    /// This is a longrunning controller. This cant be connected to.
+    /// It is a singleton that will run inside xsockets as long as the server is alive.
+    /// Most common is to start a timer in it to perform some task
+    /// </summary>
+    [XSocketMetadata("MyLongrunningController", PluginRange.Internal)]   
+    public class MyLongrunningController : XSocketController
+    {
+        private Timer timer;
+        
+        public MyLongrunningController()
+        {
+            timer = new Timer(10000);
+            timer.Elapsed += timer_Elapsed;
+            timer.Start();
+        }
+
+        void timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            //Sending a message to all clients on the Chat controller
+            this.InvokeToAll<Chat>("Hello from long-running controller", "say");
+        }
+    }
+
+##State is the key to success
+State is the most important thing in full-duplex real-time applications. Without state you will not know where to send messages, and you will spend a lot of more time to implement business logic in your applications
+
+### How to use state on the server
 All public getters and setters are accessible from the client API, so you can actually `get` and `set` the `Controller` properties from the client API's.
 
 Below you can see that the chat example is extended with a property for username. Since we can use `state` to know who the user is at all times there is no need passing the unnecessary data with every message.
@@ -319,10 +371,10 @@ Client - C#
     
 So to repeat... Since we at all times know the username there is no need for passing it to the server when we can attach the user on the message going out.
 
-####How to hide methods and properties
-You might not wanna expose all publish methods and properties to the client API's. When you want to hide a publish method/property just decorate the method/property with the `[NoEvent]` attribute. The attribute is located under `XSockets.Core.Common.Socket.Event.Attributes`
+##Parameters, Model binding & return values
+XSockets have had strongly typed model binding for generations, this is one of the things that makes it easy to use. Just declare methods on the controllers and specify the complex parameter on the methods. XSockets will transform the JSON sent in to the correct parameter type.
 
-####How to use complex objects as parameters
+###How to use complex objects as parameters
 Above we looked at how you can send complex types to the clients, of course the client can send complex types to the server as well.
 
 **Server**
@@ -353,7 +405,7 @@ Client - C#
 
     conn.Controller("chat").Invoke("chatmessage", new ChatModel{Text="Hello from CS"});
 
-####How to use IMessage as parameter
+###How to use IMessage as parameter
 When you do not process the data server-side there is no need serializing incoming messages. In these situations you can use `IMessage` as parameter since any message sent into XSockets.NET will be transformed into `IMessage` internally.
 
 This is how the `Generic` controller used in the `Getting started with real-time communication` sample is built. The code for `Generic` is very simple and looks exactly like this.
@@ -370,7 +422,7 @@ In the `Generic` `Controller` we override the `OnMessage` method which means tha
 
 You can of course use the `IMessage` parameter in regular methods on the `Controller` and not just the `OnMessage` method.
 
-####Return data synchronously to caller
+###Return data synchronously to caller
 When you call the server from a client and want to wait for the result you just replace void with the type you want to return and the client API's will wait for the result.
 
 **Server**
@@ -400,11 +452,10 @@ Client - C#
     var echo = conn.Controller("chat").Invoke<string>("echo");
     Console.WriteLine(echo.Result);
 
-####How to do overloading of methods
+##Binary data
+XSockets has supported binary messages for a long time, but in 4.0 we have made it even easier than before.
 
-    TBD
-
-####How to handle binary data
+###How to handle binary data
 Lets say that we have a file `c:\temp\xfile.txt` with the text `This file was sent with XSockets.NET` and we want to send that file to the server.
 
 **Server**
@@ -425,7 +476,7 @@ Client - C#
     var blob = File.ReadAllBytes(@"c:\temp\xfile.txt");
     conn.Controller("chat").Invoke("myfile", blob);
 
-####How to pass meta-data together with binary data
+###How to pass meta-data together with binary data
 If we want to attach metadata about the binary data that is easy to do. Just pass along the object representing the metadata and XSockets will let you extract that data on the server.
 
 **Server**
@@ -457,11 +508,11 @@ Client - C#
 
 ----------
 
-###RPC
+##RPC
 The RemoteProcedureCall pattern let you do exactly what is says, call procedures remotely. RPC together with XSockets fine grained control let you send messages to specific clients in a very smooth way.
 
 You will see more about this powerful feature combined with RPC below
-####How to call methods on the client
+###How to call methods on the client
 If you just want to send a message to the caller of the method, use `Invoke`
 
 **Server**
@@ -479,7 +530,7 @@ Client - C#
 
     conn.Controller("chat").On<string>("chatmessage", data => Console.WriteLine(data));
 
-####How to call methods on all clients
+###How to call methods on all clients
 If you want to send a message to all clients connected to the controller, use `InvokeToAll`
 
 **Server**
@@ -496,7 +547,7 @@ Client - C#
 
     conn.Controller("chat").On<string>("chatmessage", data => Console.WriteLine(data));
 
-####How to target a subset of the connected clients
+###How to target a subset of the connected clients
 If you want to send a message to some of the clients connected to the controller, use `InvokeTo`
 
 This is where you will see the power of state! You will actually get intellisense so that you can write lambda expressions to target the clients you want to send the message to.
@@ -518,7 +569,7 @@ Client - C#
 
     conn.Controller("chat").On<string>("chatmessage", data => Console.WriteLine(data));
 
-####How to send messages to clients connected on another Controller class
+###How to send messages to clients connected on another Controller class
 It is pretty much the same as sending to the clients on the same `Controller` since XSockets extension-methods are generic.
 
 So, if you are on `Controller` A and want to send to all clients on `Controller` B you just use...
@@ -529,7 +580,7 @@ So, if you are on `Controller` A and want to send to all clients on `Controller`
     //And the powerful `InvokeTo<T>`  would have a signature like:
     this.InvokeTo<T>(Func<T,bool> expression, object obj, string target);
 
-####How to call client methods outside the Controller class
+###How to call client methods outside the Controller class
 Just create a controller instance (or ask the plugin framework after the specific controller) and then use the extensions to send data
 
     //Create the instance your self
@@ -543,11 +594,11 @@ Notice that you have to pass in <T> in the extension regardless of what controll
 
 ----------
 
-###PUB/SUB
+##PUB/SUB
 The publish/subscribe pattern is useful when your applications need the users to subscribe to the topics that you are about to publish. Of course you can have very good control with XSockets since you can select subsets of subscribers very easy to get more fine grained control.
 
 You will see more about this powerful feature combined with PUB/SUB below.
-####How to publish data to subscribers
+###How to publish data to subscribers
 If you just want to send a message to the publisher/caller of the method, use `Publish`
 The big difference between `Publish` and `Invoke` is that the message only will arrive at the client if the client has a `Subscription` registered on the server.
 
@@ -568,7 +619,7 @@ Client - C#
 
     conn.Controller("chat").Subscribe<string>("chatmessage", data => Console.WriteLine(data) );
 
-####How to publish to all subscribers
+###How to publish to all subscribers
 If you want to publish a message to all clients subscribing to a topic, use `PublishToAll`
 
 **Server**
@@ -587,7 +638,7 @@ Client - C#
 
     conn.Controller("chat").On<string>("chatmessage", data => Console.WriteLine(data));
 
-####How to publish to a subset of the subscribing clients
+###How to publish to a subset of the subscribing clients
 If you want to send a message to some of the subscribing clients, use `PublishTo`
 
 This is where you will see the power of state! You will actually get intellisense so that you can write lambda expressions to target the subscribers you want to send the message to.
@@ -611,7 +662,7 @@ Client - C#
 
     conn.Controller("chat").On<string>("chatmessage", data => Console.WriteLine(data));
 
-####How to publish messages to subscribers connected on another Controller class
+###How to publish messages to subscribers connected on another Controller class
 It is pretty much the same as publishing to the clients on the same `Controller` since XSockets extension-methods are generic.
 
 So, if you are on `Controller` A and want to publish to all `chatmessage` subscribers on `Controller` B you just use...
@@ -622,7 +673,7 @@ So, if you are on `Controller` A and want to publish to all `chatmessage` subscr
     //And the powerful `PublishTo<T>`  would have a signature like:
     this.PublishTo<T>(Func<T,bool> expression, object obj, string target);
 
-####How to call subscribers outside the Controller class
+###How to call subscribers outside the Controller class
 Just create a controller instance (or ask the plugin framework after the specific controller) and then use the extensions to send data
 
     //Create the instance your self
@@ -636,10 +687,10 @@ Notice that you have to pass in <T> in the extension regardless of what controll
     
 ----------
 
-###How to handle connection lifetime events in the Controller class
+##How to handle connection lifetime events in the Controller class
 Each controller have events that you can use to know when `Open`, `Close` and `ReOpen` occurs.
 
-####The OnOpen event
+###The OnOpen event
 Will fire when the controller is used over the connection for the first time.
     
     public class Chat : XSocketController
@@ -655,7 +706,7 @@ Will fire when the controller is used over the connection for the first time.
         }
     }
 
-####The OnClose event
+###The OnClose event
 Will fire when the socket is closed or if the client choose to close this specific controller on the connection.
 
     public class Chat : XSocketController
@@ -671,7 +722,7 @@ Will fire when the socket is closed or if the client choose to close this specif
         }
     }
 
-####How to do heartbeats (ping/pong control-frames)
+###How to do heartbeats (ping/pong control-frames)
 Control-frames (ping/pong) is primarily for checking connections, measure latency and validate that the connection is valid.
 
 You can implement custom logic for sending/receiving these frames on the server, but there is a simple helper that you can use to get the functionality.
@@ -689,10 +740,10 @@ You can implement custom logic for sending/receiving these frames on the server,
         }
     }
 
-### Modules/Plugins
+## Modules/Plugins
 This section covers how to create custom modules/plugins for different parts of XSockets. This only covers the `Interfaces` within XSockets, but you can ofcourse add your custom interfaces as plugins by telling the plugin framework about the interfaces you want to use. Read more about custom plugin in `The Plugin Framework` section
 
-####How to implement your custom Pipeline
+###How to implement your custom Pipeline
 The server will only have one `XSockets.Core.Common.Socket.IXSocketPipeline`, but you can override the default one by just deriving it.
 
 Each message passing into the server or out of the server will pass the pipeline
@@ -712,7 +763,7 @@ Each message passing into the server or out of the server will pass the pipeline
         }
     }
     
-#### Write a custom AuthenticationPipeline
+### Write a custom AuthenticationPipeline
 When the socket is connected and the handshake is completed the `AuthenticationPipeline` will be called. By default the pipeline will look for a FormsAuthenticationTicket, but you can override this pipline by just implementing a interface `XSockets.Core.Common.Socket.IXSocketAuthenticationPipeline`
 
 There can only be one pipeline so even if you implement several pipelines only one wil be used.
@@ -734,12 +785,12 @@ There can only be one pipeline so even if you implement several pipelines only o
         }
     }
 
-#### Interceptors Concept
+### Interceptors Concept
 There can only be one `Pipeline`, and one `AuthenticationPipeline`, but interceptors can be 0 to N. Every interceptor will be called at a specific time. ConnectionInterceptors for example will be called when someone connects, disconnects or when a handshake is completed (ok or not).
 
 Interceptors are common when debugging or logging, but XSockets does not choose a logger for you. Implement the interface and do whatever you want inside of the interceptor(s).
 
-##### How to write ConnectionInterceptors
+#### How to write ConnectionInterceptors
 Sample of a connection interceptor that logs handshake and connect/disconnect with `debug` level
 
     public class MyConnectionInterceptor : IConnectionInterceptor
@@ -766,7 +817,7 @@ Sample of a connection interceptor that logs handshake and connect/disconnect wi
         }
     }
     
-######How to write MessageInterceptors
+#####How to write MessageInterceptors
 Sample of a message interceptor that logs in/out messages with `debug` level
 
     public class MyMessageInterceptor : IMessageInterceptor
@@ -782,7 +833,7 @@ Sample of a message interceptor that logs in/out messages with `debug` level
         }
     }
     
-######How to write ErrorInterceptors
+#####How to write ErrorInterceptors
 Sample of a error interceptor that logs exceptions with `error` level
 
     public class MyErrorInterceptor : IErrorInterceptor
@@ -793,7 +844,7 @@ Sample of a error interceptor that logs exceptions with `error` level
         }
     }
     
-####How to write a custom JSON Serializer
+###How to write a custom JSON Serializer
 You can replace the default serializer with your own favorite serializer. As everything else in XSockets.NET it is just a module/plugin. Implement the `IXSocketJsonSerializer` interface and export the new plugin to tell XSockets to use your serializer instead of the defualt one.
 
 In the sample below we use the ServiceStack.Text serializer
@@ -843,11 +894,11 @@ In the sample below we use the ServiceStack.Text serializer
         }    
     }
     
-####How to write custom Protocols
+###How to write custom Protocols
 
     TODO
     
-###Securing the Controller
+##Securing the Controller
 XSockets.NET does not provide any features for authenticating users. Instead, you integrate the XSockets:NET features into the existing authentication structure for an application. You authenticate users as you would normally in your application, and work with the results of the authentication in your XSockets.NET code. For example, you might authenticate your users with ASP.NET forms authentication, and then in your `Controller`, enforce which users or roles are authorized to call a method.
 
 XSockets provides the Authorize attribute to specify which users have access to a `controller` or `method`. You apply the Authorize attribute to either a `controller` or particular `methods` in a `controller`. Without the Authorize attribute, all public methods on the controller are available to a client that is connected to the controller. 
@@ -856,17 +907,17 @@ If you want to allow unrestrcited access on some methods you can add the `AllowA
 
 More information about attributes and methods below
 
-#### Authorize Attribute
+### Authorize Attribute
 
 This attribute can be set on Controller or Method level. If set at controller level all action methods that do not have the `AllowAnonymous` attribute will require authentication.
 
 The authorize attribute can take Roles and Users but if using that you will have to implement your own authentication by overriding `OnAuthorization(AuthorizeAttribute authorizeAttribute)`
 
-#### AllowAnonymous Attribute
+### AllowAnonymous Attribute
 
 This attribute can be set on action methods and will then allow anonymous access.
 
-#### Get FormsAuthentication Ticket
+### Get FormsAuthentication Ticket
 
 When you have custom authentication you can get the `FormsAuthenticationTicket` from this method.
 
@@ -877,7 +928,7 @@ When you have custom authentication you can get the `FormsAuthenticationTicket` 
 **Important: If you have separate project you will have to use the same origin to be able to get cookies and also use machine-key in the config to be able to get the AuthCookie.**
 ***See*** http://msdn.microsoft.com/en-us/library/system.web.configuration.machinekeysection.compatibilitymode%28v=vs.110%29.aspx ***if you are using different framework versions in the projects.***
 
-#### Write a custom AuthenticationPipeline
+### Write a custom AuthenticationPipeline
 When the socket is connected and the handshake is completed the `AuthenticationPipeline` will be called. By default the pipeline will look for a FormsAuthenticationTicket, but you can override this pipline by just implementing a interface `XSockets.Core.Common.Socket.IXSocketAuthenticationPipeline`
 
 There can only be one pipeline so even if you implement several pipelines only one wil be used.
@@ -898,7 +949,7 @@ There can only be one pipeline so even if you implement several pipelines only o
         }
     }
 
-#### How to override the OnAuthorization method
+### How to override the OnAuthorization method
 The `OnAuthorization` method is called for every method on a controller that has authentication. The attribute for the method (or controller) is passed in and we check that 
 
  1. That the user is authenticated
@@ -940,7 +991,7 @@ Based on the `Write a custom AuthenticationPipeline` where we added the username
     
     [Authorize(Roles = "batman,hulk")] //would be valid
     
-#### How to know when authorization fails
+### How to know when authorization fails
 Every time a method on a controller needs authentication the `OnAuthorization` method is called (which was overridden in previous sample).
 
 When the `OnAuthorization` returns false the `OnAuthorizationFailed` event is fired.
@@ -958,53 +1009,18 @@ When the `OnAuthorization` returns false the `OnAuthorizationFailed` event is fi
 
 The `OnAuthorizationFailedArgs` contains information about the controller and the method being called. Information about the user that called the method can be accessed from `this.ProtocolInstance.ConnectionContext.User`
 
-###How to handle errors in the Controller class
-Wrap you logic in a try catch block and call the `HandleError` method that will invoke the `OnError` event. 
-
-When needed you can also send the error to the `ErrorInterceptors` if you have implemented any.
-
-    try
-    {
-        throw new Exception("boom!");
-    }
-    catch(Exception ex)
-    {
-        this.HandleError(ex);
-        ErrorInterceptorsQueue.Push(ex);
-    }
-
-###How to create internal (long-running) Controllers
-A common scenario is that you want to do something every x seconds on the server. It can be polling a legacy database etc. And then push information to clients based on criterias just as you do in any XSockets server side method.
-
-In XSockets you can write long-running controllers. A long-running controller will be a `singleton` that only executes inside of the server. Clients can´t connect to a long-running controller.
-
-The simple sample below will send a chatmessage to all clients connected to the `Chat` controller from the long-running controller. The line that will make the controller a long-running controller is `[XSocketMetadata("MyLongrunningController", PluginRange.Internal)]` That tells XSockets to use the controller as a singleton and that it should be internal only.
-
-    /// <summary>
-    /// This is a longrunning controller. This cant be connected to.
-    /// It is a singleton that will run inside xsockets as long as the server is alive.
-    /// Most common is to start a timer in it to perform some task
-    /// </summary>
-    [XSocketMetadata("MyLongrunningController", PluginRange.Internal)]   
-    public class MyLongrunningController : XSocketController
-    {
-        private Timer timer;
-        
-        public MyLongrunningController()
-        {
-            timer = new Timer(10000);
-            timer.Elapsed += timer_Elapsed;
-            timer.Start();
-        }
-
-        void timer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            //Sending a message to all clients on the Chat controller
-            this.InvokeToAll<Chat>("Hello from long-running controller", "say");
-        }
-    }
-
 ###How to get information about the client from the ConnectionContext
+You can access various information about the connection from the `IConnectionContext`. The context is accessible from both Controller and Protocol.
+
+    this.ConnectionContext
+    
+The context contains information such as:
+
+- Cookies
+- Headers
+- Querystring
+- IPrincipal
+- PersistentId
 
 ####Getting Cookies
 You can get the `CookieCollection` by using
