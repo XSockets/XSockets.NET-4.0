@@ -17,7 +17,7 @@ XSockets.NET is a real-time messaging system that allows communication between a
 
 ----------
 
-##Getting started with real-time communication
+##Getting started with real-time
 ###1. Start a server
 
     using (var container = Composable.GetExport<IXSocketServerContainer>())
@@ -51,13 +51,17 @@ C#
 
     conn.Controller("generic").Invoke("mymessage",new {Text = "Hello C# RealTime"});
 
-### 4. What's next?
-#### JavaScript/C# Client API
+
+----------
+
+
+### What's next?
+#### Client API
 Learn to...
 
  - Use Pub/Sub, RPC or both!
 
-#### Server
+#### Server API
 Create...
 
  - Powerful server-side controllers
@@ -294,9 +298,9 @@ Client - C#
 You might not wanna expose all publish methods and properties to the client API's. When you want to hide a publish method/property just decorate the method/property with the `[NoEvent]` attribute. The attribute is located under `XSockets.Core.Common.Socket.Event.Attributes`
 
 ###How to handle errors in the Controller class
-Wrap you logic in a try catch block and call the `HandleError` method that will invoke the `OnError` event. 
+Wrap you logic in a try catch block and call the HandleError method that will invoke the OnError event.
 
-When needed you can also send the error to the `ErrorInterceptors` if you have implemented any.
+When needed you can also send the error to the ErrorInterceptors if you have implemented any.
 
     try
     {
@@ -338,38 +342,6 @@ The simple sample below will send a chatmessage to all clients connected to the 
             this.InvokeToAll<Chat>("Hello from long-running controller", "say");
         }
     }
-
-##State is the key to success
-State is the most important thing in full-duplex real-time applications. Without state you will not know where to send messages, and you will spend a lot of more time to implement business logic in your applications
-
-### How to use state on the server
-All public getters and setters are accessible from the client API, so you can actually `get` and `set` the `Controller` properties from the client API's.
-
-Below you can see that the chat example is extended with a property for username. Since we can use `state` to know who the user is at all times there is no need passing the unnecessary data with every message.
-
-Server `Controller` with state
-
-    public class Chat : XSocketController
-    {
-        public string UserName {get;set;}
-        
-        public void ChatMessage(string message)
-        {
-            this.InvokeToAll(new {UserName = this.UserName, Text = message},"chatmessage");
-        }
-    }
-    
-Set the UserName from the client API's
-
-Client - JavaScript
-
-    conn.controller('chat').setProperty('username','Espen Knutsen');
-
-Client - C#
-
-    conn.Controller("chat").SetProperty("username","Espen Knutsen");
-    
-So to repeat... Since we at all times know the username there is no need for passing it to the server when we can attach the user on the message going out.
 
 ##Parameters, Model binding & return values
 XSockets have had strongly typed model binding for generations, this is one of the things that makes it easy to use. Just declare methods on the controllers and specify the complex parameter on the methods. XSockets will transform the JSON sent in to the correct parameter type.
@@ -687,7 +659,43 @@ Notice that you have to pass in <T> in the extension regardless of what controll
     
 ----------
 
-##How to handle connection lifetime events in the Controller class
+##State is the key to success
+State is the most important thing in full-duplex real-time applications. Without state you will not know where to send messages, and you will spend a lot of more time to implement business logic in your applications
+
+### How to use state on the server
+All public getters and setters are accessible from the client API, so you can actually `get` and `set` the `Controller` properties from the client API's.
+
+Below you can see that the chat example is extended with a property for username. Since we can use `state` to know who the user is at all times there is no need passing the unnecessary data with every message.
+
+Server `Controller` with state
+
+    public class Chat : XSocketController
+    {
+        public string UserName {get;set;}
+        
+        public void ChatMessage(string message)
+        {
+            this.InvokeToAll(new {UserName = this.UserName, Text = message},"chatmessage");
+        }
+    }
+    
+Set the UserName from the client API's
+
+Client - JavaScript
+
+    conn.controller('chat').setProperty('username','Espen Knutsen');
+
+Client - C#
+
+    conn.Controller("chat").SetProperty("username","Espen Knutsen");
+    
+So to repeat... Since we at all times know the username there is no need for passing it to the server when we can attach the user on the message going out.
+
+
+----------
+
+
+##Connection lifetime events
 Each controller have events that you can use to know when `Open`, `Close` and `ReOpen` occurs.
 
 ###The OnOpen event
@@ -1047,7 +1055,7 @@ You can get/set the IPrincipal by using
 
 ----------
 
-## C# Client API Guide
+## C-Sharp
 The C# Client API has support for:
 
  - .NET 3.5, 4.0+
@@ -1457,7 +1465,7 @@ Since the storage is per client you will only get notifications for changes in t
     conn.Controller("chat").StorageClear();
 
 ----------
-##JavaScript Client API  Guide
+##JavaScript
 To get the client just get the latest package from http://nuget.org/packages/xsockets.jsapi
 
 The JavaScript API supports RPC, PUB/SUB and WebRTC.
@@ -1725,7 +1733,7 @@ Set the generic type that you want to store (in this case string)
     conn.controller('chat').storageClear();
     
 ----------
-## .NET MicroFramework Client API Guide
+## .NET MicroFramework
 The .NET MicroFramework has support for .NET MicroFramework 4.2 and 4.3
 
 ###Client Setup
@@ -2126,7 +2134,9 @@ Note that this will scale in one direction from this server to `ws://127.0.0.1:4
 
     Composable.GetExport<IXSocketsScaleOut>().AddScaleOut("ws://127.0.0.1:4503");
     
-#### Implementing Custom ScaleOut
+So basic scaling is not that hard to setup!
+
+### Implementing Custom ScaleOut
 If you rather scaleout over SQL, Redis etc you can write a custom scaleout by just deriving the ´BaseScaleout´ class
 
     public class MyScaleOut : BaseScaleOut
