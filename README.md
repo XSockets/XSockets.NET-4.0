@@ -152,7 +152,7 @@ So basically just call the UseXSockets extension from where you have your StartU
 ##Supported Platforms
 ###Server system requirements
 
-Since XSockets.NET is built to run on both .NET and Mono the server can be hosted pretty much anywhere.
+Since XSockets.NET is built to run on both .NET and Mono the server can be hosted pretty much anywhere. The server side only has .NET (or Mono equivalent) as requirements!
 
 ###Client system requirements
 
