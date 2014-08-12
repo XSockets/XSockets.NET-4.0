@@ -55,7 +55,7 @@
 </code></pre>
 
 <hr><h2>
-<a name="getting-started-with-real-time-communication" class="anchor" href="#getting-started-with-real-time-communication"><span class="octicon octicon-link"></span></a>Getting started with real-time communication</h2>
+<a name="getting-started-with-real-time" class="anchor" href="#getting-started-with-real-time"><span class="octicon octicon-link"></span></a>Getting started with real-time</h2>
 
 <h3>
 <a name="1-start-a-server" class="anchor" href="#1-start-a-server"><span class="octicon octicon-link"></span></a>1. Start a server</h3>
@@ -98,18 +98,18 @@ conn.Controller("generic").On("mymessage", data =&gt; Console.WriteLine(data.Tex
 <pre><code>conn.Controller("generic").Invoke("mymessage",new {Text = "Hello C# RealTime"});
 </code></pre>
 
-<h3>
-<a name="4-whats-next" class="anchor" href="#4-whats-next"><span class="octicon octicon-link"></span></a>4. What's next?</h3>
+<hr><h3>
+<a name="whats-next" class="anchor" href="#whats-next"><span class="octicon octicon-link"></span></a>What's next?</h3>
 
 <h4>
-<a name="javascriptc-client-api" class="anchor" href="#javascriptc-client-api"><span class="octicon octicon-link"></span></a>JavaScript/C# Client API</h4>
+<a name="client-api" class="anchor" href="#client-api"><span class="octicon octicon-link"></span></a>Client API</h4>
 
 <p>Learn to...</p>
 
 <ul>
 <li>Use Pub/Sub, RPC or both!</li>
 </ul><h4>
-<a name="server" class="anchor" href="#server"><span class="octicon octicon-link"></span></a>Server</h4>
+<a name="server-api" class="anchor" href="#server-api"><span class="octicon octicon-link"></span></a>Server API</h4>
 
 <p>Create...</p>
 
@@ -392,9 +392,9 @@ public class StockTicker : XSocketController
 <h3>
 <a name="how-to-handle-errors-in-the-controller-class" class="anchor" href="#how-to-handle-errors-in-the-controller-class"><span class="octicon octicon-link"></span></a>How to handle errors in the Controller class</h3>
 
-<p>Wrap you logic in a try catch block and call the <code>HandleError</code> method that will invoke the <code>OnError</code> event. </p>
+<p>Wrap you logic in a try catch block and call the HandleError method that will invoke the OnError event.</p>
 
-<p>When needed you can also send the error to the <code>ErrorInterceptors</code> if you have implemented any.</p>
+<p>When needed you can also send the error to the ErrorInterceptors if you have implemented any.</p>
 
 <pre><code>try
 {
@@ -440,45 +440,6 @@ public class MyLongrunningController : XSocketController
     }
 }
 </code></pre>
-
-<h2>
-<a name="state-is-the-key-to-success" class="anchor" href="#state-is-the-key-to-success"><span class="octicon octicon-link"></span></a>State is the key to success</h2>
-
-<p>State is the most important thing in full-duplex real-time applications. Without state you will not know where to send messages, and you will spend a lot of more time to implement business logic in your applications</p>
-
-<h3>
-<a name="how-to-use-state-on-the-server" class="anchor" href="#how-to-use-state-on-the-server"><span class="octicon octicon-link"></span></a>How to use state on the server</h3>
-
-<p>All public getters and setters are accessible from the client API, so you can actually <code>get</code> and <code>set</code> the <code>Controller</code> properties from the client API's.</p>
-
-<p>Below you can see that the chat example is extended with a property for username. Since we can use <code>state</code> to know who the user is at all times there is no need passing the unnecessary data with every message.</p>
-
-<p>Server <code>Controller</code> with state</p>
-
-<pre><code>public class Chat : XSocketController
-{
-    public string UserName {get;set;}
-
-    public void ChatMessage(string message)
-    {
-        this.InvokeToAll(new {UserName = this.UserName, Text = message},"chatmessage");
-    }
-}
-</code></pre>
-
-<p>Set the UserName from the client API's</p>
-
-<p>Client - JavaScript</p>
-
-<pre><code>conn.controller('chat').setProperty('username','Espen Knutsen');
-</code></pre>
-
-<p>Client - C#</p>
-
-<pre><code>conn.Controller("chat").SetProperty("username","Espen Knutsen");
-</code></pre>
-
-<p>So to repeat... Since we at all times know the username there is no need for passing it to the server when we can attach the user on the message going out.</p>
 
 <h2>
 <a name="parameters-model-binding--return-values" class="anchor" href="#parameters-model-binding--return-values"><span class="octicon octicon-link"></span></a>Parameters, Model binding &amp; return values</h2>
@@ -868,7 +829,46 @@ chat.PublishToAll&lt;Chat&gt;("Hello from manual instance","say");
 <p><em>Note: there is no point in using Invoke/Publish/Send since the actual controller does not have a socket since there is no client connected to it (we created the instance manually).</em></p>
 
 <hr><h2>
-<a name="how-to-handle-connection-lifetime-events-in-the-controller-class" class="anchor" href="#how-to-handle-connection-lifetime-events-in-the-controller-class"><span class="octicon octicon-link"></span></a>How to handle connection lifetime events in the Controller class</h2>
+<a name="state-is-the-key-to-success" class="anchor" href="#state-is-the-key-to-success"><span class="octicon octicon-link"></span></a>State is the key to success</h2>
+
+<p>State is the most important thing in full-duplex real-time applications. Without state you will not know where to send messages, and you will spend a lot of more time to implement business logic in your applications</p>
+
+<h3>
+<a name="how-to-use-state-on-the-server" class="anchor" href="#how-to-use-state-on-the-server"><span class="octicon octicon-link"></span></a>How to use state on the server</h3>
+
+<p>All public getters and setters are accessible from the client API, so you can actually <code>get</code> and <code>set</code> the <code>Controller</code> properties from the client API's.</p>
+
+<p>Below you can see that the chat example is extended with a property for username. Since we can use <code>state</code> to know who the user is at all times there is no need passing the unnecessary data with every message.</p>
+
+<p>Server <code>Controller</code> with state</p>
+
+<pre><code>public class Chat : XSocketController
+{
+    public string UserName {get;set;}
+
+    public void ChatMessage(string message)
+    {
+        this.InvokeToAll(new {UserName = this.UserName, Text = message},"chatmessage");
+    }
+}
+</code></pre>
+
+<p>Set the UserName from the client API's</p>
+
+<p>Client - JavaScript</p>
+
+<pre><code>conn.controller('chat').setProperty('username','Espen Knutsen');
+</code></pre>
+
+<p>Client - C#</p>
+
+<pre><code>conn.Controller("chat").SetProperty("username","Espen Knutsen");
+</code></pre>
+
+<p>So to repeat... Since we at all times know the username there is no need for passing it to the server when we can attach the user on the message going out.</p>
+
+<hr><h2>
+<a name="connection-lifetime-events" class="anchor" href="#connection-lifetime-events"><span class="octicon octicon-link"></span></a>Connection lifetime events</h2>
 
 <p>Each controller have events that you can use to know when <code>Open</code>, <code>Close</code> and <code>ReOpen</code> occurs.</p>
 
@@ -1293,7 +1293,7 @@ void Chat_OnAuthorizationFailed(object sender, OnAuthorizationFailedArgs e)
 </code></pre>
 
 <hr><h2>
-<a name="c-client-api-guide" class="anchor" href="#c-client-api-guide"><span class="octicon octicon-link"></span></a>C# Client API Guide</h2>
+<a name="c-sharp" class="anchor" href="#c-sharp"><span class="octicon octicon-link"></span></a>C-Sharp</h2>
 
 <p>The C# Client API has support for:</p>
 
@@ -1827,7 +1827,7 @@ Console.WriteLine("Got color {0} from storage", color);
 </code></pre>
 
 <hr><h2>
-<a name="javascript-client-api--guide" class="anchor" href="#javascript-client-api--guide"><span class="octicon octicon-link"></span></a>JavaScript Client API  Guide</h2>
+<a name="javascript" class="anchor" href="#javascript"><span class="octicon octicon-link"></span></a>JavaScript</h2>
 
 <p>To get the client just get the latest package from <a href="http://nuget.org/packages/xsockets.jsapi">http://nuget.org/packages/xsockets.jsapi</a></p>
 
@@ -2174,7 +2174,7 @@ public void ChatMessage(ChatModel chatModel)
 </code></pre>
 
 <hr><h2>
-<a name="net-microframework-client-api-guide" class="anchor" href="#net-microframework-client-api-guide"><span class="octicon octicon-link"></span></a>.NET MicroFramework Client API Guide</h2>
+<a name="net-microframework" class="anchor" href="#net-microframework"><span class="octicon octicon-link"></span></a>.NET MicroFramework</h2>
 
 <p>The .NET MicroFramework has support for .NET MicroFramework 4.2 and 4.3</p>
 
@@ -2670,8 +2670,10 @@ container.Start(configurationSetting: myCustomConfig);
 <pre><code>Composable.GetExport&lt;IXSocketsScaleOut&gt;().AddScaleOut("ws://127.0.0.1:4503");
 </code></pre>
 
-<h4>
-<a name="implementing-custom-scaleout" class="anchor" href="#implementing-custom-scaleout"><span class="octicon octicon-link"></span></a>Implementing Custom ScaleOut</h4>
+<p>So basic scaling is not that hard to setup!</p>
+
+<h3>
+<a name="implementing-custom-scaleout" class="anchor" href="#implementing-custom-scaleout"><span class="octicon octicon-link"></span></a>Implementing Custom ScaleOut</h3>
 
 <p>If you rather scaleout over SQL, Redis etc you can write a custom scaleout by just deriving the ´BaseScaleout´ class</p>
 
