@@ -20,6 +20,8 @@ XSockets.NET is a real-time messaging system that allows communication between a
 ##Getting started with real-time
 ###1. Start a server
 
+    using XSockets.Core.Common.Socket;
+    using XSockets.Plugin.Framework;
     using (var container = Composable.GetExport<IXSocketServerContainer>())
     {
         container.Start();
@@ -51,9 +53,7 @@ C#
 
     conn.Controller("generic").Invoke("mymessage",new {Text = "Hello C# RealTime"});
 
-
 ----------
-
 
 ### What's next?
 #### Client API
@@ -105,6 +105,7 @@ Open up the Package Manager Console and install the server
 #####How to register XSockets Middleware
 UseXSockets is an extension method for the OwinExtensions class.
 
+    using XSockets.Owin.Host;
     public class Startup
     {
         public void Configuration(IAppBuilder app)
@@ -190,6 +191,8 @@ If you are familiar with the MVC pattern you will find it very easy to work with
 ###How to create and use Controller classes
 To create a `Controller`, create a class that derives from `XSockets.Core.XSocket.XSocketController`. The following example shows a simple `Controller` class for a chat application.
 
+    //using XSockets.Core.XSocket;
+    //using XSockets.Core.XSocket.Helpers;
     public class Chat : XSocketController
     {
         public void ChatMessage(string message)
@@ -206,6 +209,8 @@ If you want to specify a different name for clients to use, add the `XSocketsMet
 
 Server
 
+    //using XSockets.Core.XSocket;
+    //using XSockets.Plugin.Framework.Attributes;
     [XSocketMetadata(PluginAlias = "Chat")]
     public class MyToLongAndComplexClassNameForTheChat : XSocketController
     
@@ -231,6 +236,9 @@ If you want to send messages to clients from your own code that runs outside the
 
 To expose a method on the `Controller` that you want to be callable from the client, declare a public method, as shown in the following examples.
 
+    //using System.Collections.Generic;
+    //using XSockets.Core.XSocket;
+    //using XSockets.Core.XSocket.Helpers;
     public class Chat : XSocketController
     {
         public void ChatMessage(string message)
@@ -255,6 +263,8 @@ There are many extensions for both PUB/SUB and RPC, and you can of course write 
 
 Server
 
+    //using XSockets.Core.XSocket;
+    //using XSockets.Core.XSocket.Helpers;
     public class Chat : XSocketController
     {
         public void ChatMessage(string message)
@@ -277,6 +287,8 @@ You can specify complex types and arrays for the parameters. The following examp
 
 Server code that calls a client method using a complex object
 
+    //using XSockets.Core.XSocket;
+    //using XSockets.Core.XSocket.Helpers;
     public void ChatMessage(string message)
     {
         this.InvokeToAll(new {Text=message},"chatmessage");
@@ -304,6 +316,8 @@ Wrap you logic in a try catch block and call the HandleError method that will in
 
 When needed you can also send the error to the ErrorInterceptors if you have implemented any.
 
+    //using XSockets.Core.Utility.MessageQueue.Interceptors;
+    //using XSockets.Core.XSocket;
     try
     {
         throw new Exception("boom!");
@@ -320,7 +334,11 @@ A common scenario is that you want to do something every x seconds on the server
 In XSockets you can write long-running controllers. A long-running controller will be a `singleton` that only executes inside of the server. Clients can´t connect to a long-running controller.
 
 The simple sample below will send a chatmessage to all clients connected to the `Chat` controller from the long-running controller. The line that will make the controller a long-running controller is `[XSocketMetadata("MyLongrunningController", PluginRange.Internal)]` That tells XSockets to use the controller as a singleton and that it should be internal only.
-
+    
+    //using XSockets.Core.XSocket;
+    //using XSockets.Core.XSocket.Helpers;
+    //using XSockets.Plugin.Framework.Attributes;
+    
     /// <summary>
     /// This is a longrunning controller. This cant be connected to.
     /// It is a singleton that will run inside xsockets as long as the server is alive.
@@ -363,6 +381,8 @@ A simple model for our chat sample
 
 Server code that accepts a complex object and sends it to all clients. Since we have the username (showed in `How to use state on the server`) we never pass that in, we only set it before sending data out.
 
+    //using XSockets.Core.XSocket;
+    //using XSockets.Core.XSocket.Helpers;
     public void ChatMessage(ChatModel message)
     {
         message.UserName = this.UserName;
@@ -384,6 +404,8 @@ When you do not process the data server-side there is no need serializing incomi
 
 This is how the `Generic` controller used in the `Getting started with real-time communication` sample is built. The code for `Generic` is very simple and looks exactly like this.
 
+    //using XSockets.Core.XSocket;
+    //using XSockets.Core.XSocket.Helpers;
     public class Generic : XSocketController
     {
         public override OnMessage(IMessage message)
@@ -408,6 +430,8 @@ When you call the server from a client and want to wait for the result you just 
     
 You can of course send data before doing the return, for example.
 
+    //using XSockets.Core.XSocket;
+    //using XSockets.Core.XSocket.Helpers;
     public string Echo()
     {
         this.InvokeToAll("someData", "someMethod");
@@ -434,6 +458,8 @@ Lets say that we have a file `c:\temp\xfile.txt` with the text `This file was se
 
 **Server**
 
+    //using XSockets.Core.XSocket;
+    //using XSockets.Core.Common.Socket.Event.Interface;
     public void MyFile(IMessage message)
     {
         var filecontent = Encoding.UTF8.GetString(message.Blob.ToArray());
@@ -464,6 +490,8 @@ If we want to attach metadata about the binary data that is easy to do. Just pas
         public string Name {get;set;}
     }
 
+    //using XSockets.Core.XSocket;
+    //using XSockets.Core.Common.Socket.Event.Interface;
     public void MyFile(IMessage message)
     {
         var filecontent = Encoding.UTF8.GetString(message.Blob.ToArray());
@@ -526,6 +554,9 @@ If you just want to send a message to the caller of the method, use `Invoke`
 
 **Server**
     
+    //using XSockets.Core.XSocket;
+    //using XSockets.Core.XSocket.Helpers;
+    
     //Send a message to the caller
     this.Invoke("Hello to caller from server", "chatmessage");
 
@@ -543,6 +574,9 @@ Client - C#
 If you want to send a message to all clients connected to the controller, use `InvokeToAll`
 
 **Server**
+    
+    //using XSockets.Core.XSocket;
+    //using XSockets.Core.XSocket.Helpers;
     
     this.InvokeToAll("Hello to all from server", "chatmessage");
 
@@ -566,6 +600,9 @@ Below for example we send to all clients having the same gender and location as 
 
 **Server**
     
+    //using XSockets.Core.XSocket;
+    //using XSockets.Core.XSocket.Helpers;
+    
     this.InvokeTo(p => p.Gender == this.Gender && p.City == this.City,"Hello to some from server", "chatmessage");
 
 **Client**
@@ -583,6 +620,9 @@ It is pretty much the same as sending to the clients on the same `Controller` si
 
 So, if you are on `Controller` A and want to send to all clients on `Controller` B you just use...
 
+    //using XSockets.Core.XSocket;
+    //using XSockets.Core.XSocket.Helpers;
+    
     //To all
     this.InvokeToAll<B>("Hello to all from server", "target");
     
@@ -591,6 +631,9 @@ So, if you are on `Controller` A and want to send to all clients on `Controller`
 
 ###How to call client methods outside the Controller class
 Just create a controller instance (or ask the plugin framework after the specific controller) and then use the extensions to send data
+
+    //using XSockets.Core.XSocket;
+    //using XSockets.Core.XSocket.Helpers;
 
     //Create the instance your self
     var chat = new Chat();
@@ -613,6 +656,9 @@ The big difference between `Publish` and `Invoke` is that the message only will 
 
 **Server**
     
+    //using XSockets.Core.XSocket;
+    //using XSockets.Core.XSocket.Helpers;
+    
     //Publish a message to the caller
     this.Publish("Hello to caller from server", "chatmessage");
 
@@ -632,6 +678,9 @@ Client - C#
 If you want to publish a message to all clients subscribing to a topic, use `PublishToAll`
 
 **Server**
+    
+    //using XSockets.Core.XSocket;
+    //using XSockets.Core.XSocket.Helpers;
     
     this.PublishToAll("Hello to all subscribers from server", "chatmessage");
 
@@ -657,6 +706,9 @@ Below for example we send to all clients having the same gender and location as 
 
 **Server**
     
+    //using XSockets.Core.XSocket;
+    //using XSockets.Core.XSocket.Helpers;
+    
     this.PublishTo(p => p.Gender == this.Gender && p.City == this.City,"Hello to some from server", "chatmessage");
 
 **Client**
@@ -676,6 +728,9 @@ It is pretty much the same as publishing to the clients on the same `Controller`
 
 So, if you are on `Controller` A and want to publish to all `chatmessage` subscribers on `Controller` B you just use...
 
+    //using XSockets.Core.XSocket;
+    //using XSockets.Core.XSocket.Helpers;
+    
     //To all
     this.PublishToAll<B>("Hello to all 'chatmessage' subscribers on 'controller' B from server", "chatmessage");
     
@@ -685,6 +740,9 @@ So, if you are on `Controller` A and want to publish to all `chatmessage` subscr
 ###How to call subscribers outside the Controller class
 Just create a controller instance (or ask the plugin framework after the specific controller) and then use the extensions to send data
 
+    //using XSockets.Core.XSocket;
+    //using XSockets.Core.XSocket.Helpers;
+    
     //Create the instance your self
     var chat = new Chat();
     //Then just use one of the extensions to target, one, some, others or all...
@@ -706,6 +764,9 @@ Below you can see that the chat example is extended with a property for username
 
 Server `Controller` with state
 
+    //using XSockets.Core.XSocket;
+    //using XSockets.Core.XSocket.Helpers;
+    
     public class Chat : XSocketController
     {
         public string UserName {get;set;}
@@ -738,6 +799,9 @@ Each controller have events that you can use to know when `Open`, `Close` and `R
 ###The OnOpen event
 Will fire when the controller is used over the connection for the first time.
     
+    //using XSockets.Core.XSocket;
+    //using XSockets.Core.Common.Socket.Event.Arguments;
+    
     public class Chat : XSocketController
     {
         public Chat()
@@ -754,6 +818,9 @@ Will fire when the controller is used over the connection for the first time.
 ###The OnClose event
 Will fire when the socket is closed or if the client choose to close this specific controller on the connection.
 
+    //using XSockets.Core.XSocket;
+    //using XSockets.Core.Common.Socket.Event.Arguments;
+    
     public class Chat : XSocketController
     {
         public Chat()
@@ -772,6 +839,9 @@ Control-frames (ping/pong) is primarily for checking connections, measure latenc
 
 You can implement custom logic for sending/receiving these frames on the server, but there is a simple helper that you can use to get the functionality.
 
+    //using XSockets.Core.XSocket;
+    //using XSockets.Core.Common.Socket.Event.Arguments;
+    
     public class Chat : XSocketController
     {
         public Chat()
@@ -793,6 +863,10 @@ The server will only have one `XSockets.Core.Common.Socket.IXSocketPipeline`, bu
 
 Each message passing into the server or out of the server will pass the pipeline
 
+    //using XSockets.Core.Common.Socket;
+    //using XSockets.Core.XSocket;
+    //using XSockets.Core.Common.Socket.Event.Interface;
+
     public class MyPipeline : XSocketPipeline
     {
         public override void OnIncomingMessage(IXSocketController controller, IMessage e)
@@ -812,6 +886,10 @@ Each message passing into the server or out of the server will pass the pipeline
 When the socket is connected and the handshake is completed the `AuthenticationPipeline` will be called. By default the pipeline will look for a FormsAuthenticationTicket, but you can override this pipline by just implementing a interface `XSockets.Core.Common.Socket.IXSocketAuthenticationPipeline`
 
 There can only be one pipeline so even if you implement several pipelines only one wil be used.
+
+    //using XSockets.Core.Common.Protocol;
+    //using XSockets.Core.Common.Socket;
+    //using XSockets.Plugin.Framework.Attributes;
 
     [Export(typeof(IXSocketAuthenticationPipeline))]
     public class MyAuthenticationPipeline : IXSocketAuthenticationPipeline
@@ -837,6 +915,11 @@ Interceptors are common when debugging or logging, but XSockets does not choose 
 
 #### How to write ConnectionInterceptors
 Sample of a connection interceptor that logs handshake and connect/disconnect with `debug` level
+
+    //using Serilog.Events;
+    //using XSockets.Core.Common.Interceptor;
+    //using XSockets.Core.Common.Protocol;
+    //using XSockets.Plugin.Framework.Helpers;
 
     public class MyConnectionInterceptor : IConnectionInterceptor
     {
@@ -865,6 +948,11 @@ Sample of a connection interceptor that logs handshake and connect/disconnect wi
 #####How to write MessageInterceptors
 Sample of a message interceptor that logs in/out messages with `debug` level
 
+    //using Serilog.Events;
+    //using XSockets.Core.Common.Interceptor;
+    //using XSockets.Core.Common.Protocol;
+    //using XSockets.Plugin.Framework.Helpers;
+    
     public class MyMessageInterceptor : IMessageInterceptor
     {
         public void OnIncomingMessage(IXSocketProtocol protocol, IMessage message)
@@ -881,6 +969,12 @@ Sample of a message interceptor that logs in/out messages with `debug` level
 #####How to write ErrorInterceptors
 Sample of a error interceptor that logs exceptions with `error` level
 
+    //using Serilog.Events;
+    //using XSockets.Core.Common.Interceptor;
+    //using XSockets.Core.Common.Protocol;
+    //using XSockets.Core.Common.Socket.Event.Interface;
+    //using XSockets.Plugin.Framework.Helpers;
+    
     public class MyErrorInterceptor : IErrorInterceptor
     {
         public void OnError(IXSocketException exception)
@@ -978,6 +1072,11 @@ When the socket is connected and the handshake is completed the `AuthenticationP
 
 There can only be one pipeline so even if you implement several pipelines only one wil be used.
 
+    //using System.Security.Principal;
+    //using XSockets.Core.Common.Protocol;
+    //using XSockets.Core.Common.Socket;
+    //using XSockets.Plugin.Framework.Attributes;
+
     [Export(typeof(IXSocketAuthenticationPipeline))]
     public class MyAuthenticationPipeline : IXSocketAuthenticationPipeline
     {
@@ -1001,6 +1100,10 @@ The `OnAuthorization` method is called for every method on a controller that has
  2. If the user name is required we verify a match
  3. If user name was not required or did not match we check roles
 
+        //using System.Linq;
+        //using XSockets.Core.Common.Socket.Attributes;
+        //using XSockets.Core.XSocket;
+        
         public virtual bool OnAuthorization(IAuthorizeAttribute authorizeAttribute)
         {
             try
@@ -1028,6 +1131,8 @@ The `OnAuthorization` method is called for every method on a controller that has
 **Example**
 Based on the `Write a custom AuthenticationPipeline` where we added the username `Hero` and the roles `hulk`, `superman` we have the following scenario
 
+    //using XSockets.Core.Common.Socket.Attributes;
+
     [Authorize()] //would be valid since we have a authorized `fake` user
 
     [Authorize(Users = "David")] //would be valid
@@ -1041,6 +1146,9 @@ Every time a method on a controller needs authentication the `OnAuthorization` m
 
 When the `OnAuthorization` returns false the `OnAuthorizationFailed` event is fired.
 
+    //using XSockets.Core.Common.Socket.Event.Arguments;
+    //using XSockets.Core.XSocket;
+    
     //Constructor
     public Chat()
     {
@@ -1187,6 +1295,9 @@ The example below creates a listener for `ChatMessage` and it expects the data t
 
 The server code for the examples with the `ChatModel` can look like
 
+    //using XSockets.Core.XSocket;
+    //using XSockets.Core.XSocket.Helpers;
+    
     this.InvokeToAll("I am Yogi the gummi bear","chatmessage");
 
 ####Methods without parameters
@@ -1194,6 +1305,9 @@ If the method you're handling does not have parameters just use the non generic 
 
 **Server**
 
+    //using XSockets.Core.XSocket;
+    //using XSockets.Core.XSocket.Helpers;
+    
     public class Chat : XSocketController
     {
         public void CallAllClients()
@@ -1218,6 +1332,9 @@ If we have a complex object being sent from the server, like the `ChatModel` we 
 
 The server code for the examples with the `ChatModel` can look like
 
+    //using XSockets.Core.XSocket;
+    //using XSockets.Core.XSocket.Helpers;
+
     this.InvokeToAll(new ChatModel{Name="Yogi", Text="I am a gummi bear"},"chatmessage");
 
 ####Methods with parameters, specifying dynamic objects for the parameters
@@ -1230,6 +1347,9 @@ As an alternative to specifying parameters as generic types of the On method, yo
 **Server**
 
 The server code for the examples with the `ChatModel` can look like
+
+    //using XSockets.Core.XSocket;
+    //using XSockets.Core.XSocket.Helpers;
 
     this.InvokeToAll(new ChatModel{Name="Yogi", Text="I am a gummi bear"},"chatmessage");
     
@@ -1249,6 +1369,9 @@ If you know the type contained in the Data part of the IMessage you can use Extr
 
 The server code for the examples with the `ChatModel` can look like
 
+    //using XSockets.Core.XSocket;
+    //using XSockets.Core.XSocket.Helpers;
+
     this.InvokeToAll(new ChatModel{Name="Yogi", Text="I am a gummi bear"},"chatmessage");
     
 ####How to remove a handler
@@ -1264,6 +1387,8 @@ To call a method on the server, use the Invoke method on the `Controller`.
 If the server method has no return value, use the non-generic overload of the Invoke method.
 
 **Server - method without return value**
+
+    //using XSockets.Core.XSocket;
 
     public class Chat : XSocketController
     {
@@ -1378,6 +1503,9 @@ When you no longer want to subscribe to a `topic` you just use the `unsubscribe`
 
 **Server**
 
+    //using XSockets.Core.XSocket;
+    //using XSockets.Core.XSocket.Helpers;
+    
     //The server migth publish the message back to all clients subscribing
     public void ChatMessage(ChatModel chatModel)
     {
@@ -1447,6 +1575,9 @@ Client - C#
 
 **Server**
 
+    //using XSockets.Core.Common.Socket.Event.Interface;
+    //using XSockets.Core.XSocket;
+    
     public void MyFile(IMessage message)
     {
         var filecontent = Encoding.UTF8.GetString(message.Blob.ToArray());
@@ -1464,6 +1595,9 @@ Client - C#
     conn.Controller("chat").Invoke("myfile", blob, new {Name="xfile.txt"});
     
 **Server**
+    
+    //using XSockets.Core.Common.Socket.Event.Interface;
+    //using XSockets.Core.XSocket;
     
     //simple class for holding metadata about a file
     public class FileInfo
@@ -1490,6 +1624,9 @@ You may also handle errors on individual controller using the OnError event on a
     conn.Controller("chat").OnError += (sender, errorArgs) => Console.WriteLine(errorArgs.Exception.Message);
 
 To handle errors from method invocations, wrap the code in a try-catch block. 
+
+    //using XSockets.Core.XSocket;
+    //using XSockets.Core.XSocket.Helpers;
 
     try
     {
@@ -1601,6 +1738,9 @@ A simple model for a chat
 
 A controller where we use state to only send in text since the username is known.
 
+    //using XSockets.Core.XSocket;
+    //using XSockets.Core.XSocket.Helpers;
+
     public class Chat : XSocketController
     {
         public string UserName {get;set;}
@@ -1629,6 +1769,9 @@ A simple model for a chat
 
 A controller where we use state to only send in text since the user name is know. See `How to set properties on the server from the client`
 
+    //using XSockets.Core.XSocket;
+    //using XSockets.Core.XSocket.Helpers;
+    
     public class Chat : XSocketController
     {
         public string UserName {get;set;}
@@ -1675,6 +1818,9 @@ A simple model for a chat
   
 A controller where we use state to only send in text since the user name is know. See `How to set properties on the server from the client`
 
+    //using XSockets.Core.XSocket;
+    //using XSockets.Core.XSocket.Helpers;
+    
     public class Chat : XSocketController
     {
         public string UserName {get;set;}
@@ -1744,6 +1890,9 @@ where `fn` is called when a publish occurs and `cb` is the callback that confirm
 
 **Server**
 
+    //using XSockets.Core.XSocket;
+    //using XSockets.Core.XSocket.Helpers;
+    
     //The server migth publish the message back to all clients subscribing
     public void ChatMessage(ChatModel chatModel)
     {
@@ -1805,6 +1954,9 @@ Client - JavaScript
 
 **Server**
 
+    //using XSockets.Core.Common.Socket.Event.Interface;
+    //using XSockets.Core.XSocket;
+
     public void MyFile(IMessage message)
     {
         var filecontent = Encoding.UTF8.GetString(message.Blob.ToArray());
@@ -1823,13 +1975,17 @@ Client - JavaScript
     conn.controller("chat").invokeBinary("myfile",blob,{Name:"xfile.txt"});
 
 **Server**
-    
+
     //simple class for holding metadata about a file
     public class FileInfo
     {
         public string Name {get;set;}
     }
 
+    //using XSockets.Core.Common.Socket.Event.Interface;
+    //using XSockets.Core.XSocket;
+    //using XSockets.Core.XSocket.Helpers;
+    
     public void MyFile(IMessage message)
     {
         var filecontent = Encoding.UTF8.GetString(message.Blob.ToArray());
@@ -1990,6 +2146,9 @@ When you no longer want to subscribe to a `topic` you just use the `unsubscribe`
 
 **Server**
 
+    //using XSockets.Core.XSocket;
+    //using XSockets.Core.XSocket.Helpers;
+    
     //The server will publish the message back to all clients subscribing
     public void ChatMessage(ChatModel chatModel)
     {
@@ -2011,6 +2170,9 @@ A simple model for a chat
 
 A controller where we use state to only send in text since the user-name is known.
 
+    //using XSockets.Core.XSocket;
+    //using XSockets.Core.XSocket.Helpers;
+    
     public class Chat : XSocketController
     {
         public string UserName {get;set;}
@@ -2036,6 +2198,10 @@ By default the logger will log everything in `Debug` and only `Fatal` level in `
 
 It is very easy to set your custom SeriLogger/Configuration/Sink. Just implement the `IDefaultLogger` interface and set the configuraiton of choice. For more information about SerilLog see http://serilog.net
 
+    //using Serilog;
+    //using XSockets.Plugin.Framework.Attributes;
+    //using XSockets.Plugin.Framework.Logger;
+    
     //
     // Sample below will write to file and console
     //
@@ -2070,16 +2236,21 @@ Passing configuration as a parametertop
 
 Just create the configurations needed and pass them to StartServers
 
+    //using XSockets.Core.Common.Configuration;
+    //using XSockets.Core.Common.Socket;
+    //using XSockets.Core.Configuration;
+    //using XSockets.Plugin.Framework;
+    
     //List of IConfigurationSettings
     var myCustomConfigs = new List<IConfigurationSetting>();
     //Add one configuration
     myCustomConfigs.Add(new ConfigurationSetting("ws://192.74.38.15:4502"));  
     using (var server = Composable.GetExport<IXSocketServerContainer>())
     {
-        server.StartServers(configurationSettings:myCustomConfigs);
+        server.Start(configurationSettings:myCustomConfigs);
         Console.WriteLine("Started, hit enter to quit");
         Console.ReadLine();
-        server.StopServers();
+        server.Stop();
     }
 
 Note: you can of course pass in several configuration.
@@ -2088,6 +2259,8 @@ Note: you can of course pass in several configuration.
 
 Just inherit the `XSockets.Core.Configuration.ConfigurationSetting` class and implement your configuration. XSockets will find and and use these custom configurations.
 
+    //using XSockets.Core.Configuration;
+    
     public class MyTestConfig : ConfigurationSetting
     {
         public MyTestConfig() : base("ws://195.74.38.15:4502")
@@ -2115,6 +2288,8 @@ One of the most common questions about configuration is how to enable DNS config
 ##### Public Endpoint
 Let's say that you want to connect (client <-> server) to ws://chucknorris.com:4502 the configuration for that could look like
 
+    //using XSockets.Core.Configuration;
+    
     public class ChuckNorrisConfig : ConfigurationSetting
     {
         public ChuckNorrisConfig() : base(new Uri("ws://chucknorris.com:4502")) { }
@@ -2124,6 +2299,8 @@ Let's say that you want to connect (client <-> server) to ws://chucknorris.com:4
 
 ##### Public & Private Endpoint
 Let's say that you want to connect (client <-> firewall <-> server) to ws://chucknorris.com:4502, but the public endpoint is represented by a firewall. Your firewall will then forward the connection to our servers private IP address (for example 192.168.1.7).
+
+    //using XSockets.Core.Configuration;
 
     public class ChuckNorrisConfig : ConfigurationSetting
     {
@@ -2137,6 +2314,9 @@ To get WSS you have to set the endpoint to be ´wss´ instead of ws, and you wil
 
 ######Sample 1 - Certificate from store
 
+    //using System.Security.Cryptography.X509Certificates;
+    //using XSockets.Core.Configuration;
+
     public class ChuckNorrisConfig : ConfigurationSetting
     {
         public ChuckNorrisConfig() : base(new Uri("wss://chucknorris.com:4502"))
@@ -2148,6 +2328,9 @@ To get WSS you have to set the endpoint to be ´wss´ instead of ws, and you wil
     
 ######Sample 2 - X509Certificate2
 
+    //using System.Security.Cryptography.X509Certificates;
+    //using XSockets.Core.Configuration;
+    
     public class ChuckNorrisConfig : ConfigurationSetting
     {
         public ChuckNorrisConfig() : base(new Uri("wss://chucknorris.com:4502"))
@@ -2166,6 +2349,8 @@ To host XSockets in OWIN is easy and also let you access the HttpContext and the
 `PM> Install-Package XSockets.Owin.Host`
 
 Register XSockets in Owin IAppBuilder
+
+    //using XSockets.Owin.Host;
 
     public class Startup
     {
@@ -2191,6 +2376,9 @@ Create a new ConsoleApplication and install the package XSockets. This will outp
 
 **Install:**
 `PM> Install-package XSockets`
+
+    //using XSockets.Core.Common.Socket;
+    //using XSockets.Plugin.Framework;
 
     using (var container = XSockets.Plugin.Framework.Composable.GetExport<IXSocketServerContainer>())
     {
@@ -2271,6 +2459,12 @@ By default XSockets will not store messages for clients being offline, but it is
 ###Example using Offline Storage
 A simple sample showing how this can be implemented in the chat
     
+    //using XSockets.Core.Common.Protocol;
+    //using XSockets.Core.Common.Socket.Event.Arguments;
+    //using XSockets.Core.Common.Socket.Event.Interface;
+    //using XSockets.Core.XSocket;
+    //using XSockets.Core.XSocket.Helpers;
+    
     public class Chat : XSocketController
     {
         public Chat()
@@ -2305,6 +2499,12 @@ To implement your own offline plugin just implement the interface `IOfflineQueue
 Below you can see an empty implementation, where you store the messages is up to you! It is also your own responsibility to make sure the logic is valid, but the methods in this plugin will be called when you use the pattern described above... Calling `Queue`, `OnlinePublish` and `OfflineSubscribe`
 
 *Note: You should also handle the lambda expressions passed into the `Queue` method so that only clients matching the expression will receive messages when they are back online.*
+
+    //using System;
+    //using XSockets.Core.Common.Protocol;
+    //using XSockets.Core.Common.Socket;
+    //using XSockets.Core.Common.Socket.Event.Interface;
+    //using XSockets.Core.Common.Utility.MessageQueue;
 
     public class MyOfflineQueue
         : IOfflineQueue
@@ -2349,12 +2549,24 @@ You can add several servers to the scaleout, this is done by requesting the `IXS
 
 Note that this will scale in one direction from this server to `ws://127.0.0.1:4503`. So to get scaling both ways you just add this servers location to the server on `4503`
 
+    //using XSockets.Core.Common.Enterprise;
+    //using XSockets.Core.Common.Socket;
+    //using XSockets.Plugin.Framework;
+
     Composable.GetExport<IXSocketsScaleOut>().AddScaleOut("ws://127.0.0.1:4503");
     
 So basic scaling is not that hard to setup!
 
 ### Implementing Custom ScaleOut
 If you rather scaleout over SQL, Redis etc you can write a custom scaleout by just deriving the ´BaseScaleout´ class
+
+    //using System.Collections.Generic;
+    //using System.Linq;
+    //using System.Timers;
+    //using XSockets.Core.Common.Protocol;
+    //using XSockets.Core.Common.Socket.Event.Interface;
+    //using XSockets.Core.Utility.MessageQueue.Interceptors;
+    //using XSockets.Enterprise;
 
     public class MyScaleOut : BaseScaleOut
     {
@@ -2448,6 +2660,11 @@ When the socket is connected and the handshake is completed the `AuthenticationP
 
 There can only be one pipeline so even if you implement several pipelines only one wil be used.
 
+    //using System.Security.Principal;
+    //using XSockets.Core.Common.Protocol;
+    //using XSockets.Core.Common.Socket;
+    //using XSockets.Plugin.Framework.Attributes;
+    
     [Export(typeof(IXSocketAuthenticationPipeline))]
     public class MyAuthenticationPipeline : IXSocketAuthenticationPipeline
     {
@@ -2470,6 +2687,10 @@ The `OnAuthorization` method is called for every method on a controller that has
  1. That the user is authenticated
  2. If the user name is required we verify a match
  3. If user name was not required or did not match we check roles
+
+        //using System.Linq;
+        //using XSockets.Core.Common.Socket.Attributes;
+        //using XSockets.Core.XSocket;
 
         public virtual bool OnAuthorization(IAuthorizeAttribute authorizeAttribute)
         {
@@ -2508,6 +2729,10 @@ Every time a method on a controller needs authorization the `OnAuthorization` me
 
 When the `OnAuthorization` returns false the `OnAuthorizationFailed` event is fired.
 
+    //using System;
+    //using XSockets.Core.Common.Socket.Event.Arguments;
+    //using XSockets.Core.XSocket;
+
     //Constructor
     public Chat()
     {
@@ -2540,6 +2765,8 @@ So lets build a zoo (just like the example in the link above).
 
 First of all we need a `IAnimal` interface for our animals. We also decorate the class with the `Export` attribute
 
+    //using XSockets.Plugin.Framework.Attributes;
+
     [Export(typeof(IAnimal))] 
     public interface IAnimal
     {
@@ -2547,6 +2774,9 @@ First of all we need a `IAnimal` interface for our animals. We also decorate the
     }
 
 We also need A `IZoo` interface, it has an `IEnumerable of IAnimal`. Just like the IAnimal interface the `IZoo` has the `Export` attribute. Also note that we use the `ÌmportMany` attribute to get all `Exports` of `IAnimal`
+
+    //using System.Collections.Generic;
+    //using XSockets.Plugin.Framework.Attributes;
 
     [Export(typeof(IZoo))]
     public interface IZoo
@@ -2595,6 +2825,8 @@ Now we just need a `Zoo` to keep the `Animals` in.
 
 Note that the the interfaces decides how the classes should behave regarding Exports/Imports
 
+    //using XSockets.Plugin.Framework;
+    
     class Program
     {
         static void Main(string[] args)
@@ -2621,12 +2853,16 @@ If you for some reason do not want to load all assemblies/executables when the p
 
 The sample below will  load only assemblies starting with XSockets.* and also a specific assembly named "SomeAssembly.dll"
 
+    //using XSockets.Plugin.Framework;
+
     Composable.ClearPluginFilters();
     Composable.AddPluginFilter("XSockets.*.dll");
     Composable.AddPluginFilter("SomeAssembly.dll");
 
 ### Handling Exceptions
 You can use the `Composable.AddErrorAction` to get information about any exceptions taht occurs inside of the plugin framework. If you add several `actions` they will all be called when/if an exception is thrown.
+
+    //using XSockets.Plugin.Framework;
 
     Composable.AddErrorAction(ex => Console.WriteLine("First ErrorAction: {0}", ex.Message));
     Composable.AddErrorAction(ex => Console.WriteLine("Second ErrorAction: {0}", ex.Message));
@@ -2724,6 +2960,8 @@ We can now get all instances of IAnimal using GetExport or GetExports...
 
 Here the classes implementing IAnimal is known in the current solution so we do not have to load any assemblies.
 
+    //using XSockets.Plugin.Framework;
+
     //Lets make the plugin framework aware of IAnimal
     Composable.RegisterExport<IAnimal>();
     Composable.ReCompose();
@@ -2735,6 +2973,8 @@ Here the classes implementing IAnimal is known in the current solution so we do 
 **Approach 2**
 
 Here there are implementations of IAnimal in a assembly not yet loaded.
+
+    //using XSockets.Plugin.Framework;
 
     Composable.RegisterExport<IAnimal>();
     Composable.LoadAssembly(@"C:\temp\PluginDemo.dll");
