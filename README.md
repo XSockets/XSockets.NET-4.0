@@ -429,7 +429,7 @@ Client - C#
 ##Binary data
 XSockets has supported binary messages for a long time, but in 4.0 we have made it even easier than before.
 
-###How to handle binary data
+###Send binary data to the server
 Lets say that we have a file `c:\temp\xfile.txt` with the text `This file was sent with XSockets.NET` and we want to send that file to the server.
 
 **Server**
@@ -443,7 +443,10 @@ Lets say that we have a file `c:\temp\xfile.txt` with the text `This file was se
 
 Client - JavaScript
 
-    N/A
+    // Create a simple Array buffer and fill it with "something"
+    var arrayBuffer = new ArrayBuffer(10);
+    // Send the binary data to XSockets
+    conn.controller("chat").invokeBinary("myfile",blob);
 
 Client - C#
 
@@ -473,12 +476,19 @@ Just use `Extract<T>` to get back to metadata attached to the binary data.
 
 Client - JavaScript
 
-    N/A
+    // Create a simple Array buffer and fill it with "something"
+    var arrayBuffer = new ArrayBuffer(10);
+    // Send the binary data and metadata to XSockets
+    conn.controller("chat").invokeBinary("myfile",blob,{Name:"xfile.txt"});
 
 Client - C#
 
     var blob = File.ReadAllBytes(@"c:\temp\xfile.txt");
     conn.Controller("chat").Invoke("myfile", blob, new {Name="xfile.txt"});
+
+###Send binary data to the clients
+
+    TODO
 
 ----------
 
@@ -1397,6 +1407,66 @@ To close as controller (not the actual connection/socket) you just call the `Clo
         Console.WriteLine("Closed {0}", disconnectArgs.ClientInfo.Controller);
     };
 
+###Binary data
+XSockets has supported binary messages for a long time, but in 4.0 we have made it even easier than before.
+
+####How to handle binary data
+Lets say that we have a file `c:\temp\xfile.txt` with the text `This file was sent with XSockets.NET` and we want to send that file to the server.
+
+**Server**
+
+    public void MyFile(IMessage message)
+    {
+        var filecontent = Encoding.UTF8.GetString(message.Blob.ToArray());
+    }
+
+**Clients**
+
+Client - JavaScript
+
+    // Create a simple Array buffer and fill it with "something"
+    var arrayBuffer = new ArrayBuffer(10);
+    // Send the binary data and metadata to XSockets
+    conn.controller("chat").invokeBinary("myfile",blob);
+
+Client - C#
+
+    var blob = File.ReadAllBytes(@"c:\temp\xfile.txt");
+    conn.Controller("chat").Invoke("myfile", blob);
+
+####How to pass meta-data together with binary data
+If we want to attach metadata about the binary data that is easy to do. Just pass along the object representing the metadata and XSockets will let you extract that data on the server.
+
+**Clients**
+
+Client - JavaScript
+
+    // Create a simple Array buffer and fill it with "something"
+    var arrayBuffer = new ArrayBuffer(10);
+    // Send the binary data and metadata to XSockets
+    conn.controller("chat").invokeBinary("myfile",blob,{Name:"xfile.txt"});
+
+Client - C#
+
+    var blob = File.ReadAllBytes(@"c:\temp\xfile.txt");
+    conn.Controller("chat").Invoke("myfile", blob, new {Name="xfile.txt"});
+    
+**Server**
+    
+    //simple class for holding metadata about a file
+    public class FileInfo
+    {
+        public string Name {get;set;}
+    }
+
+    public void MyFile(IMessage message)
+    {
+        var filecontent = Encoding.UTF8.GetString(message.Blob.ToArray());
+        var metadata = message.Extract<FileInfo>();
+    }
+
+Just use `Extract<T>` to get back to metadata attached to the binary data.
+
 ###How to handle errors
 
 To handle errors that the client raises, you can add a handler for the Error event on the connection object.
@@ -1858,7 +1928,7 @@ When you no longer want to subscribe to a `topic` you just use the `unsubscribe`
 
 **Server**
 
-    //The server migth publish the message back to all clients subscribing
+    //The server will publish the message back to all clients subscribing
     public void ChatMessage(ChatModel chatModel)
     {
         this.PublishToAll(chatModel, "chatmessage");
@@ -2118,10 +2188,19 @@ Now, Try connect to the Generic Controller using the following piece of JavaScri
 
 ----------
 ## Fallback
-To use the fallback in XSockets you have to have OWIN, .NET 4.5 and WebAPI.
+To use the fallback in XSockets you have to have .NET 4.5 and WebAPI.
 
-    TODO
+###Setup
+To install the fallback use the `Package Manager Console` or another `Nuget` tool
+
+    Install-Package XSockets.Fallback 
     
+All you need to do now is to add the fallback `JavaScript` as a reference.
+Add the reference before the other XSockets JavaScript reference like this
+
+    <script src="XSockets.WebAPI.fallback.latest.js"></script>    
+    <script src="XSockets.latest.js"></script>
+
 ----------
 
 ##Performance & Scaling
