@@ -1438,6 +1438,13 @@ XSockets has supported binary messages for a long time, but in 4.0 we have made 
 ####How to handle binary data
 Lets say that we have a file `c:\temp\xfile.txt` with the text `This file was sent with XSockets.NET` and we want to send that file to the server.
 
+**Client**
+
+Client - C#
+
+    var blob = File.ReadAllBytes(@"c:\temp\xfile.txt");
+    conn.Controller("chat").Invoke("myfile", blob);
+
 **Server**
 
     public void MyFile(IMessage message)
@@ -1445,31 +1452,11 @@ Lets say that we have a file `c:\temp\xfile.txt` with the text `This file was se
         var filecontent = Encoding.UTF8.GetString(message.Blob.ToArray());
     }
 
-**Clients**
-
-Client - JavaScript
-
-    // Create a simple Array buffer and fill it with "something"
-    var arrayBuffer = new ArrayBuffer(10);
-    // Send the binary data and metadata to XSockets
-    conn.controller("chat").invokeBinary("myfile",blob);
-
-Client - C#
-
-    var blob = File.ReadAllBytes(@"c:\temp\xfile.txt");
-    conn.Controller("chat").Invoke("myfile", blob);
 
 ####How to pass meta-data together with binary data
 If we want to attach metadata about the binary data that is easy to do. Just pass along the object representing the metadata and XSockets will let you extract that data on the server.
 
-**Clients**
-
-Client - JavaScript
-
-    // Create a simple Array buffer and fill it with "something"
-    var arrayBuffer = new ArrayBuffer(10);
-    // Send the binary data and metadata to XSockets
-    conn.controller("chat").invokeBinary("myfile",blob,{Name:"xfile.txt"});
+**Client**
 
 Client - C#
 
@@ -1800,6 +1787,56 @@ As soon as you start to communicate over a new controller the `OnOpen` event wil
 To close as controller (not the actual connection/socket) you just call the `Close` method on the controller instance. This will fire the `OnClose` event on the controller.
 
     conn.controller("chat").close();
+    
+###Binary data
+XSockets has supported binary messages for a long time, but in 4.0 we have made it even easier than before.
+
+####How to handle binary data
+Lets say that we want to send binary data from the client to the server.
+
+**Clients**
+
+Client - JavaScript
+
+    // Create a simple Array buffer and fill it with "something"
+    var arrayBuffer = new ArrayBuffer(10);
+    // Send the binary data and metadata to XSockets
+    conn.controller("chat").invokeBinary("myfile",blob);
+
+**Server**
+
+    public void MyFile(IMessage message)
+    {
+        var filecontent = Encoding.UTF8.GetString(message.Blob.ToArray());
+    }
+
+####How to pass meta-data together with binary data
+If we want to attach metadata about the binary data that is easy to do. Just pass along the object representing the metadata and XSockets will let you extract that data on the server.
+
+**Client**
+
+Client - JavaScript
+
+    // Create a simple Array buffer and fill it with "something"
+    var arrayBuffer = new ArrayBuffer(10);
+    // Send the binary data and metadata to XSockets
+    conn.controller("chat").invokeBinary("myfile",blob,{Name:"xfile.txt"});
+
+**Server**
+    
+    //simple class for holding metadata about a file
+    public class FileInfo
+    {
+        public string Name {get;set;}
+    }
+
+    public void MyFile(IMessage message)
+    {
+        var filecontent = Encoding.UTF8.GetString(message.Blob.ToArray());
+        var metadata = message.Extract<FileInfo>();
+    }
+
+Just use `Extract<T>` to get back to metadata attached to the binary data.
     
 ###How to handle errors
 
@@ -2209,22 +2246,96 @@ Now, Try connect to the Generic Controller using the following piece of JavaScri
     
 ###Amazon
 
-    TODO
+    TBD
 
 ----------
 ## Fallback
-To use the fallback in XSockets you have to have .NET 4.5 and WebAPI.
+To use the fallback in XSockets you have to have **.NET 4.5 and WebAPI**.
 
 ###Setup
 To install the fallback use the `Package Manager Console` or another `Nuget` tool
 
     Install-Package XSockets.Fallback 
     
-All you need to do now is to add the fallback `JavaScript` as a reference.
-Add the reference before the other XSockets JavaScript reference like this
+Since all XSockets clients except the JavaScript always is full-duplex the only API that will use the fallback is the JavaScript. You do not need to do anything for it to work. The fallback to longpolling is built-in with the regular javascript file.
 
-    <script src="XSockets.WebAPI.fallback.latest.js"></script>    
-    <script src="XSockets.latest.js"></script>
+##Offline Messages
+XSockets provides a mechanism for storing messages in-memory for clients being offline for a short period of time. It can be between pages or bad connectivity.
+
+By default XSockets will not store messages for clients being offline, but it is easy to implement this functionality.
+
+ 1. When a client goes offline you tell XSockets what `topics` the client want to subscribe to while being offline.
+ 2. When a clients comes back online you `publish` the messages that was received while the client was offline
+ 3. When you send a message you use the `extensions` that will both send and queue.
+
+###Example using Offline Storage
+A simple sample showing how this can be implemented in the chat
+    
+    public class Chat : XSocketController
+    {
+        public Chat()
+        {
+            this.OnClose += Chat_OnClose;
+            this.OnReopen += Chat_OnReopen;
+        }
+
+        void Chat_OnClose(object sender, OnClientDisconnectArgs e)
+        {
+            //Subscribe for "chatmessage"  while client is offline
+            //This can be any number of topics
+            this.OfflineSubscribe("chatmessage");
+        }
+
+        private void Chat_OnReopen(object sender, OnClientConnectArgs onClientConnectArgs)
+        {
+            //Get all messages received while offline
+            this.OnlinePublish();
+        }
+    
+        public void ChatMessage(IMessage message) 
+        {
+            this.Queue(DeliveryType.Rpc, message);
+        }
+    }
+    
+*Note: You can ofcourse pass in lambda expressions in the `Queue` method and only clients matching will receive messages when they are back online.*
+ 
+### Custom Offline Message Module
+To implement your own offline plugin just implement the interface `IOfflineQueue`
+Below you can see an empty implementation, where you store the messages is up to you! It is also your own responsibility to make sure the logic is valid, but the methods in this plugin will be called when you use the pattern described above... Calling `Queue`, `OnlinePublish` and `OfflineSubscribe`
+
+*Note: You should also handle the lambda expressions passed into the `Queue` method so that only clients matching the expression will receive messages when they are back online.*
+
+    public class MyOfflineQueue
+        : IOfflineQueue
+    {
+        public void OfflineSubscribe<T>(T socket, params string[] topics) where T : class, IXSocketController
+        {
+            //Store the subscriptions for this client
+        }
+
+        public void OfflineSubscribe<T>(T socket, int storeForMs, params string[] topics) where T : class, IXSocketController
+        {
+            //NOTE: This method is probably not interesting for your custom module
+            //Store the subscriptions for this client for x ms
+        }
+
+        public void OnlinePublish<T>(T socket) where T : class, IXSocketController
+        {
+            //Get all messages that was targeting this client while he was offline
+        }
+
+        public void Queue<T>(T socket, DeliveryType deliveryType, IMessage message, Func<T, bool> func) where T : class, IXSocketController
+        {
+            //Store the message for all clients that has the topic as a subscription
+            //Note that a subset of clients is targeted with the Func<T,bool>
+        }
+
+        public void Queue<T>(T socket, DeliveryType deliveryType, IMessage message) where T : class, IXSocketController
+        {
+            //Store the message for all clients that has the topic as a subscription
+        }
+    }
 
 ----------
 
