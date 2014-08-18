@@ -167,7 +167,7 @@ The XSockets.NET team has built a few client libraries to make life easier for o
     NETMF       4.2, 4.3
     JavaScript  Browser with websockets (there is a fallback for IE 9 & IE 8)
 
-##Communication - How it works
+##Architecture - How it works
 
 The architecture for XSockets.NET is simple yet powerful. Each client connects to a protocol, the protocol will then allow communication over n controllers. So you can multiplex over several controller on one connection. This architecture enables communication cross-protocol as well as cross-controller.
 
@@ -175,7 +175,7 @@ Different clients have different capabilities, browsers for example have the RFC
 
 ----------
 
-###Basic architecture
+###Basics
 [image here]
 
 The red clients are clients libraries written by XSockets.NET and the blue clients are examples of what we have easily connected with custom protocols.
@@ -487,9 +487,34 @@ Client - C#
     conn.Controller("chat").Invoke("myfile", blob, new {Name="xfile.txt"});
 
 ###Send binary data to the clients
+If you want to send for example and image from the server to the clients it can be done like this. The name of the controller will be "Chat" and the name (or topic) is "myimage".
 
-    TODO
+**Server**
 
+    var blob = File.ReadAllBytes(@"c:\temp\someimage.jpg");
+    this.InvokeToAll(blob,"myimage");
+    
+**Clients**
+
+Client - JavaScript
+
+    conn.controller("chat").subscribe("myimage", function (b) {
+        var uint8Array = new Uint8Array(b.binary);
+        var arrayBuffer = uint8Array.buffer;
+        var blob = new Blob([arrayBuffer], { type: "image/jpg" });
+        var blobUrl = window.URL.createObjectURL(blob);
+        $("img").attr("src", blobUrl);
+    });
+
+Client - C#
+
+    conn.Controller("chat").On<IMessage>("myimage", message =>
+    {
+        var ms = new MemoryStream(message.Blob.ToArray());
+        var img = Image.FromStream(ms);
+        //Do something with the image...
+    });
+    
 ----------
 
 ##RPC
