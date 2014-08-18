@@ -219,7 +219,7 @@ namespace MyApplication
 <h3>
 <a name="server-system-requirements" class="anchor" href="#server-system-requirements"><span class="octicon octicon-link"></span></a>Server system requirements</h3>
 
-<p>Since XSockets.NET is built to run on both .NET and Mono the server can be hosted pretty much anywhere.</p>
+<p>Since XSockets.NET is built to run on both .NET and Mono the server can be hosted pretty much anywhere. The server side only has .NET (or Mono equivalent) as requirements!</p>
 
 <h3>
 <a name="client-system-requirements" class="anchor" href="#client-system-requirements"><span class="octicon octicon-link"></span></a>Client system requirements</h3>
@@ -236,15 +236,15 @@ NETMF       4.2, 4.3
 JavaScript  Browser with websockets (there is a fallback for IE 9 &amp; IE 8)
 </code></pre>
 
-<h3>
-<a name="communication---how-it-works" class="anchor" href="#communication---how-it-works"><span class="octicon octicon-link"></span></a>Communication - How it works</h3>
+<h2>
+<a name="communication---how-it-works" class="anchor" href="#communication---how-it-works"><span class="octicon octicon-link"></span></a>Communication - How it works</h2>
 
 <p>The architecture for XSockets.NET is simple yet powerful. Each client connects to a protocol, the protocol will then allow communication over n controllers. So you can multiplex over several controller on one connection. This architecture enables communication cross-protocol as well as cross-controller.</p>
 
 <p>Different clients have different capabilities, browsers for example have the RFC6455 (websockets) protocol implemented, but other things devices might talk a protocol that you have created. Since XSockets allows “cross-protocol communication” all connected clients can communicate with each other very easily.</p>
 
-<h4>
-<a name="basic-architecture" class="anchor" href="#basic-architecture"><span class="octicon octicon-link"></span></a>Basic architecture</h4>
+<hr><h3>
+<a name="basic-architecture" class="anchor" href="#basic-architecture"><span class="octicon octicon-link"></span></a>Basic architecture</h3>
 
 <p>[image here]</p>
 
@@ -545,7 +545,7 @@ Console.WriteLine(echo.Result);
 <p>XSockets has supported binary messages for a long time, but in 4.0 we have made it even easier than before.</p>
 
 <h3>
-<a name="how-to-handle-binary-data" class="anchor" href="#how-to-handle-binary-data"><span class="octicon octicon-link"></span></a>How to handle binary data</h3>
+<a name="send-binary-data-to-the-server" class="anchor" href="#send-binary-data-to-the-server"><span class="octicon octicon-link"></span></a>Send binary data to the server</h3>
 
 <p>Lets say that we have a file <code>c:\temp\xfile.txt</code> with the text <code>This file was sent with XSockets.NET</code> and we want to send that file to the server.</p>
 
@@ -561,7 +561,10 @@ Console.WriteLine(echo.Result);
 
 <p>Client - JavaScript</p>
 
-<pre><code>N/A
+<pre><code>// Create a simple Array buffer and fill it with "something"
+var arrayBuffer = new ArrayBuffer(10);
+// Send the binary data to XSockets
+conn.controller("chat").invokeBinary("myfile",blob);
 </code></pre>
 
 <p>Client - C#</p>
@@ -596,13 +599,22 @@ public void MyFile(IMessage message)
 
 <p>Client - JavaScript</p>
 
-<pre><code>N/A
+<pre><code>// Create a simple Array buffer and fill it with "something"
+var arrayBuffer = new ArrayBuffer(10);
+// Send the binary data and metadata to XSockets
+conn.controller("chat").invokeBinary("myfile",blob,{Name:"xfile.txt"});
 </code></pre>
 
 <p>Client - C#</p>
 
 <pre><code>var blob = File.ReadAllBytes(@"c:\temp\xfile.txt");
 conn.Controller("chat").Invoke("myfile", blob, new {Name="xfile.txt"});
+</code></pre>
+
+<h3>
+<a name="send-binary-data-to-the-clients" class="anchor" href="#send-binary-data-to-the-clients"><span class="octicon octicon-link"></span></a>Send binary data to the clients</h3>
+
+<pre><code>TODO
 </code></pre>
 
 <hr><h2>
@@ -1735,6 +1747,78 @@ conn.Open();
 </code></pre>
 
 <h3>
+<a name="binary-data-1" class="anchor" href="#binary-data-1"><span class="octicon octicon-link"></span></a>Binary data</h3>
+
+<p>XSockets has supported binary messages for a long time, but in 4.0 we have made it even easier than before.</p>
+
+<h4>
+<a name="how-to-handle-binary-data" class="anchor" href="#how-to-handle-binary-data"><span class="octicon octicon-link"></span></a>How to handle binary data</h4>
+
+<p>Lets say that we have a file <code>c:\temp\xfile.txt</code> with the text <code>This file was sent with XSockets.NET</code> and we want to send that file to the server.</p>
+
+<p><strong>Server</strong></p>
+
+<pre><code>public void MyFile(IMessage message)
+{
+    var filecontent = Encoding.UTF8.GetString(message.Blob.ToArray());
+}
+</code></pre>
+
+<p><strong>Clients</strong></p>
+
+<p>Client - JavaScript</p>
+
+<pre><code>// Create a simple Array buffer and fill it with "something"
+var arrayBuffer = new ArrayBuffer(10);
+// Send the binary data and metadata to XSockets
+conn.controller("chat").invokeBinary("myfile",blob);
+</code></pre>
+
+<p>Client - C#</p>
+
+<pre><code>var blob = File.ReadAllBytes(@"c:\temp\xfile.txt");
+conn.Controller("chat").Invoke("myfile", blob);
+</code></pre>
+
+<h4>
+<a name="how-to-pass-meta-data-together-with-binary-data-1" class="anchor" href="#how-to-pass-meta-data-together-with-binary-data-1"><span class="octicon octicon-link"></span></a>How to pass meta-data together with binary data</h4>
+
+<p>If we want to attach metadata about the binary data that is easy to do. Just pass along the object representing the metadata and XSockets will let you extract that data on the server.</p>
+
+<p><strong>Clients</strong></p>
+
+<p>Client - JavaScript</p>
+
+<pre><code>// Create a simple Array buffer and fill it with "something"
+var arrayBuffer = new ArrayBuffer(10);
+// Send the binary data and metadata to XSockets
+conn.controller("chat").invokeBinary("myfile",blob,{Name:"xfile.txt"});
+</code></pre>
+
+<p>Client - C#</p>
+
+<pre><code>var blob = File.ReadAllBytes(@"c:\temp\xfile.txt");
+conn.Controller("chat").Invoke("myfile", blob, new {Name="xfile.txt"});
+</code></pre>
+
+<p><strong>Server</strong></p>
+
+<pre><code>//simple class for holding metadata about a file
+public class FileInfo
+{
+    public string Name {get;set;}
+}
+
+public void MyFile(IMessage message)
+{
+    var filecontent = Encoding.UTF8.GetString(message.Blob.ToArray());
+    var metadata = message.Extract&lt;FileInfo&gt;();
+}
+</code></pre>
+
+<p>Just use <code>Extract&lt;T&gt;</code> to get back to metadata attached to the binary data.</p>
+
+<h3>
 <a name="how-to-handle-errors" class="anchor" href="#how-to-handle-errors"><span class="octicon octicon-link"></span></a>How to handle errors</h3>
 
 <p>To handle errors that the client raises, you can add a handler for the Error event on the connection object.</p>
@@ -2330,7 +2414,7 @@ Do note that the client will receive data even if there is no subscription if th
 
 <p><strong>Server</strong></p>
 
-<pre><code>//The server migth publish the message back to all clients subscribing
+<pre><code>//The server will publish the message back to all clients subscribing
 public void ChatMessage(ChatModel chatModel)
 {
     this.PublishToAll(chatModel, "chatmessage");
@@ -2648,9 +2732,21 @@ container.Start(configurationSetting: myCustomConfig);
 <hr><h2>
 <a name="fallback" class="anchor" href="#fallback"><span class="octicon octicon-link"></span></a>Fallback</h2>
 
-<p>To use the fallback in XSockets you have to have OWIN, .NET 4.5 and WebAPI.</p>
+<p>To use the fallback in XSockets you have to have .NET 4.5 and WebAPI.</p>
 
-<pre><code>TODO
+<h3>
+<a name="setup" class="anchor" href="#setup"><span class="octicon octicon-link"></span></a>Setup</h3>
+
+<p>To install the fallback use the <code>Package Manager Console</code> or another <code>Nuget</code> tool</p>
+
+<pre><code>Install-Package XSockets.Fallback 
+</code></pre>
+
+<p>All you need to do now is to add the fallback <code>JavaScript</code> as a reference.
+Add the reference before the other XSockets JavaScript reference like this</p>
+
+<pre><code>&lt;script src="XSockets.WebAPI.fallback.latest.js"&gt;&lt;/script&gt;    
+&lt;script src="XSockets.latest.js"&gt;&lt;/script&gt;
 </code></pre>
 
 <hr><h2>
