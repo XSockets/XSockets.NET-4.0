@@ -237,14 +237,14 @@ JavaScript  Browser with websockets (there is a fallback for IE 9 &amp; IE 8)
 </code></pre>
 
 <h2>
-<a name="communication---how-it-works" class="anchor" href="#communication---how-it-works"><span class="octicon octicon-link"></span></a>Communication - How it works</h2>
+<a name="architecture---how-it-works" class="anchor" href="#architecture---how-it-works"><span class="octicon octicon-link"></span></a>Architecture - How it works</h2>
 
 <p>The architecture for XSockets.NET is simple yet powerful. Each client connects to a protocol, the protocol will then allow communication over n controllers. So you can multiplex over several controller on one connection. This architecture enables communication cross-protocol as well as cross-controller.</p>
 
 <p>Different clients have different capabilities, browsers for example have the RFC6455 (websockets) protocol implemented, but other things devices might talk a protocol that you have created. Since XSockets allows “cross-protocol communication” all connected clients can communicate with each other very easily.</p>
 
 <hr><h3>
-<a name="basic-architecture" class="anchor" href="#basic-architecture"><span class="octicon octicon-link"></span></a>Basic architecture</h3>
+<a name="basics" class="anchor" href="#basics"><span class="octicon octicon-link"></span></a>Basics</h3>
 
 <p>[image here]</p>
 
@@ -614,7 +614,35 @@ conn.Controller("chat").Invoke("myfile", blob, new {Name="xfile.txt"});
 <h3>
 <a name="send-binary-data-to-the-clients" class="anchor" href="#send-binary-data-to-the-clients"><span class="octicon octicon-link"></span></a>Send binary data to the clients</h3>
 
-<pre><code>TODO
+<p>If you want to send for example and image from the server to the clients it can be done like this. The name of the controller will be "Chat" and the name (or topic) is "myimage".</p>
+
+<p><strong>Server</strong></p>
+
+<pre><code>var blob = File.ReadAllBytes(@"c:\temp\someimage.jpg");
+this.InvokeToAll(blob,"myimage");
+</code></pre>
+
+<p><strong>Clients</strong></p>
+
+<p>Client - JavaScript</p>
+
+<pre><code>conn.controller("chat").subscribe("myimage", function (b) {
+    var uint8Array = new Uint8Array(b.binary);
+    var arrayBuffer = uint8Array.buffer;
+    var blob = new Blob([arrayBuffer], { type: "image/jpg" });
+    var blobUrl = window.URL.createObjectURL(blob);
+    $("img").attr("src", blobUrl);
+});
+</code></pre>
+
+<p>Client - C#</p>
+
+<pre><code>conn.Controller("chat").On&lt;IMessage&gt;("myimage", message =&gt;
+{
+    var ms = new MemoryStream(message.Blob.ToArray());
+    var img = Image.FromStream(ms);
+    //Do something with the image...
+});
 </code></pre>
 
 <hr><h2>
@@ -1756,6 +1784,14 @@ conn.Open();
 
 <p>Lets say that we have a file <code>c:\temp\xfile.txt</code> with the text <code>This file was sent with XSockets.NET</code> and we want to send that file to the server.</p>
 
+<p><strong>Client</strong></p>
+
+<p>Client - C#</p>
+
+<pre><code>var blob = File.ReadAllBytes(@"c:\temp\xfile.txt");
+conn.Controller("chat").Invoke("myfile", blob);
+</code></pre>
+
 <p><strong>Server</strong></p>
 
 <pre><code>public void MyFile(IMessage message)
@@ -1764,36 +1800,12 @@ conn.Open();
 }
 </code></pre>
 
-<p><strong>Clients</strong></p>
-
-<p>Client - JavaScript</p>
-
-<pre><code>// Create a simple Array buffer and fill it with "something"
-var arrayBuffer = new ArrayBuffer(10);
-// Send the binary data and metadata to XSockets
-conn.controller("chat").invokeBinary("myfile",blob);
-</code></pre>
-
-<p>Client - C#</p>
-
-<pre><code>var blob = File.ReadAllBytes(@"c:\temp\xfile.txt");
-conn.Controller("chat").Invoke("myfile", blob);
-</code></pre>
-
 <h4>
 <a name="how-to-pass-meta-data-together-with-binary-data-1" class="anchor" href="#how-to-pass-meta-data-together-with-binary-data-1"><span class="octicon octicon-link"></span></a>How to pass meta-data together with binary data</h4>
 
 <p>If we want to attach metadata about the binary data that is easy to do. Just pass along the object representing the metadata and XSockets will let you extract that data on the server.</p>
 
-<p><strong>Clients</strong></p>
-
-<p>Client - JavaScript</p>
-
-<pre><code>// Create a simple Array buffer and fill it with "something"
-var arrayBuffer = new ArrayBuffer(10);
-// Send the binary data and metadata to XSockets
-conn.controller("chat").invokeBinary("myfile",blob,{Name:"xfile.txt"});
-</code></pre>
+<p><strong>Client</strong></p>
 
 <p>Client - C#</p>
 
@@ -2215,6 +2227,66 @@ public void ChatMessage(ChatModel chatModel)
 
 <pre><code>conn.controller("chat").close();
 </code></pre>
+
+<h3>
+<a name="binary-data-2" class="anchor" href="#binary-data-2"><span class="octicon octicon-link"></span></a>Binary data</h3>
+
+<p>XSockets has supported binary messages for a long time, but in 4.0 we have made it even easier than before.</p>
+
+<h4>
+<a name="how-to-handle-binary-data-1" class="anchor" href="#how-to-handle-binary-data-1"><span class="octicon octicon-link"></span></a>How to handle binary data</h4>
+
+<p>Lets say that we want to send binary data from the client to the server.</p>
+
+<p><strong>Clients</strong></p>
+
+<p>Client - JavaScript</p>
+
+<pre><code>// Create a simple Array buffer and fill it with "something"
+var arrayBuffer = new ArrayBuffer(10);
+// Send the binary data and metadata to XSockets
+conn.controller("chat").invokeBinary("myfile",blob);
+</code></pre>
+
+<p><strong>Server</strong></p>
+
+<pre><code>public void MyFile(IMessage message)
+{
+    var filecontent = Encoding.UTF8.GetString(message.Blob.ToArray());
+}
+</code></pre>
+
+<h4>
+<a name="how-to-pass-meta-data-together-with-binary-data-2" class="anchor" href="#how-to-pass-meta-data-together-with-binary-data-2"><span class="octicon octicon-link"></span></a>How to pass meta-data together with binary data</h4>
+
+<p>If we want to attach metadata about the binary data that is easy to do. Just pass along the object representing the metadata and XSockets will let you extract that data on the server.</p>
+
+<p><strong>Client</strong></p>
+
+<p>Client - JavaScript</p>
+
+<pre><code>// Create a simple Array buffer and fill it with "something"
+var arrayBuffer = new ArrayBuffer(10);
+// Send the binary data and metadata to XSockets
+conn.controller("chat").invokeBinary("myfile",blob,{Name:"xfile.txt"});
+</code></pre>
+
+<p><strong>Server</strong></p>
+
+<pre><code>//simple class for holding metadata about a file
+public class FileInfo
+{
+    public string Name {get;set;}
+}
+
+public void MyFile(IMessage message)
+{
+    var filecontent = Encoding.UTF8.GetString(message.Blob.ToArray());
+    var metadata = message.Extract&lt;FileInfo&gt;();
+}
+</code></pre>
+
+<p>Just use <code>Extract&lt;T&gt;</code> to get back to metadata attached to the binary data.</p>
 
 <h3>
 <a name="how-to-handle-errors-1" class="anchor" href="#how-to-handle-errors-1"><span class="octicon octicon-link"></span></a>How to handle errors</h3>
@@ -2726,13 +2798,13 @@ container.Start(configurationSetting: myCustomConfig);
 <h3>
 <a name="amazon" class="anchor" href="#amazon"><span class="octicon octicon-link"></span></a>Amazon</h3>
 
-<pre><code>TODO
+<pre><code>TBD
 </code></pre>
 
 <hr><h2>
 <a name="fallback" class="anchor" href="#fallback"><span class="octicon octicon-link"></span></a>Fallback</h2>
 
-<p>To use the fallback in XSockets you have to have .NET 4.5 and WebAPI.</p>
+<p>To use the fallback in XSockets you have to have <strong>.NET 4.5 and WebAPI</strong>.</p>
 
 <h3>
 <a name="setup" class="anchor" href="#setup"><span class="octicon octicon-link"></span></a>Setup</h3>
@@ -2742,11 +2814,92 @@ container.Start(configurationSetting: myCustomConfig);
 <pre><code>Install-Package XSockets.Fallback 
 </code></pre>
 
-<p>All you need to do now is to add the fallback <code>JavaScript</code> as a reference.
-Add the reference before the other XSockets JavaScript reference like this</p>
+<p>Since all XSockets clients except the JavaScript always is full-duplex the only API that will use the fallback is the JavaScript. You do not need to do anything for it to work. The fallback to longpolling is built-in with the regular javascript file.</p>
 
-<pre><code>&lt;script src="XSockets.WebAPI.fallback.latest.js"&gt;&lt;/script&gt;    
-&lt;script src="XSockets.latest.js"&gt;&lt;/script&gt;
+<h2>
+<a name="offline-messages" class="anchor" href="#offline-messages"><span class="octicon octicon-link"></span></a>Offline Messages</h2>
+
+<p>XSockets provides a mechanism for storing messages in-memory for clients being offline for a short period of time. It can be between pages or bad connectivity.</p>
+
+<p>By default XSockets will not store messages for clients being offline, but it is easy to implement this functionality.</p>
+
+<ol>
+<li>When a client goes offline you tell XSockets what <code>topics</code> the client want to subscribe to while being offline.</li>
+<li>When a clients comes back online you <code>publish</code> the messages that was received while the client was offline</li>
+<li>When you send a message you use the <code>extensions</code> that will both send and queue.</li>
+</ol><h3>
+<a name="example-using-offline-storage" class="anchor" href="#example-using-offline-storage"><span class="octicon octicon-link"></span></a>Example using Offline Storage</h3>
+
+<p>A simple sample showing how this can be implemented in the chat</p>
+
+<pre><code>public class Chat : XSocketController
+{
+    public Chat()
+    {
+        this.OnClose += Chat_OnClose;
+        this.OnReopen += Chat_OnReopen;
+    }
+
+    void Chat_OnClose(object sender, OnClientDisconnectArgs e)
+    {
+        //Subscribe for "chatmessage"  while client is offline
+        //This can be any number of topics
+        this.OfflineSubscribe("chatmessage");
+    }
+
+    private void Chat_OnReopen(object sender, OnClientConnectArgs onClientConnectArgs)
+    {
+        //Get all messages received while offline
+        this.OnlinePublish();
+    }
+
+    public void ChatMessage(IMessage message) 
+    {
+        this.Queue(DeliveryType.Rpc, message);
+    }
+}
+</code></pre>
+
+<p><em>Note: You can ofcourse pass in lambda expressions in the <code>Queue</code> method and only clients matching will receive messages when they are back online.</em></p>
+
+<h3>
+<a name="custom-offline-message-module" class="anchor" href="#custom-offline-message-module"><span class="octicon octicon-link"></span></a>Custom Offline Message Module</h3>
+
+<p>To implement your own offline plugin just implement the interface <code>IOfflineQueue</code>
+Below you can see an empty implementation, where you store the messages is up to you! It is also your own responsibility to make sure the logic is valid, but the methods in this plugin will be called when you use the pattern described above... Calling <code>Queue</code>, <code>OnlinePublish</code> and <code>OfflineSubscribe</code></p>
+
+<p><em>Note: You should also handle the lambda expressions passed into the <code>Queue</code> method so that only clients matching the expression will receive messages when they are back online.</em></p>
+
+<pre><code>public class MyOfflineQueue
+    : IOfflineQueue
+{
+    public void OfflineSubscribe&lt;T&gt;(T socket, params string[] topics) where T : class, IXSocketController
+    {
+        //Store the subscriptions for this client
+    }
+
+    public void OfflineSubscribe&lt;T&gt;(T socket, int storeForMs, params string[] topics) where T : class, IXSocketController
+    {
+        //NOTE: This method is probably not interesting for your custom module
+        //Store the subscriptions for this client for x ms
+    }
+
+    public void OnlinePublish&lt;T&gt;(T socket) where T : class, IXSocketController
+    {
+        //Get all messages that was targeting this client while he was offline
+    }
+
+    public void Queue&lt;T&gt;(T socket, DeliveryType deliveryType, IMessage message, Func&lt;T, bool&gt; func) where T : class, IXSocketController
+    {
+        //Store the message for all clients that has the topic as a subscription
+        //Note that a subset of clients is targeted with the Func&lt;T,bool&gt;
+    }
+
+    public void Queue&lt;T&gt;(T socket, DeliveryType deliveryType, IMessage message) where T : class, IXSocketController
+    {
+        //Store the message for all clients that has the topic as a subscription
+    }
+}
 </code></pre>
 
 <hr><h2>
