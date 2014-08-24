@@ -366,6 +366,9 @@ The simple sample below will send a chatmessage to all clients connected to the 
 ##Parameters, Model binding & return values
 XSockets have had strongly typed model binding for generations, this is one of the things that makes it easy to use. Just declare methods on the controllers and specify the complex parameter on the methods. XSockets will transform the JSON sent in to the correct parameter type.
 
+You can return any serializable object from the action methods. The value returned will end up at the client that initiated the call.
+As of 4.0 you can also return Task and Task&lt;T&gt; from the action methods and the client will get the data back when the Task is completed.
+
 ###How to use complex objects as parameters
 Above we looked at how you can send complex types to the clients, of course the client can send complex types to the server as well.
 
@@ -526,13 +529,13 @@ If you want to send for example and image from the server to the clients it can 
 
 Client - JavaScript
 
-    conn.controller("chat").subscribe("myimage", function (b) {
+    conn.controller("chat").on("myimage") = function (b) {
         var uint8Array = new Uint8Array(b.binary);
         var arrayBuffer = uint8Array.buffer;
         var blob = new Blob([arrayBuffer], { type: "image/jpg" });
         var blobUrl = window.URL.createObjectURL(blob);
         $("img").attr("src", blobUrl);
-    });
+    };
 
 Client - C#
 
@@ -916,70 +919,70 @@ Interceptors are common when debugging or logging, but XSockets does not choose 
 #### How to write ConnectionInterceptors
 Sample of a connection interceptor that logs handshake and connect/disconnect with `debug` level
 
-    //using Serilog.Events;
     //using XSockets.Core.Common.Interceptor;
     //using XSockets.Core.Common.Protocol;
-    //using XSockets.Plugin.Framework.Helpers;
+    //using XSockets.Core.Common.Utility.Logging;
+    //using XSockets.Plugin.Framework;
 
     public class MyConnectionInterceptor : IConnectionInterceptor
     {
 
         public void Connected(IXSocketProtocol protocol)
         {
-            LogHelper.Log(LogEventLevel.Verbose, "Connected {@protocol}" , protocol.ConnectionContext);            
+            Composable.GetExport<IXLogger>().Verbose("Connected {@protocol}" , protocol.ConnectionContext);            
         }
 
         public void Disconnected(IXSocketProtocol protocol)
         {
-            LogHelper.Log(LogEventLevel.Verbose, "Disconnected {@protocol}", protocol.ConnectionContext);
+            Composable.GetExport<IXLogger>().Verbose("Disconnected {@protocol}", protocol.ConnectionContext);
         }
 
         public void HandshakeCompleted(IXSocketProtocol protocol)
         {
-            LogHelper.Log(LogEventLevel.Verbose, "Handshake ok {@protocol}", protocol.ConnectionContext);
+            Composable.GetExport<IXLogger>().Verbose("Handshake ok {@protocol}", protocol.ConnectionContext);
         }
 
         public void HandshakeInvalid(string rawHandshake)
         {
-            LogHelper.Log(LogEventLevel.Verbose, "Handshake failed {raw}", rawHandshake);
+            Composable.GetExport<IXLogger>().Verbose("Handshake failed {raw}", rawHandshake);
         }
     }
     
 #####How to write MessageInterceptors
 Sample of a message interceptor that logs in/out messages with `debug` level
 
-    //using Serilog.Events;
     //using XSockets.Core.Common.Interceptor;
     //using XSockets.Core.Common.Protocol;
-    //using XSockets.Plugin.Framework.Helpers;
+    //using XSockets.Core.Common.Socket.Event.Interface;
+    //using XSockets.Core.Common.Utility.Logging;
+    //using XSockets.Plugin.Framework;
     
     public class MyMessageInterceptor : IMessageInterceptor
     {
         public void OnIncomingMessage(IXSocketProtocol protocol, IMessage message)
         {
-            LogHelper.Log(LogEventLevel.Debug, "{incoming message {@message}}", message);
+            Composable.GetExport<IXLogger>().Debug("{incoming message {@message}}", message);
         }
 
         public void OnOutgoingMessage(IXSocketProtocol protocol, IMessage message)
         {
-            LogHelper.Log(LogEventLevel.Debug, "{outgoing message {@message}}", message);
+            Composable.GetExport<IXLogger>().Debug("{outgoing message {@message}}", message);
         }
     }
     
 #####How to write ErrorInterceptors
 Sample of a error interceptor that logs exceptions with `error` level
 
-    //using Serilog.Events;
+    //using System;
     //using XSockets.Core.Common.Interceptor;
-    //using XSockets.Core.Common.Protocol;
-    //using XSockets.Core.Common.Socket.Event.Interface;
-    //using XSockets.Plugin.Framework.Helpers;
+    //using XSockets.Core.Common.Utility.Logging;
+    //using XSockets.Plugin.Framework;
     
     public class MyErrorInterceptor : IErrorInterceptor
-    {
-        public void OnError(IXSocketException exception)
+    {        
+        public void OnError(Exception exception)
         {
-            LogHelper.Log(LogEventLevel.Error, "{Exception {@ex}}", exception);
+            Composable.GetExport<IXLogger>().Error(exception, "Exception");
         }
     }
     
@@ -1425,17 +1428,17 @@ The Stock class used for return value
 **Client - calling a method that has a return value in a synchronous method**
 
     var stocks = conn.Controller("stockticker").Invoke<IEnumerable<Stock>>("GetStocks");
-    foreach (Stock stock in stocks)
+    foreach (Stock stock in stocks.Result)
     {
         Console.WriteLine("Symbol: {0} price: {1}\n", stock.Symbol, stock.Price);
     }
     
-If there is no respons for 2000 ms there will be a `TimeoutException` so you should wrap the synchronous call like:
+If there is no respons for 30000 ms there will be a `TimeoutException` so you should wrap the synchronous call like:
 
     try
     {
         var stocks = conn.Controller("stockticker").Invoke<IEnumerable<Stock>>("GetStocks");
-        foreach (Stock stock in stocks)
+        foreach (Stock stock in stocks.Result)
         {
             Console.WriteLine("Symbol: {0} price: {1}\n", stock.Symbol, stock.Price);
         }
@@ -1455,7 +1458,7 @@ If there is no respons for 2000 ms there will be a `TimeoutException` so you sho
         });
     }
     
-Of course you can set the default 2000 ms to be longer or shorter if needed. Just pass in your timeout as a parameter in the call like
+Of course you can set the default 30000 ms to be longer or shorter if needed. Just pass in your timeout as a parameter in the call like
     
     //Timeout will now be 5 seconds
     var stocks = conn.Controller("stockticker").Invoke<IEnumerable<Stock>>("GetStocks",5000);
@@ -1631,7 +1634,7 @@ To handle errors from method invocations, wrap the code in a try-catch block.
     try
     {
         var stocks = conn.Controller("stockticker").Invoke<IEnumerable<Stock>>("GetStocks");
-        foreach (Stock stock in stocks)
+        foreach (Stock stock in stocks.Result)
         {
             Console.WriteLine("Symbol: {0} price: {1}", stock.Symbol, stock.Price);
         }
@@ -2194,29 +2197,109 @@ Note: If the property on the controller is an `Enum` use the `SetEnum` method in
 
 As of 4.0 XSockets will use http://serilog.net as the default logger. Since it is a plugin you can of course replace SeriLog with something else if you want to.
 
-By default the logger will log everything in `Debug` and only `Fatal` level in `Release`.
+By default the logger will log everything in `Information`.
 
-It is very easy to set your custom SeriLogger/Configuration/Sink. Just implement the `IDefaultLogger` interface and set the configuraiton of choice. For more information about SerilLog see http://serilog.net
+###Customize Serilog
+
+It is very easy to set your custom SeriLogger/Configuration/Sink. Just inherit the `XLogger`  class from assembly `XSockets.Logger.dll` and set the configuraiton of choice. For more information about SerilLog see http://serilog.net
+
+All methods on XLogger is virtual so that you can override them, but if you want to redo the whole thing or even replace Serilog with another logger see the next section
 
     //using Serilog;
-    //using XSockets.Plugin.Framework.Attributes;
-    //using XSockets.Plugin.Framework.Logger;
+    //using XSockets.Logger;
     
     //
-    // Sample below will write to file and console
+    // Sample below will write to console with level Verbose
     //
-    [Export(typeof(IDefaultLogger))]
-    public class MyLogger : IDefaultLogger
-    {       
-        public ILogger Logger
+    public class MyLogger : XLogger
+    {
+        public MyLogger()
         {
-            get
-            {
-                return new LoggerConfiguration()
-                    .WriteTo.ColoredConsole()
-                    .WriteTo.File("log.txt")
-                    .CreateLogger();
-            }
+            Log.Logger = new LoggerConfiguration().MinimumLevel.Verbose()
+                .WriteTo.ColoredConsole()
+                .CreateLogger();
+        }
+    }
+
+###Custom Logger (replacing Serilog)
+If you do not want Serilog or you just dont want to use the `Xlogger` you can implement your own since the default XLogger is an overridable module.
+
+Just implement the `IXlogger` interface and implement all methods and your new logger is good to go.
+
+
+    //using System;
+    //using XSockets.Core.Common.Utility.Logging;
+    
+    public class MyXLogger : IXLogger
+    {
+        public void SetEventLevel(LogEventLevel level)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Verbose(string template, params object[] parmeters)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Verbose(Exception ex, string template, params object[] parmeters)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Debug(string template, params object[] parmeters)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Debug(Exception ex, string template, params object[] parmeters)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Information(string template, params object[] parmeters)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Information(Exception ex, string template, params object[] parmeters)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Warning(string template, params object[] parmeters)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Warning(Exception ex, string template, params object[] parmeters)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Error(string template, params object[] parmeters)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Error(Exception ex, string template, params object[] parmeters)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Fatal(string template, params object[] parmeters)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Fatal(Exception ex, string template, params object[] parmeters)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool LevelEnabled(LogEventLevel level)
+        {
+            throw new NotImplementedException();
         }
     }
 
