@@ -89,7 +89,7 @@ Inside of the Main method start the server with the code below.
     using XSockets.Plugin.Framework;
     using (var container = Composable.GetExport<IXSocketServerContainer>())
     {
-        server.StartServers();
+        container.Start();
         Console.WriteLine("Started, hit enter to quit");
         Console.ReadLine();
     }
@@ -2452,7 +2452,7 @@ Note that by default you will get the `Generic` controller as well as the `WebRT
 **Install:**
 
  1. If not done install chocolatey (http://chocolatey.org/)
- 2. Open up the Command Prompt and type cinst XSockets.Windows.Service
+ 2. Open up the Command Prompt and type ***cinst XSockets.Windows.Service***
     
 ###Console Application
 Create a new ConsoleApplication and install the package XSockets. This will output some sample code for getting the server started.
