@@ -304,9 +304,9 @@ Client - JavaScript
 
 Client - C#
 
-    conn.Controller("chat").On("chatmessage", data => Console.WriteLine(data.Text));
+    conn.Controller("chat").On<dynamic>("chatmessage", data => Console.WriteLine(data.Text));
 
-*Above we get a dynamic since we do not specify the datatype, but we can of course use a complex type to get the message deserialized into the correct type and get intellisense.*
+*Above we get a dynamic, but we can of course use any type to get the message deserialized into the correct type and get intellisense. Which is prefered*
 
 ####How to hide methods and properties
 You might not wanna expose all publish methods and properties to the client API's. When you want to hide a publish method/property just decorate the method/property with the `[NoEvent]` attribute. The attribute is located under `XSockets.Core.Common.Socket.Event.Attributes`
@@ -697,7 +697,7 @@ Client - JavaScript
 
 Client - C#
 
-    conn.Controller("chat").On<string>("chatmessage", data => Console.WriteLine(data));
+    conn.Controller("chat").Subscribe<string>("chatmessage", data => Console.WriteLine(data));
 
 ###How to publish to a subset of the subscribing clients
 If you want to send a message to some of the subscribing clients, use `PublishTo`
@@ -724,7 +724,7 @@ Client - JavaScript
 
 Client - C#
 
-    conn.Controller("chat").On<string>("chatmessage", data => Console.WriteLine(data));
+    conn.Controller("chat").Subscribe<string>("chatmessage", data => Console.WriteLine(data));
 
 ###How to publish messages to subscribers connected on another Controller class
 It is pretty much the same as publishing to the clients on the same `Controller` since XSockets extension-methods are generic.
@@ -1343,11 +1343,12 @@ The server code for the examples with the `ChatModel` can look like
     this.InvokeToAll(new ChatModel{Name="Yogi", Text="I am a gummi bear"},"chatmessage");
 
 ####Methods with parameters, specifying dynamic objects for the parameters
-As an alternative to specifying parameters as generic types of the On method, you can specify parameters as dynamic objects. Below we get the `data` parameter as an dynamic since we did not specify the generic parameter for the `On` method.
+As an alternative to specifying specific types to the On method, you can specify parameters as dynamic objects.
 
-    conn.Controller("chat").On("chatmessage", data => Console.WriteLine(data.Text));
+    conn.Controller("chat").On<dynamic>("chatmessage", data => Console.WriteLine(data.Text));
     
-*Note: Dynamic keyword will not exist in clients for Android/iOS or .NET 3.5 and earlier.*
+*Note: Dynamic keyword will (currently) not exist in clients for Android/iOS.*
+*Note: Dynamic keyword does not exist in .NET 3.5 and earlier.*
 
 **Server**
 
@@ -1367,8 +1368,6 @@ If you know the type contained in the Data part of the IMessage you can use Extr
 
     //example extracting the JSON into a specific type
     var chatModel = o.Extract<ChatModel>();
-    
-*Note: Dynamic keyword will not exist in clients for Android/iOS or .NET 3.5 and earlier.*
 
 **Server**
 
@@ -1468,12 +1467,12 @@ Of course you can set the default 30000 ms to be longer or shorter if needed. Ju
 ###PUB/SUB
 ####How to define subscription methods on the client that the server can publish to
 
-    conn.Controller("stockticker").Subscribe<Stock>("newStock", data => Console.WriteLine("Symbol: {0} price: {1}\n", stock.Symbol, stock.Price));
+    conn.Controller("stockticker").Subscribe<Stock>("newStock", stock => Console.WriteLine("Symbol: {0} price: {1}\n", stock.Symbol, stock.Price));
         
 ####How to subscribe one time
 If you only want to get a message once and then unsubscribe automatically you can use `one`
 
-    conn.Controller("stockticker").One<Stock>("newStock", data => Console.WriteLine("Symbol: {0} price: {1}\n", stock.Symbol, stock.Price));
+    conn.Controller("stockticker").One<Stock>("newStock", stock => Console.WriteLine("Symbol: {0} price: {1}\n", stock.Symbol, stock.Price));
     
 This will make sure that the client unsubscribe to the topic after getting the first message.
 
