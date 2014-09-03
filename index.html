@@ -1,37 +1,37 @@
 <!DOCTYPE html>
 <html>
+
   <head>
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <title>Xsockets.net-4.0 by XSockets</title>
+    <meta name="description" content="Xsockets.net-4.0 : Super duper real-time framework">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Xsockets.net-4.0</title>
   </head>
 
   <body>
-    <div id="container">
-      <div class="inner">
 
-        <header>
-          <h1>Xsockets.net-4.0</h1>
-          <h2>Super duper real-time framework</h2>
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/XSockets/XSockets.NET-4.0">View on GitHub</a>
+
+          <h1 id="project_title">Xsockets.net-4.0</h1>
+          <h2 id="project_tagline">Super duper real-time framework</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/XSockets/XSockets.NET-4.0/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/XSockets/XSockets.NET-4.0/tarball/master">Download this project as a tar.gz file</a>
+            </section>
         </header>
+    </div>
 
-        <section id="downloads" class="clearfix">
-          <a href="https://github.com/XSockets/XSockets.NET-4.0/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
-          <a href="https://github.com/XSockets/XSockets.NET-4.0/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
-          <a href="https://github.com/XSockets/XSockets.NET-4.0" id="view-on-github" class="button"><span>View on GitHub</span></a>
-        </section>
-
-        <hr>
-
-        <section id="main_content">
-          <h1>
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
 <a name="xsocketsnet-4---documentation" class="anchor" href="#xsocketsnet-4---documentation"><span class="octicon octicon-link"></span></a>XSockets.NET 4 - Documentation</h1>
 
 <p>This section covers server and client API´s for XSockets.NET</p>
@@ -393,10 +393,10 @@ public void ChatMessage(string message)
 
 <p>Client - C#</p>
 
-<pre><code>conn.Controller("chat").On("chatmessage", data =&gt; Console.WriteLine(data.Text));
+<pre><code>conn.Controller("chat").On&lt;dynamic&gt;("chatmessage", data =&gt; Console.WriteLine(data.Text));
 </code></pre>
 
-<p><em>Above we get a dynamic since we do not specify the datatype, but we can of course use a complex type to get the message deserialized into the correct type and get intellisense.</em></p>
+<p><em>Above we get a dynamic, but we can of course use any type to get the message deserialized into the correct type and get intellisense. Which is prefered</em></p>
 
 <h4>
 <a name="how-to-hide-methods-and-properties" class="anchor" href="#how-to-hide-methods-and-properties"><span class="octicon octicon-link"></span></a>How to hide methods and properties</h4>
@@ -861,7 +861,7 @@ this.PublishToAll("Hello to all subscribers from server", "chatmessage");
 
 <p>Client - C#</p>
 
-<pre><code>conn.Controller("chat").On&lt;string&gt;("chatmessage", data =&gt; Console.WriteLine(data));
+<pre><code>conn.Controller("chat").Subscribe&lt;string&gt;("chatmessage", data =&gt; Console.WriteLine(data));
 </code></pre>
 
 <h3>
@@ -893,7 +893,7 @@ this.PublishTo(p =&gt; p.Gender == this.Gender &amp;&amp; p.City == this.City,"H
 
 <p>Client - C#</p>
 
-<pre><code>conn.Controller("chat").On&lt;string&gt;("chatmessage", data =&gt; Console.WriteLine(data));
+<pre><code>conn.Controller("chat").Subscribe&lt;string&gt;("chatmessage", data =&gt; Console.WriteLine(data));
 </code></pre>
 
 <h3>
@@ -1451,10 +1451,12 @@ void Chat_OnAuthorizationFailed(object sender, OnAuthorizationFailedArgs e)
 <p>The C# Client API has support for:</p>
 
 <ul>
-<li>.NET 3.5, 4.0+</li>
-<li>iOS (MonoTouch)</li>
-<li>Android (MonoDroid)</li>
-<li>.NET MicroFramework 4.2, 4.3 (see specific API for NETMF)</li>
+<li>.NET 3.5, 4.0+ (this section)</li>
+<li>iOS (MonoTouch) (this section)</li>
+<li>Android (MonoDroid) (this section)</li>
+<li>.NET MicroFramework 4.2, 4.3 (see specific section for NETMF)</li>
+<li>Dart (see specific section)</li>
+<li>Arduino (see specific section)</li>
 </ul><h3>
 <a name="client-setup" class="anchor" href="#client-setup"><span class="octicon octicon-link"></span></a>Client Setup</h3>
 
@@ -1625,12 +1627,13 @@ this.InvokeToAll(new ChatModel{Name="Yogi", Text="I am a gummi bear"},"chatmessa
 <h4>
 <a name="methods-with-parameters-specifying-dynamic-objects-for-the-parameters" class="anchor" href="#methods-with-parameters-specifying-dynamic-objects-for-the-parameters"><span class="octicon octicon-link"></span></a>Methods with parameters, specifying dynamic objects for the parameters</h4>
 
-<p>As an alternative to specifying parameters as generic types of the On method, you can specify parameters as dynamic objects. Below we get the <code>data</code> parameter as an dynamic since we did not specify the generic parameter for the <code>On</code> method.</p>
+<p>As an alternative to specifying specific types to the On method, you can specify parameters as dynamic objects.</p>
 
-<pre><code>conn.Controller("chat").On("chatmessage", data =&gt; Console.WriteLine(data.Text));
+<pre><code>conn.Controller("chat").On&lt;dynamic&gt;("chatmessage", data =&gt; Console.WriteLine(data.Text));
 </code></pre>
 
-<p><em>Note: Dynamic keyword will not exist in clients for Android/iOS or .NET 3.5 and earlier.</em></p>
+<p><em>Note: Dynamic keyword will (currently) not exist in clients for Android/iOS.</em>
+<em>Note: Dynamic keyword does not exist in .NET 3.5 and earlier.</em></p>
 
 <p><strong>Server</strong></p>
 
@@ -1655,8 +1658,6 @@ this.InvokeToAll(new ChatModel{Name="Yogi", Text="I am a gummi bear"},"chatmessa
 <pre><code>//example extracting the JSON into a specific type
 var chatModel = o.Extract&lt;ChatModel&gt;();
 </code></pre>
-
-<p><em>Note: Dynamic keyword will not exist in clients for Android/iOS or .NET 3.5 and earlier.</em></p>
 
 <p><strong>Server</strong></p>
 
@@ -1773,7 +1774,7 @@ var stocks = conn.Controller("stockticker").Invoke&lt;IEnumerable&lt;Stock&gt;&g
 <h4>
 <a name="how-to-define-subscription-methods-on-the-client-that-the-server-can-publish-to" class="anchor" href="#how-to-define-subscription-methods-on-the-client-that-the-server-can-publish-to"><span class="octicon octicon-link"></span></a>How to define subscription methods on the client that the server can publish to</h4>
 
-<pre><code>conn.Controller("stockticker").Subscribe&lt;Stock&gt;("newStock", data =&gt; Console.WriteLine("Symbol: {0} price: {1}\n", stock.Symbol, stock.Price));
+<pre><code>conn.Controller("stockticker").Subscribe&lt;Stock&gt;("newStock", stock =&gt; Console.WriteLine("Symbol: {0} price: {1}\n", stock.Symbol, stock.Price));
 </code></pre>
 
 <h4>
@@ -1781,7 +1782,7 @@ var stocks = conn.Controller("stockticker").Invoke&lt;IEnumerable&lt;Stock&gt;&g
 
 <p>If you only want to get a message once and then unsubscribe automatically you can use <code>one</code></p>
 
-<pre><code>conn.Controller("stockticker").One&lt;Stock&gt;("newStock", data =&gt; Console.WriteLine("Symbol: {0} price: {1}\n", stock.Symbol, stock.Price));
+<pre><code>conn.Controller("stockticker").One&lt;Stock&gt;("newStock", stock =&gt; Console.WriteLine("Symbol: {0} price: {1}\n", stock.Symbol, stock.Price));
 </code></pre>
 
 <p>This will make sure that the client unsubscribe to the topic after getting the first message.</p>
@@ -2697,6 +2698,127 @@ public class Chat : XSocketController
 <p>Note: If the property on the controller is an <code>Enum</code> use the <code>SetEnum</code> method instead</p>
 
 <hr><h2>
+<a name="arduino" class="anchor" href="#arduino"><span class="octicon octicon-link"></span></a>Arduino</h2>
+
+<p>We have written a very very simple client for the Arduino.</p>
+
+<h3>
+<a name="client-setup-3" class="anchor" href="#client-setup-3"><span class="octicon octicon-link"></span></a>Client Setup</h3>
+
+<p>Download the Arduino client from GitHub and then add the library as shown here <a href="http://arduino.cc/en/Guide/Libraries">http://arduino.cc/en/Guide/Libraries</a></p>
+
+<h3>
+<a name="how-to-establish-a-connection-3" class="anchor" href="#how-to-establish-a-connection-3"><span class="octicon octicon-link"></span></a>How to establish a connection</h3>
+
+<p>Use the <code>connect</code> method to open a connection. The method returns false if the connection failed and true if it was ok.</p>
+
+<pre><code>client.connect("192.168.0.108",4502)
+</code></pre>
+
+<ul>
+<li>The first parameter is the IP of the server</li>
+<li>The second parameter is the port of the server</li>
+</ul><h3>
+<a name="how-to-send-messages-1" class="anchor" href="#how-to-send-messages-1"><span class="octicon octicon-link"></span></a>How to send messages</h3>
+
+<p>The open method just opens the socket. When you communicate to a specific <code>controller</code> for the first time the controller will be created on the server. </p>
+
+<p>You always pass in <code>controller</code>, <code>topic</code> and <code>data</code> when sending from Arduino.</p>
+
+<pre><code>client.send("chat","message","Hello from Arduino");
+</code></pre>
+
+<p>The code sample above would invoke the method "Message" on the controller "Chat" with the object/data "Hello from Arduino".</p>
+
+<h3>
+<a name="how-to-receive-messages-1" class="anchor" href="#how-to-receive-messages-1"><span class="octicon octicon-link"></span></a>How to receive messages</h3>
+
+<p>Set a message delegate to be able to receive data. This delegate will receive all data sent to the client from the server.</p>
+
+<pre><code>//Set onMessage to handle data
+client.setOnMessageDelegate(onMessage);
+
+//The onMessage implementation
+void onMessage(XSocketClient client, String data) {
+  //Just write to serial port
+  Serial.println(data);
+}   
+</code></pre>
+
+<h3>
+<a name="subscribe" class="anchor" href="#subscribe"><span class="octicon octicon-link"></span></a>Subscribe</h3>
+
+<p>If you use pub/sub in XSockets you will have to tell the server that you subscribe for specific topics.</p>
+
+<pre><code>client.addListener("controllername","topic");
+</code></pre>
+
+<h3>
+<a name="unsubscribe" class="anchor" href="#unsubscribe"><span class="octicon octicon-link"></span></a>Unsubscribe</h3>
+
+<p>When you wan to unsubscribe for a topic just use</p>
+
+<pre><code>client.removeListener("controllername","topic");
+</code></pre>
+
+<h3>
+<a name="a-sample" class="anchor" href="#a-sample"><span class="octicon octicon-link"></span></a>A Sample...</h3>
+
+<p>The code below connects to a XSockets server on 192.168.1.2 and port 4502.
+If the connection was a success the client send a message (that will also fire the controller generic to be created).</p>
+
+<p>Data received will be handled by the <code>onMessage</code> method.</p>
+
+<pre><code>#include "Arduino.h"
+#include &lt;Ethernet.h&gt;
+#include &lt;SPI.h&gt;
+#include &lt;XSocketClient.h&gt;
+
+byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
+XSocketClient client;
+
+void setup() {
+  Serial.begin(9600);
+  Ethernet.begin(mac);
+  Serial.println("Start to connect");
+  if(client.connect("192.168.0.108",4502)){
+      Serial.println("Connected!");
+  }
+  else{
+      Serial.println("Error connecting");
+  }
+
+  client.setOnMessageDelegate(onMessage);
+  delay(1000);
+
+  client.send("generic","hello","Arduino connected");
+}
+
+void loop() {
+  client.receiveData();
+
+  delay(500);
+}
+
+void onMessage(XSocketClient client, String data) {
+  Serial.println(data);
+}
+</code></pre>
+
+<p>TIP: Test this in an easy way by using Putty like this</p>
+
+<ol>
+<li>Start XSockets.</li>
+<li>Connect the Arduino (by running sample above), but remember to change IP if needed.</li>
+<li>Open putty on the same machine as XSockets</li>
+<li>Enter 127.0.0.1 and port 4502</li>
+<li>Choose RAW as connection type</li>
+<li>When putty opens type "PuttyProtocol" and hit enter</li>
+<li>You are now connected....</li>
+<li>type <code>generic|message|Hello from putty</code>
+</li>
+<li>If all goes well you will see the message at the Arduino side.</li>
+</ol><hr><h2>
 <a name="logging" class="anchor" href="#logging"><span class="octicon octicon-link"></span></a>Logging</h2>
 
 <p>As of 4.0 XSockets will use <a href="http://serilog.net">http://serilog.net</a> as the default logger. Since it is a plugin you can of course replace SeriLog with something else if you want to.</p>
@@ -3823,15 +3945,18 @@ Supported platforms are:</p>
 <ul>
 <li>XSockets</li>
 </ul><hr>
-        </section>
-
-        <footer>
-          Xsockets.net-4.0 is maintained by <a href="https://github.com/XSockets">XSockets</a><br>
-          This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
-        </footer>
-
-        
-      </div>
+      </section>
     </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Xsockets.net-4.0 maintained by <a href="https://github.com/XSockets">XSockets</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
   </body>
 </html>
