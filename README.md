@@ -431,6 +431,8 @@ When you call the server from a client and want to wait for the result you just 
         return "Echo";
     }
     
+*Note: You can also return Task&lt;T&gt;*
+
 You can of course send data before doing the return, for example.
 
     //using XSockets.Core.XSocket;
