@@ -94,7 +94,7 @@ Inside of the Main method start the server with the code below.
         Console.ReadLine();
     }
 
-####Install into OWIN (self hosted)
+###Install into OWIN (self hosted)
 **Note: This requires .NET 4.5+**
 Open up the Package Manager Console and install the server
 
@@ -102,7 +102,7 @@ Open up the Package Manager Console and install the server
 
 `PM> Install-Package XSockets.Owin.Host` **(include `-pre` to get v 4.0)**
 
-#####How to register XSockets Middleware
+####How to register XSockets Middleware
 UseXSockets is an extension method for the OwinExtensions class.
 
     using XSockets.Owin.Host;
@@ -124,13 +124,13 @@ UseXSockets is an extension method for the OwinExtensions class.
         }
     }
 
-####Install into OWIN (IIS)
+###Install into OWIN (IIS)
 **Note: This requires .NET 4.5+**
 Open up the Package Manager Console and install the server
 
 `PM> Install-Package XSockets.Owin.Host` **(include `-pre` to get v 4.0)**
 
-#####How to register XSockets Middleware
+####How to register XSockets Middleware
 UseXSockets is an extension method for the OwinExtensions class.
 
     using Microsoft.Owin;
