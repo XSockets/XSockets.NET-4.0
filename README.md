@@ -41,7 +41,7 @@ C#
 
     var conn = new XSocketClient("ws://127.0.0.1:4502", "http://localhost","generic");
     conn.Open();
-    conn.Controller("generic").On("mymessage", data => Console.WriteLine(data.Text));
+    conn.Controller("generic").On<dynamic>("mymessage", data => Console.WriteLine(data.Text));
 
 ### 3. Send message
 
@@ -177,7 +177,7 @@ Different clients have different capabilities, browsers for example have the RFC
 ----------
 
 ###Basics
-[image here]
+![Architecture](http://xsockets.net/$2/file/xsocketscommunication-1.png)
 
 The red clients are clients libraries written by XSockets.NET and the blue clients are examples of what we have easily connected with custom protocols.
 
@@ -2439,6 +2439,20 @@ Just create the configurations needed and pass them to StartServers
     }
 
 Note: you can of course pass in several configuration.
+
+#### Use autoconfiguration but with custom port
+
+Just use the `AutoConfiguration` class to create a custom configuration that lets you choose a port to use. For example port 8181 as shown below.
+    
+    using (var container = Composable.GetExport<IXSocketServerContainer>())
+	{
+		//Get a custom config on port 8181
+		var autoConfigPort8181 = new AutoConfiguration(defaultPort:8181).GetConfigurationSettings();
+	    
+		//Start the server with the autoconfig for port 8181
+		container.Start(configurationSettings:autoConfigPort8181);
+	    Console.ReadLine();
+	}
 
 #### Configuration as a plugin
 
