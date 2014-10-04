@@ -2440,7 +2440,7 @@ Just create the configurations needed and pass them to StartServers
 
 Note: you can of course pass in several configuration.
 
-#### Use autoconfiguration but with custom port
+### Autoconfiguration with custom port
 
 Just use the `AutoConfiguration` class to create a custom configuration that lets you choose a port to use. For example port 8181 as shown below.
     
@@ -2454,7 +2454,7 @@ Just use the `AutoConfiguration` class to create a custom configuration that let
 	    Console.ReadLine();
 	}
 
-#### Configuration as a plugin
+### Configuration as a plugin
 
 Just inherit the `XSockets.Core.Configuration.ConfigurationSetting` class and implement your configuration. XSockets will find and and use these custom configurations.
 
