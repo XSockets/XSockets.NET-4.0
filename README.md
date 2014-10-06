@@ -2447,7 +2447,7 @@ Just use the `AutoConfiguration` class to create a custom configuration that let
     using (var container = Composable.GetExport<IXSocketServerContainer>())
 	{
 		//Get a custom config on port 8181
-		var autoConfigPort8181 = new AutoConfiguration(defaultPort:8181).GetConfigurationSettings();
+		var autoConfigPort8181 = new AutoConfiguration(defaultPort:8181).GetConfigurationSettings(true);
 	    
 		//Start the server with the autoconfig for port 8181
 		container.Start(configurationSettings:autoConfigPort8181);
@@ -2688,10 +2688,51 @@ A simple sample showing how this can be implemented in the chat
         public void ChatMessage(IMessage message) 
         {
             this.Queue(DeliveryType.Rpc, message);
+            this.InvokeToAll(message);
         }
     }
     
 *Note: You can ofcourse pass in lambda expressions in the `Queue` method and only clients matching will receive messages when they are back online.*
+ 
+### Extension that handles both Queue and Send
+Above is a sample where we use the queue helper but then have to send manually. If you want to have an extension that both queue and send you can write something like the sample below.
+
+    public static class StratechExtensions
+    {
+        /// <summary>
+        /// Send and queue (basic)
+        /// </summary>
+        public static void QueueAndSend<T>(this T controller, DeliveryType deliveryType, IMessage message) where T : class, IXSocketController
+        {
+            Composable.GetExport<IOfflineQueue>().Queue<T>(controller, deliveryType, message);
+            switch (deliveryType)
+            {
+                case DeliveryType.PubSub:
+                    controller.PublishToAll(message);
+                    break;
+                case DeliveryType.Rpc:
+                    controller.InvokeToAll(message);
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Send and queue with lambda
+        /// </summary>
+        public static void QueueAndSend<T>(this T controller, DeliveryType deliveryType, IMessage message, Func<T, bool> f) where T : class, IXSocketController
+        {
+            Composable.GetExport<IOfflineQueue>().Queue<T>(controller, deliveryType, message, f);
+            switch (deliveryType)
+            {
+                case DeliveryType.PubSub:
+                    controller.PublishTo(f,message);
+                break;
+                case DeliveryType.Rpc:
+                    controller.InvokeTo(f, message);
+                break;
+            }
+        }
+    }
  
 ### Custom Offline Message Module
 To implement your own offline plugin just implement the interface `IOfflineQueue`
