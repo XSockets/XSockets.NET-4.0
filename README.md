@@ -2750,11 +2750,8 @@ By passing a custom *configuration* into the ctor of the `XSockets.WebRTC(broker
         optional: [{
             'bandwidth': 500
         }]
-    }});
-    
-    
-    // Will give you the following result;
-    
+    }});       
+    // Will give you the following result;    
     {
     "iceServers": [{
         "url": "stun:404.idonotexist.net"
@@ -2773,7 +2770,6 @@ By passing a custom *configuration* into the ctor of the `XSockets.WebRTC(broker
     },
     "sdpExpressions": []
     }
-    
     
 #####sdpExpressions 
 
