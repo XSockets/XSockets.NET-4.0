@@ -2656,7 +2656,6 @@ When installation is completed just follow these steps
 
 	using System.Web;
 	using XSockets.Core.Common.Socket;
-
 	[assembly: PreApplicationStartMethod(typeof(VideoChatDemo.App_Start.xbooter), "Start")]
 	namespace VideoChatDemo.App_Start
 	{
@@ -2712,7 +2711,6 @@ Here follows a brief description of the JavaScript API.
 In order to create a PeerConnection (`XSockets.WebRTC`) you need a PeerBroker to broker connections.
 
     var conn = new XSockets.WebSocket("ws://127.0.0.1:4502", ["connectionbroker"]);
-    
     var broker = conn.controller("connectionbroker");
 	    broker.onopen = function () {
 	    rtc = new XSockets.WebRTC(broker);
@@ -2740,7 +2738,7 @@ By passing a custom *configuration* into the ctor of the `XSockets.WebRTC(broker
         "optional": []
     },
     "sdpExpressions": []
-}
+    }
 
 ##### Example modified iceServers & streamConstraints
 
@@ -2774,14 +2772,13 @@ By passing a custom *configuration* into the ctor of the `XSockets.WebRTC(broker
         }]
     },
     "sdpExpressions": []
-}
+    }
     
     
 #####sdpExpressions 
 
 This expression parses and modifies the sdp and limits the video bandwidth 256 kilobits per second.
 
-    ...
     
     expression:[
      function (sdp) { 
@@ -2889,29 +2886,28 @@ Get a list of peerId's on the current context
 ##### getUserMedia(constrints,success,failure)
 Attach a local media stream ( camera / audio ) to the PeerConnection by calling `.getUserMedia(constrints,success,failure)`
 
-    rtc.getUserMedia(rtc.userMediaConstraints.hd(true), function(result){
-    
-    console.log("MediaStream using HD constrints and audio is added to the PeerConnection"
+    rtc.getUserMedia(rtc.userMediaConstraints.hd(true), function(result){    
+        console.log("MediaStream using HD constrints and audio is added to the PeerConnection"
     ,result);
-    
     });
 
 ##### addMediaStream(mediaStream,callback)
-If you want to a (external) media stream to the PeerConnection (local) call the `addMediaStream(mediaStream,callback)`
+If you want to a (external) media stream to the PeerConnection (local) call the 
+`addMediaStream(mediaStream,callback)`
 
       window.getUserMedia(rtc.userMediaConstraints.qvga(false), function (stream) {
-                         // Add the MediaStream capured
-                         rtc.addLocalStream(stream, function () {
-                         console.log("Added yet another media stream...");
-                   });
+          // Add the MediaStream capured
+          rtc.addLocalStream(stream, function () {
+              console.log("Added yet another media stream...");
+     });
 
 ##### removeStream(streamId)
 
 To remove a local media stream from the PeerConnection and all connected remote peerconnection call the .removeStream(streamID) method
 
      rtc.removeStream(streamId, function(id) {
-                             console.log("local stream removed", id);
-                         });
+        console.log("local stream removed", id);
+     });
 
 ##### refreshStreams(peerId,callback)
 
@@ -2964,6 +2960,7 @@ When a remote peer removes a stream (`.removeStream(mediaStreamId)`) the JavaScr
      rtc.onremotestreamlost =  function(function) {
         // do op
      });
+     
 ####MediaSources
 
 To get a list of media sources ( cameras, microphones ) attached to the users device you the API provides you with a few small helper functions located in the  `XSockets.WebRTC.MediaSource()`
