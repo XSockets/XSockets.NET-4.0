@@ -2636,8 +2636,8 @@ Now, Try connect to the Generic Controller using the following piece of JavaScri
     TBD
 
 
-## WebRTC
-This repo contains the full source code of the [XSockets.NET][1]  WebRTC experiments.  
+## WebRTC API
+Audio/Video and datachannels peer-2-peer in your browser.
 
 ###Simple WebRTC application
 We have created a simple demo package available on Nuget. This package gives you a very simple "video conference". The demo allows 1-n clients to connect and share MediaStreems, chat and send files.
@@ -2716,7 +2716,6 @@ In order to create a PeerConnection (`XSockets.WebRTC`) you need a PeerBroker to
 	    rtc = new XSockets.WebRTC(broker);
     };
  
-
 ####Configuration (Customize)
 
 By passing a custom *configuration* into the ctor of the `XSockets.WebRTC(broker,configuration)` you can easily modify the iceServers, `sdpConstraints` and `streamConstraints` and parameters.  You can also provide a set of expressions (sdpExpressions) that will be abale to intercept the SDP messages.
@@ -2750,7 +2749,7 @@ By passing a custom *configuration* into the ctor of the `XSockets.WebRTC(broker
         optional: [{
             'bandwidth': 500
         }]
-    }});       
+    }});
     // Will give you the following result;    
     {
     "iceServers": [{
@@ -2774,7 +2773,6 @@ By passing a custom *configuration* into the ctor of the `XSockets.WebRTC(broker
 #####sdpExpressions 
 
 This expression parses and modifies the sdp and limits the video bandwidth 256 kilobits per second.
-
     
     expression:[
      function (sdp) { 
@@ -2830,11 +2828,8 @@ Fires when the client starts to negotiation.
     
     });
     
-    
-
 #####onconnectioncreated
 Fires when the client has established a peer connection
-
     
     rtc.onpeerconnectioncreated = functction(peer){
         // do op
@@ -2842,7 +2837,6 @@ Fires when the client has established a peer connection
 
 #####onconnectionlost
 Fires when a peer connection is lost (destroyed)
-
     
     rtc.onpeerconnectionlost = function(peer){
     
@@ -2850,7 +2844,6 @@ Fires when a peer connection is lost (destroyed)
     
 #### Other PeerConnection events 
 Other PeerConnection (peer) events of interest may be the following.  Note that we are using the `.bind(event,fn)` method for those. 
-
 
     rtc.bind("signalingstatechange", function (evt)
     {
@@ -2921,7 +2914,6 @@ To get a list of the peerconnection (clients ) media-streams call the `.getLocal
 
     var myLocalStreams = rtc.getLocalStreams();
 
-
 #####getRemoteStreams()
 To get a list of  mediaStreams attach to remote peers call the `getRemoteStreams()` method.
 
@@ -2938,8 +2930,6 @@ When a media stream is attached to the PeerConnection using `getUserMedia` och `
          // do op
     });
     
-    
-
 ##### onremotestream(event)
 
 When a remote PeerConnection is connected the API fires the `onremotestream(event)` .
