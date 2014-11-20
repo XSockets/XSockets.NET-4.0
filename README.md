@@ -56,6 +56,7 @@ C#
 ----------
 
 ### What's next?
+For code samples and video tutorials see our [Virtual Academy](http://xsockets.net/academy)
 #### Client API
 Learn to...
 
@@ -75,12 +76,10 @@ Create...
 ## Installing XSockets.NET
 XSockets.NET is distributed through nuget.org and chocolatey.org. From Chocolatey you install our Windows Service and on Nuget we have all our packages for development. You can read more about all the packages after the installation samples.
 
-**NOTE: Use the suffix `-pre` to get XSockets 4.0 assemblies from nuget**
-
 ### Install into a Self-Hosted application
 In the nuget Package Manager Console run the command below to install the server.
 
-`PM> Install-Package XSockets.Server` **(include `-pre` to get v 4.0)**
+`PM> Install-Package XSockets.Server`
 ####Start the server
 
 Inside of the Main method start the server with the code below.
@@ -98,9 +97,9 @@ Inside of the Main method start the server with the code below.
 **Note: This requires .NET 4.5+**
 Open up the Package Manager Console and install the server
 
-`PM> Install-Package Microsoft.Owin.SelfHost` **(include `-pre` to get v 4.0)**
+`PM> Install-Package Microsoft.Owin.SelfHost`
 
-`PM> Install-Package XSockets.Owin.Host` **(include `-pre` to get v 4.0)**
+`PM> Install-Package XSockets.Owin.Host` 
 
 ####How to register XSockets Middleware
 UseXSockets is an extension method for the OwinExtensions class.
@@ -128,7 +127,7 @@ UseXSockets is an extension method for the OwinExtensions class.
 **Note: This requires .NET 4.5+**
 Open up the Package Manager Console and install the server
 
-`PM> Install-Package XSockets.Owin.Host` **(include `-pre` to get v 4.0)**
+`PM> Install-Package XSockets.Owin.Host` 
 
 ####How to register XSockets Middleware
 UseXSockets is an extension method for the OwinExtensions class.
@@ -805,16 +804,10 @@ Each controller have events that you can use to know when `Open`, `Close` and `R
 Will fire when the controller is used over the connection for the first time.
     
     //using XSockets.Core.XSocket;
-    //using XSockets.Core.Common.Socket.Event.Arguments;
     
     public class Chat : XSocketController
     {
-        public Chat()
-        {
-            this.OnOpen += Chat_OnOpen;
-        }
-
-        void Chat_OnOpen(object sender, OnClientConnectArgs e)
+        public override void OnOpened()
         {
             //Connection to controller is open
         }
@@ -824,16 +817,10 @@ Will fire when the controller is used over the connection for the first time.
 Will fire when the socket is closed or if the client choose to close this specific controller on the connection.
 
     //using XSockets.Core.XSocket;
-    //using XSockets.Core.Common.Socket.Event.Arguments;
     
     public class Chat : XSocketController
     {
-        public Chat()
-        {
-            this.OnClose += Chat_OnClose;
-        }
-
-        void Chat_OnClose(object sender, OnClientDisconnectArgs e)
+        public override void OnClosed()
         {
             //Connection to controller was closed
         }
@@ -845,16 +832,10 @@ Control-frames (ping/pong) is primarily for checking connections, measure latenc
 You can implement custom logic for sending/receiving these frames on the server, but there is a simple helper that you can use to get the functionality.
 
     //using XSockets.Core.XSocket;
-    //using XSockets.Core.Common.Socket.Event.Arguments;
     
     public class Chat : XSocketController
     {
-        public Chat()
-        {
-            this.OnOpen += Chat_OnOpen;
-        }
-
-        void Chat_OnOpen(object sender, OnClientConnectArgs e)
+        public override void OnOpened()
         {
             this.ProtocolInstance.Heartbeat(notifyAction: (reason)=>{ Console.WriteLine(reason); });
         }
@@ -1039,8 +1020,11 @@ In the sample below we use the ServiceStack.Text serializer
     }
     
 ###How to write custom Protocols
+Since everything (almost) is a modules/plugin in XSockets you can add custom protocols. This enables you to write your own protocols so that you can connect other "things" than the clients we have created. The good thing about this is that even though your clients use different protocols they will still be able to communicate with each other cross-protocol!
+ 
+#### Custom Protocol Basics
 
-    TODO
+    See our code sample and video at the [XSockets Academy](http://xsockets.net/academy/xva-05-02-customprotocol) page
     
 ##Securing the Controller
 XSockets.NET does not provide any features for authenticating users. Instead, you integrate the XSockets:NET features into the existing authentication structure for an application. You authenticate users as you would normally in your application, and work with the results of the authentication in your XSockets.NET code. For example, you might authenticate your users with ASP.NET forms authentication, and then in your `Controller`, enforce which users or roles are authorized to call a method.
@@ -1218,8 +1202,6 @@ The C# Client API has support for:
 ###Client Setup
 To get the client just get the latest package from http://nuget.org/packages/xsockets.client
 
- **NOTE: Use the suffix `-pre` to get v 4.0**
-
 The C# clients ALWAYS talk full-duplex/bi-directional communication, and just like the XSockets server this behavior has nothing to do with what OS or WebServer you are running.
 
 ###How to establish a connection
@@ -1233,6 +1215,24 @@ Just like in the JavaScript client you can multiplex over several `Controller` o
 - The third parameter is params string[] for setting your controllers
 
 Do note that the call to `Open` is synchron and will wait until the connection is open and the handshake is completed.
+
+### How to AutoReconnect
+By default the client will not reconnect if the connection is closed, but by just calling the `SetAutoReconnect()` method, you can pass in a timeout for the reconnect to occur. By default the timeout is 5 seconds. If the connection is closed and autoreconnect is enabled the client will try to reconnect, if that reconnect fails the event `OnAutoReconnectFailed` will be invoked. This way you can implement some custom logic between attempts to reconnect.
+
+A simple sample where out `IXSocketClient` is `_client`, we also have a `fail`counter and after 4 attempts we stop trying to reconnect.
+
+	//Using the default timeout
+    _client.SetAutoReconnect();
+    //If the reconnect fails...
+    _client.OnAutoReconnectFailed += (sender, eventArgs) =>
+    {
+        Console.WriteLine("AutoReconnect Failed");
+        fail++;
+        if (fail > 4)
+        {
+            _client.AutoReconnect = false;
+        }
+    }
 
 ###How to configure the connection
 ####How to use multiple Controllers
@@ -1693,15 +1693,14 @@ Since the storage is per client you will only get notifications for changes in t
 
 ----------
 ##JavaScript
-To get the client just get the latest package from http://nuget.org/packages/xsockets.jsapi
+To get the client just get the latest package from 
+http://nuget.org/packages/xsockets.jsapi
 
 The JavaScript API supports RPC, PUB/SUB and WebRTC.
 
 ###Client Setup
 The JavaScript client has no dependencies, just add the `XSockets.latest.js` to your page.
 You can get the latest package from http://nuget.org/packages/xsockets.jsapi
-
-**NOTE: Use the suffix `-pre` to get v 4.0**
 
    &lt;script src=&quot;Scripts/XSockets.latest.min.js&quot;&gt;&lt;/script&gt;
   
